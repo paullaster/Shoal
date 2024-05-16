@@ -14,5 +14,10 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  envPrefix: 'VUE_APP',
+  server: {
+    port: 3000,
+    open:  'http://localhost:3000',
   }
 })
