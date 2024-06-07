@@ -1,0 +1,10 @@
+.primary {
+    background-color: var(--vt-c-primary);
+    padding: 0.5rem 1rem;
+    border-radius: .8rem;
+    border: none;
+    color: var(--vt-c-white);
+}
+.md {
+    width: 16rem;
+}

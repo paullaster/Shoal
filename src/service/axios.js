@@ -1,17 +1,17 @@
 /* eslint-disable linebreak-style */
 import axios from "axios";
-import { APP_API_BASE_URL } from "@/env";
-import { AuthService } from "@/packages/Auth";
+import { appApiBaseUrl } from "@/environments";
+import AuthService  from "@/packages/auth/AuthService";
 
 const instance = axios.create({
-	baseURL: APP_API_BASE_URL,
+	baseURL: appApiBaseUrl,
 	// timeout: 10000,
 });
 
 
 const requestInterceptor = (config) => {
-	if (AuthService.Check()) {
-		config.headers.Authorization = `Bearer ${AuthService.Token()}`;
+	if (AuthService.isAuthenticated()) {
+		config.headers.Authorization = `Bearer ${AuthService.token}`;
 		!config.headers.Accept || !config.headers['Content-Type']  ? config.headers['Content-Type'] = "Application/json" : "";
 	}
 	config.validateStatus = function (status) {
@@ -35,6 +35,4 @@ const reponseInterceptor = (response) => {
 
 instance.interceptors.response.use(reponseInterceptor, errorInterceptor);
 
-export const _request  = (options) => {
-    return instance.request(options);
-}
+export const _request  = (options) => instance.request(options);

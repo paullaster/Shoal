@@ -1,0 +1,27 @@
+@keyframes logo-appear {
+    from {
+        opacity: 0;
+        top: 25%;
+        left: .8%;
+    }
+    to {
+        opacity: 1;
+        top: 0;
+        left: 0;
+        transform: scale(0.5);
+    }
+}
+
+@keyframes display-car-appear {
+    from {
+        opacity: 0;
+        top: 100%;
+        left: .8%;
+        transform: scale(0.2);
+    }
+    to {
+        opacity: 1;
+        top: 30%;
+        transform: scale(0.8);
+    }
+}
