@@ -1,6 +1,7 @@
 <template>
     <button :class="classProp"  :disabled="disabled">
-        {{ caption }}
+        <span></span>
+        <span>{{ caption }}</span>
     </button>
 </template>
 

@@ -8,16 +8,16 @@
 <script setup>
 import LogoComponent from '@/components/LogoComponent.vue';
 import DisplayCard from '../components/DisplayCard.vue';
-import {useGlobalStore, useCategoryStore } from "@/store";
+import {useGlobalStore, useProductStore } from "@/store";
 import { onBeforeRouteLeave } from "vue-router";
 
 // STORE
 const globalStore = useGlobalStore();
-const categoryStore = useCategoryStore();
+const categoryStore = useProductStore();
 
 // STORE ACTIONS
 const { setMenu } = globalStore;
-const { setProductList } = categoryStore;
+const { getProducts } = categoryStore;
 
 const menus = [
     {
@@ -46,7 +46,7 @@ setMenu(menus);
 
 // LIFECYCLE HOOKS
 onBeforeRouteLeave( () => {
-    setProductList();
+    getProducts();
 } );
 
 </script>

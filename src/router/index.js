@@ -10,12 +10,25 @@ const router = createRouter({
     },
     {
       path: '/categories',
-      name: 'categories',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('@/packages/categories/views/CategoriesComponent.vue')
-    }
+      redirect: { name: 'categories'},
+      children: [
+        {
+          path: '/',
+          name: 'categories',
+          component: () => import('@/packages/products/views/ProductsComponent.vue'),
+        },
+        {
+          path: ':category/:productId',
+          name: 'productDetails',
+          component: () => import('@/packages/products/components/ProductDetailPage.vue'),
+        },
+      ],
+    },
+    {
+      path: '/cart',
+      name: 'cart',
+      component: () => import('@/packages/cart/views/CartComponent.vue'),
+    },
   ]
 })
 

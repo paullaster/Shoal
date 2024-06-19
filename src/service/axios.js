@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import axios from "axios";
 import { appApiBaseUrl } from "@/environments";
 import AuthService  from "@/packages/auth/AuthService";
