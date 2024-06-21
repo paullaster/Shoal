@@ -16,6 +16,9 @@ class AuthService {
     isAuthenticated() {
         return this.isLoggedIn;
     }
+    getToken() {
+        return this.token;
+    }
 }
 
 export default new AuthService();

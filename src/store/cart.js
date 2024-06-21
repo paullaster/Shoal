@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import constants from "./constants";
 import { _request } from "@/service";
 
 export const useCartStore = defineStore('cart', {
@@ -12,7 +13,7 @@ export const useCartStore = defineStore('cart', {
     },
     actions: {
         getCartItems() {
-            _request({
+            _request.axiosRequest({
                 url: constants.cart,
                 method: 'GET',
             })

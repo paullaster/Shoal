@@ -14,7 +14,7 @@ export const useProductStore = defineStore("product", {
     },
     actions: {
         getProducts() {
-            _request({
+            _request.axiosRequest({
                 url: constants.products,
                 method: "GET",
             })
@@ -28,7 +28,7 @@ export const useProductStore = defineStore("product", {
                 });
         },
         getProduct(params) {
-            _request({
+            _request.axiosRequest({
                 url: `${constants.products}/${params}`,
                 method: "GET",
 

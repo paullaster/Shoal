@@ -13,7 +13,7 @@ export const useSetupStore = defineStore('setup', {
     },
     actions: {
         getCategories(){
-            _request({
+            _request.axiosRequest({
                 method: 'GET',
                 url: constnants.categories,
             })
