@@ -1,7 +1,8 @@
 <template>
     <button :class="classProp"  :disabled="disabled">
-        <span></span>
+        <span><v-icon :icon="preIcon" class="mr-3"></v-icon></span>
         <span>{{ caption }}</span>
+        <span><v-icon :icon="postIcon" class="mr-3"></v-icon></span>
     </button>
 </template>
 
@@ -12,6 +13,12 @@ const props = defineProps({
     caption: {
         type: String,
         required: true
+    },
+    preIcon: {
+        type: String,
+    },
+    postIcon: {
+        type: String,
     },
     disabled: {
         type: Boolean,
