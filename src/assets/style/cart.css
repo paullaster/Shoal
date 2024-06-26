@@ -1,0 +1,85 @@
+.cart-wrapper {
+    min-height: 100vh;
+    padding: .8rem .4rem;
+
+    & .cart-wrapper-card {
+        display: flex;
+        flex-direction: column;
+        & > * {
+            margin-bottom: 1rem;
+        }
+        & .cart-wrapper-card-heading {
+            display: grid;
+            grid-template-columns: 1fr 9fr;
+            & > :last-child {
+                font-weight: 700;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+            }
+        }
+        & .cart-wrapper-card-items {
+            display: grid;
+            grid-template-columns: .4fr 7.8fr 3fr;
+            & .cart-wrapper-card-items-image {
+                margin-right: .4rem;
+            }
+            & .cart-wrapper-card-items-details {
+                & .cart-wrapper-card-items-details-price {
+                    color: var(--vt-c-primary);
+                }
+            }
+            & .cart-wrapper-card-items-action {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                & > :first-child {
+                    margin-right: .3rem;
+                }
+            }
+        }
+        & .cart-wrapper-card-promo {
+            width: 100%;
+            background-color: var(--vt-c-primary-light-2);
+            border-radius: .8rem;
+            & > input {
+                width: 90%;
+                height: 6dvh;
+                border: none;
+                padding-left: .8rem;
+                outline: none;
+                background-color: transparent;
+                color: var(--vt-c-primary);
+                font-size: 1.2rem;
+                font-weight: 400;
+            }
+        }
+        & .cart-wrapper-card-total {
+            & > p {
+                font-size: var(--font-xxsmall);
+                font-weight: 600;
+                color: var(--vt-c-support);
+            }
+        }
+        & .cart-wrapper-card-checkout-actions {
+            display: grid;
+            grid-template-columns: 4fr 2fr;
+            column-gap: .8rem;
+            & > .continue-Shopping {
+                background-color: var(--vt-c-primary-light-2);
+                border-radius: .8rem;
+                height: 6dvh;
+                font-weight: 400;
+                color: var(--vt-c-support);
+            }
+            & .checkout-btn {
+                background-color: var(--vt-c-primary);
+                border-radius: .8rem;
+                height: 6dvh;
+                font-weight: 400;
+                color: var(--vt-c-white);
+            }
+        }
+    }
+}

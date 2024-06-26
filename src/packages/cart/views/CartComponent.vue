@@ -3,70 +3,50 @@
     <section class="cart-wrapper-card">
       <h2 class="cart-wrapper-card-heading">
         <v-btn icon="mdi-arrow-left-thin" class="mr-4" elevation="0"></v-btn>
-        <span>Shopping Bag ({{ 3 }})</span>
+        <span>Shopping Bag ({{ 1 }})</span>
       </h2>
       <div class="cart-wrapper-card-items">
-        <div>
-         <v-avatar class="square-avatar">
+        <div class="cart-wrapper-card-items-image">
+          <v-avatar class="square-avatar">
             <v-img
-                src="http://localhost:3500/public/image/products/AAA70GIZE5AUV.png"  
-                alt="colored-phts"          
+              src="http://localhost:3500/public/image/products/AAA70GIZE5AUV.png"
+              alt="colored-phts"
             >
-
             </v-img>
-         </v-avatar>
+          </v-avatar>
         </div>
-        <div>
-          <v-row>
-            <v-col>
+        <div class="cart-wrapper-card-items-details">
+          <p class="cart-wrapper-card-items-details-name-attribute">
               <span>Product Name</span>
-            </v-col>
-            <v-col>
               <span>(Medi)</span>
-            </v-col>
-            <v-col>
-              <span>- red</span>
-            </v-col>
-          </v-row>
+              <span> - red</span>
+          </p>
+          <p class="cart-wrapper-card-items-details-price">
+            <span>{{ currency }}</span><span>{{ amount }}</span>
+          </p>
         </div>
-        <div>
-          <v-row>
-            <v-col>
-              <v-btn icon="mdi-minus"></v-btn>
-            </v-col>
-            <v-col>
-              <v-text-field v-model="quantity" type="number" min="1"></v-text-field>
-            </v-col>
-            <v-col>
-              <v-btn icon="mdi-plus"></v-btn>
-            </v-col>
-          </v-row>
+        <div class="cart-wrapper-card-items-action">
+              <v-btn size="x-small" icon="mdi-minus" elevation="0" class="icon-btn-bg-color"></v-btn>
+              <input :value="quantity" type="number" min="1" readOnly class="remove-cart-input-bg" />
+              <v-btn  size="x-small" icon="mdi-plus" elevation="0" class="icon-btn-bg-color"></v-btn>
         </div>
-      </div>
-      <div>
-        <v-row>
-          <v-col>
-            <span>{{ currency }} {{ amount }}</span>
-          </v-col>
-        </v-row>
       </div>
       <div class="cart-wrapper-card-promo">
-        <v-text-field label="Promo code"></v-text-field>
-        <button>Apply</button>
+        <input placeholder="Promo code" />
+        <v-btn size="x-small" icon="mdi-check" elevation="0" class="cart-promo-btn"></v-btn>
       </div>
       <div class="cart-wrapper-card-total">
-        <h3>Total: {{ currency }} {{ amount }}</h3>
+        <p>Total: {{ currency }} {{ amount }}</p>
       </div>
-      <div class="cart-wrapper-card-checkout">
-        <ButtonComponent caption="Continue Shopping"></ButtonComponent>
-        <ButtonComponent caption="Checkout" preIcon="mdi-basket-check"></ButtonComponent>
+      <div class="cart-wrapper-card-checkout-actions">
+        <button class="continue-Shopping">Continue Shopping</button>
+        <button class="checkout-btn" ><v-icon icon="mdi-basket-check" class="mr.2"></v-icon> <span>Checkout</span></button>
       </div>
     </section>
   </main>
 </template>
 
 <script setup>
-import ButtonComponent from '@/components/ButtonComponent.vue'
 import { ref } from 'vue'
 const currency = ref('$')
 const amount = ref(23)
@@ -77,5 +57,17 @@ const quantity = ref(1)
 .square-avatar {
   border-radius: 8px;
 }
-
+.icon-btn-bg-color {
+background-color: var(--vt-c-primary-light-2);
+}
+.remove-cart-input-bg, .remove-cart-input-bg:hover, .remove-cart-input-bg:focus {
+  background-color: transparent !important;
+  border:none !important;
+  width: 100%;
+  outline: none !important;
+}
+.cart-promo-btn {
+  background-color: transparent !important;
+  color: var(--vt-c-primary);
+}
 </style>

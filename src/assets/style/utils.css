@@ -8,3 +8,12 @@
 .md {
     width: 16rem;
 }
+.sml {
+    width: 12rem;
+}
+.sm {
+    width: 4rem;
+}
+.icon-btn-bg-color {
+background-color: var(--vt-c-secondary-light)
+}

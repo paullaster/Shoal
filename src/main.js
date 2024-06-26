@@ -1,4 +1,4 @@
-import './assets/main.css'
+import './assets/style/main.css'
 import Toast, { useToast } from 'vue-toastification'
 import 'vue-toastification/dist/index.css'
 import { createApp, markRaw } from 'vue'
