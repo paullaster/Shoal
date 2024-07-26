@@ -1,7 +1,5 @@
 <template>
-    <div class="logo-wrapper">
-        <img :src="NoelsLogo" alt="Noels Fish Delivery Logo" >
-    </div>
+        <img :src="NoelsLogo"  :width="width" :height="height" alt="Noels Fish Delivery Logo" >
 </template>
 
 <script setup>
@@ -16,12 +14,8 @@ defineProps({
     },
 })
 </script>
-
-<style scoped>
-/* .logo-wrapper {
-    width: 100dvw;
-    color: white;
-    position: absolute;
-    animation: logo-appear 2s ease-in-out linear;
-} */
+<style>
+img{
+    background-color: red;
+}
 </style>

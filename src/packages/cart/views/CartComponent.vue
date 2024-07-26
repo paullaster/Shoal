@@ -2,14 +2,14 @@
   <main class="cart-wrapper">
     <section class="cart-wrapper-card">
       <h2 class="cart-wrapper-card-heading">
-        <v-btn icon="mdi-arrow-left-thin" class="mr-4" elevation="0"></v-btn>
+        <v-btn icon="mdi-arrow-left-thin" class="mr-4" elevation="0" @click="router.back()"></v-btn>
         <span>Shopping Bag ({{ 1 }})</span>
       </h2>
       <div class="cart-wrapper-card-items">
         <div class="cart-wrapper-card-items-image">
           <v-avatar class="square-avatar">
             <v-img
-              src="http://localhost:3500/public/image/products/AAA70GIZE5AUV.png"
+              src="http://192.168.0.103:3500/public/image/products/AAA70GIZE5AUV.png"
               alt="colored-phts"
             >
             </v-img>
@@ -48,6 +48,14 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+
+
+// ROUTES
+const router = useRouter();
+
+
+
 const currency = ref('$')
 const amount = ref(23)
 const quantity = ref(1)

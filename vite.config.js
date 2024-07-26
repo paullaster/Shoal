@@ -21,5 +21,6 @@ export default defineConfig({
   envPrefix: 'VUE_APP',
   server: {
     port: 3000,
+    host: true,
   }
 })

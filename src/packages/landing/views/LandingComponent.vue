@@ -1,13 +1,13 @@
 <template>
     <main class="landing-wrapper">
-        <LogoComponent />
+        <SearchComponent />
         <DisplayCard />
     </main>
 </template>
 
 <script setup>
-import LogoComponent from '@/components/LogoComponent.vue';
 import DisplayCard from '../components/DisplayCard.vue';
+import SearchComponent from '@/components/SearchComponent.vue';
 import {useGlobalStore, useProductStore } from "@/store";
 import { onBeforeRouteLeave } from "vue-router";
 

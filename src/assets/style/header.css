@@ -1,0 +1,33 @@
+.header-wrapper {
+    display: flex;
+    flex-direction: column;
+    & .header-title {
+        /* color: white; */
+        font-size: 2rem;
+        text-align: center;
+        padding-bottom: 1rem 0.8rem;
+        font-weight: 700;
+    }
+    & .header-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        position: relative;
+        & ul {
+            display: flex;
+            & li {
+                margin-right: 1rem;
+                & a {
+                    color: var(--vt-c-support);
+                    text-decoration: none;
+                    transition: 0.4s;
+                }
+            }
+        }
+        & .reare-nav {
+            position: absolute;
+            right: 0;
+        }
+    }
+}
