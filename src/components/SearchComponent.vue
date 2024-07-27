@@ -1,7 +1,8 @@
 <template>
     <div class="search-page-wrapper">
-        <div  class="search-input-control">
-            <input type="text" placeholder="search products, categories and catalogues">
+        <div  class="search-input-wrapper">
+            <v-icon>mdi-magnify</v-icon>
+            <input type="search" placeholder="search products, categories and catalogues">
         </div>
         <div class="search-page-result" v-if="focused">
             search page
