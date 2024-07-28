@@ -6,6 +6,7 @@ export const useSetupStore = defineStore('setup', {
     state(){
         return {
             categories: [],
+            currency: 'KSH.',
         }
     },
     getters: {

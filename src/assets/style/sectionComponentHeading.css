@@ -1,0 +1,19 @@
+.section-component-heading {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--vt-c-text-dark-2);
+    padding: .8rem 0.2rem;
+    max-width: 100%;
+    & > h1 {
+        font-size: var(--font-xsmall);
+        font-weight: 300;
+        color: var(--vt-c-support-light);
+        max-width: 70%;
+    }
+    & > button {
+        color: var(--vt-c-primary);
+        transition: 0.4s;
+    }
+}

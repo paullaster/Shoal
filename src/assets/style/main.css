@@ -1,11 +1,15 @@
 @import './animation.css';
 @import './base.css';
 @import './cart.css';
+@import './displaycard.css';
 @import './header.css';
 @import './landing.css';
 @import './product.css';
+@import './productListing.css';
 @import './search.css';
+@import './sectionComponentHeading.css';
 @import './typography.css';
+@import './userHistory.css';
 @import './utils.css';
 
 #app {

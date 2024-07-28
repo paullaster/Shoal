@@ -1,0 +1,8 @@
+.product-listing-wrapper {
+    /* flex-basis: 50%; */
+    /* max-width: 50%;
+    /* min-width: 50%; */
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: .8rem;
+}

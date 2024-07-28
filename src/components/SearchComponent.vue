@@ -1,5 +1,5 @@
 <template>
-    <div class="search-page-wrapper">
+    <section class="search-page-wrapper">
         <div  class="search-input-wrapper">
             <v-icon>mdi-magnify</v-icon>
             <input type="search" placeholder="search products, categories and catalogues">
@@ -7,7 +7,7 @@
         <div class="search-page-result" v-if="focused">
             search page
         </div>
-    </div>
+    </section>
 </template>
 
 <script setup>

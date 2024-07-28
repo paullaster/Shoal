@@ -10,11 +10,11 @@ const router = createRouter({
     },
     {
       path: '/categories',
-      redirect: { name: 'categories'},
+      redirect: { name: 'category'},
       children: [
         {
-          path: '/',
-          name: 'categories',
+          path: ':id',
+          name: 'category',
           component: () => import('@/packages/products/views/ProductsComponent.vue'),
         },
         {

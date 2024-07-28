@@ -9,7 +9,7 @@
 import DisplayCard from '../components/DisplayCard.vue';
 import SearchComponent from '@/components/SearchComponent.vue';
 import {useGlobalStore, useProductStore } from "@/store";
-import { onBeforeRouteLeave } from "vue-router";
+import { onMounted } from 'vue';
 
 // STORE
 const globalStore = useGlobalStore();
@@ -17,7 +17,7 @@ const categoryStore = useProductStore();
 
 // STORE ACTIONS
 const { setMenu } = globalStore;
-const { getProducts } = categoryStore;
+const { getCategories, getProducts } = categoryStore;
 
 const menus = [
     {
@@ -43,11 +43,11 @@ const menus = [
 ];
 setMenu(menus);
 
+onMounted(() => {
+    // getProducts();
+    // getCategories();
 
-// LIFECYCLE HOOKS
-onBeforeRouteLeave( () => {
-    getProducts();
-} );
+})
 
 </script>
 
