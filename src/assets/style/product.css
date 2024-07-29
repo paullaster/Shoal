@@ -21,3 +21,47 @@
         }
     }
 }
+.product-detailpage-btn-holder{
+    position: sticky;
+    bottom: 0;
+    width: 100% !important;
+    display: flex;
+    justify-content: space-between !important;
+    align-items: center !important;
+    background-color: var(--vt-c-white);
+    margin: 2rem 0  0 0!important;
+
+    & > :first-child {
+        width: 10% !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        height: 100%;
+        border: .1rem solid var(--vt-c-primary);
+        background-color: var(--vt-c-primary-light-2) !important;
+        color: var(--vt-c-primary) !important;
+    }
+    & > :last-child {
+        width: 80% !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        height: 100%;
+        border: none;
+
+        & > .v-btn__content{
+            width: 100% !important;
+            height: 100% !important;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            & > :first-child {
+                width: 16%;
+            }
+            & > :last-child {
+                display: block;
+                width: 80%;
+            }
+        }
+    }
+}

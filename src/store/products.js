@@ -120,27 +120,12 @@ export const useProductStore = defineStore("product", {
                 }
               ],
             product: {},
-            categories: [],
         }
     },
     getters: {
         productGetter: (state) => (key) => state[key]
     },
     actions: {
-        getCategories() {
-            _request.axiosRequest({
-                url: constants.categories,
-                method: "GET",
-            })
-               .then(res => {
-                    this.$patch({
-                        categories: res.data
-                    })
-                })
-               .catch(err => {
-                    this.toast.error(err.message);
-                });
-        },
         getProducts() {
             _request.axiosRequest({
                 url: constants.products,

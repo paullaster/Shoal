@@ -1,0 +1,82 @@
+.auth-wrapper {
+  padding: .4rem 1.6rem 0;
+  & > .btn-section{
+    & > .navigation-btn {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+    }
+  }
+  & > .logo-section {
+    text-align: center;
+    & img {
+      width: 100%;
+      max-width: 200px;
+    }
+  }
+  & > .auth-intro {
+    margin-bottom: 1.6rem;
+    text-align: center;
+    font-size: var(--font-xsmall);
+    color: var(--vt-c-support);
+    font-weight: 600;
+  }
+  & > .auth-content {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    & > .form-container {
+        padding:.1rem;
+        & > p {
+          font-size: var(--font-xsmall);
+          color: var(--vt-c-support);
+          font-weight: 200;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+        & > form {
+            .v-field__input {
+                padding:.4rem;
+                border: 1px solid var(--vt-c-border) !important;
+                border-radius: 4px;
+                transition: 0.4s;
+                &:focus {
+                  border-color: var(--vt-c-focus);
+                }
+  
+            }
+            & > button {
+              padding:.8rem 1rem;
+              background-color: var(--vt-c-primary);
+              color: white;
+              border: none;
+              cursor: pointer;
+              transition: 0.4s;
+            }
+          }
+    }
+  }
+  & >.social-login {
+    .v-btn__content {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100%;
+        padding:.8rem 0;
+        & > :last-child {
+            width: 90%;
+            font-size: var(--font-xxsmall);
+            color: var(--vt-c-support);
+            font-weight: 300;
+        }
+    }
+  }
+}
+.footer {
+    text-align: center;
+    font-weight: 300;
+    & > img {
+        width: 100%;
+        max-width: 200px;
+    }
+}

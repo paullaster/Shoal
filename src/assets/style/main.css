@@ -1,6 +1,8 @@
 @import './animation.css';
+@import './auth.css';
 @import './base.css';
 @import './cart.css';
+@import './categories.css';
 @import './displaycard.css';
 @import './header.css';
 @import './landing.css';

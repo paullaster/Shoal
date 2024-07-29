@@ -13,7 +13,7 @@ const router = createRouter({
       redirect: { name: 'category'},
       children: [
         {
-          path: ':id',
+          path: ':category',
           name: 'category',
           component: () => import('@/packages/products/views/ProductsComponent.vue'),
         },
@@ -35,14 +35,9 @@ const router = createRouter({
       component: () => import('@/packages/cart/components/CheckoutComponent.vue'),
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('@/packages/auth/views/LoginComponent.vue'),
-    },
-    {
-      path: '/register',
-      name:'register',
-      component: () => import('@/packages/auth/views/RegisterComponent.vue'),
+      path: '/auth',
+      component: () => import('@/packages/auth/views/AuthComponent.vue'),
+      name: 'auth',
     },
     {
       path: '/profile',
@@ -53,7 +48,12 @@ const router = createRouter({
       path: '/:user/orders',
       name: 'orders',
       component: () => import('@/packages/orders/views/OrdersComponent.vue'),
-    }
+    },
+    {
+      path: '/search',
+      component: () => import('@/components/SearchComponent.vue'),
+      name: 'search',
+    },
   ]
 })
 

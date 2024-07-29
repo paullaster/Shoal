@@ -2,7 +2,7 @@
   <div class="categories">
     <ul>
       <li v-for="category in categories" :key="category.cid">
-        <router-link :to="{ name: 'category', params: { id: category.cid } }">
+        <router-link :to="{ name: 'category', params: { category: category.cid } }">
           <img :src="category.image" alt="category" />
           <span>{{ category.description }}</span>
         </router-link>

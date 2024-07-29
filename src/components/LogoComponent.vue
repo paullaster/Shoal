@@ -15,7 +15,5 @@ defineProps({
 })
 </script>
 <style>
-img{
-    background-color: red;
-}
+
 </style>

@@ -44,3 +44,33 @@ background-color: var(--vt-c-secondary-light)
     -moz-border-radius: .8rem;
     border-radius: .8rem;
 }
+
+.smAndUp {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: .6rem;
+    width: 100%; 
+}
+
+.bg-c-primary {
+    background-color: var(--vt-c-primary) !important;
+    color: var(--vt-c-white) !important;
+}
+.d-flex-space-in-btn {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+.facebook-bg {
+    background-color: #3b5998 !important;
+    color: white !important;
+}
+.instagram-bg {
+    background-color: #e4405f !important;
+    color: white !important;
+}
+.social-login-caption {
+    font-weight: 400 !important;
+    color: white !important;
+}

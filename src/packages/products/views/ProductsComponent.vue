@@ -1,36 +1,11 @@
 <template>
   <main class="categories-wrapper">
-    <section class="category-wrapper-card" v-for="(category, i) in categorizedProducts" :key="i">
-      <h2 class="category-wrapper-card-heading">{{ Object.keys(category)[0] }}</h2>
-      <div
-        class="category-wrapper-card-product"
-        v-for="(product, index) in category[Object.keys(category)[0]]"
-        :key="index"
-        @click="
-          () =>
-            router.push({
-              name: 'productDetails',
-              params: {
-                category: stringToBase64AndReverse.toBase64String(Object.keys(category)[0]),
-                productId: stringToBase64AndReverse.toBase64String(product.pid)
-              }
-            })
-        "
-      >
-        <div class="category-wrapper-card-product-image">
-          <img :src="product.image" alt="product.name" />
-        </div>
-        <div class="category-wrapper-card-product-info">
-          <div class="category-wrapper-card-product-info-name">
-            {{ product.name }}
-          </div>
-          <div class="category-wrapper-card-product-info-price">
-            {{ product.price }}
-          </div>
-        </div>
-        <div class="category-wrapper-card-product-button">
-          <button class="category-wrapper-card-product-button-add-to-cart">Add to cart</button>
-        </div>
+    <section class="category-wrapper-card" >
+      <h2 class="category-wrapper-card-heading bg-c-primary cool-borderradius">
+        {{ categories.find(c=>c?.cid?.trim() === route.params.category?.trim())?.description }}
+      </h2>
+      <div :class="screenXExtraSmall ? '' : 'smAndUp'" :key="refreshProductView">
+        <ProductListing v-for="product in categoryProducts"  :key="product.pid" :product="product"/>
       </div>
     </section>
   </main>
@@ -38,13 +13,13 @@
 
 <script setup>
 import { useProductStore, useSetupStore } from '@/store'
-import stringToBase64AndReverse from '@/util/stringToBase64AndReverse'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
+import {  useRoute } from 'vue-router'
+import ProductListing from '@/components/ProductListing.vue'
 
 // ROUTING
-const router = useRouter();
+const route = useRoute();
 
 
 // STORE
@@ -56,26 +31,42 @@ const { products } = storeToRefs(productStore)
 const { categories } = storeToRefs(setupStore)
 
 // STORE ACTIONS
-productStore.getProducts()
-setupStore.getCategories()
+// productStore.getProducts()
+// setupStore.getCategories()
+
+
+// VARS
+const screenXExtraSmall = ref(true);
+const refreshProductView = ref(0);
 
 // COMPUTED PROPERTIES
-const categorizedProducts = computed({
+const categoryProducts = computed({
   get: () => {
-    return categories.value.map((category) => {
-      const categoryProducts = products.value.filter((product) => {
-        return product.category.trim() === category.cid.trim()
-      })
-      return { [category.cid]: categoryProducts }
+    return products.value.filter((prod) => {
+        return prod.category.trim() === route.params.category.trim()
     })
   }
 })
 
 // WATCH EFFECT
+watch(
+  () => window.outerWidth,
+  (newWidth) => {
+    if(newWidth > 325 ) {
+      refreshProductView.value = refreshProductView.value + 1
+      screenXExtraSmall.value = false;
+    } else {
+      refreshProductView.value = refreshProductView.value + 1
+      screenXExtraSmall.value = true;
+    }
+  }
+)
+
 
 // Lifecycle Hooks
-onMounted(() => {})
+onMounted(() => {
+  if(window?.outerWidth > 325 ) {
+    screenXExtraSmall.value = false;
+  }
+})
 </script>
-
-<style scoped>
-</style>
