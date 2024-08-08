@@ -49,7 +49,7 @@ const { cart } = storeToRefs(cartStore);
 
 
 // Component State
-const cartCount = ref(cart?.Item?.length || 0)
+const cartCount = ref(0)
 const showHeader = ref(true);
 
 router.afterEach(() => {
@@ -67,6 +67,14 @@ watch(
     showHeader.value = false;
   }
 });
+
+watch(
+  () => cart.value,
+  (cart) => {
+    cartCount.value = cart?.Item?.reduce((sum, item) => sum + item.quantity, 0);
+  },
+  { immediate: true, deep: true }
+)
 </script>
 
 <style scoped>
