@@ -39,7 +39,7 @@
         <p>Total: {{ currency }} {{ amount }}</p>
       </div>
       <div class="cart-wrapper-card-checkout-actions">
-        <button class="continue-Shopping">Continue Shopping</button>
+        <button class="continue-Shopping" @click="()=>router.push({name: 'landing'})">Continue Shopping</button>
         <button class="checkout-btn" ><v-icon icon="mdi-basket-check" class="mr.2"></v-icon> <span>Checkout</span></button>
       </div>
     </section>

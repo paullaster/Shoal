@@ -22,14 +22,14 @@
         <v-btn  class="bg-c-primary">
           <v-icon >mdi-phone-outline</v-icon>
         </v-btn>
-        <v-btn @click="() => router.push({ name: 'cart' })" class="bg-c-primary" v-if="!numberOfProductInCart">
+        <v-btn @click="async () =>await cartStore.createCart(product)" class="bg-c-primary" v-if="!numberOfProductInCart">
           <v-icon class="mr-2">mdi-cart-plus</v-icon>
           <span>Add to Cart</span>
         </v-btn>
         <div v-if="numberOfProductInCart">
-          <v-btn class="bg-c-primary"><v-icon class="mr-2">mdi-minus</v-icon></v-btn>
+          <v-btn class="bg-c-primary" @click.prevent="()=>cartStore.updateCart(product.pid, 'remove')"><v-icon class="mr-2">mdi-minus</v-icon></v-btn>
           <span>{{ numberOfProductInCart }}</span>
-          <v-btn class="bg-c-primary"><v-icon>mdi-plus</v-icon></v-btn>
+          <v-btn class="bg-c-primary" @click.prevent="()=>cartStore.updateCart(product.pid, 'add')"><v-icon>mdi-plus</v-icon></v-btn>
         </div>
       </div>
     </section>
@@ -38,15 +38,11 @@
 
 <script setup>
 import { useProductStore, useSetupStore, useCartStore } from '@/store'
-import stringToBase64AndReverse from '@/util/stringToBase64AndReverse'
 import { storeToRefs } from 'pinia'
-import { useRoute, useRouter } from 'vue-router'
-import ButtonComponent from '@/components/ButtonComponent.vue'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 // ROUTES
-const route = useRoute()
-const router = useRouter()
+
 // STORE
 const productStore = useProductStore()
 const setupStore = useSetupStore()
@@ -59,11 +55,12 @@ const {cart} = storeToRefs(cartStore);
 
 // STORE ACTIONS
 // productStore.getProduct(stringToBase64AndReverse.fromBase64String(route.params.productId))
+// cartStore.getCart();
 
 // @TODO: remove
 productStore.$patch({
   product: {
-    id: '1',
+    pid: '1',
     name: 'Product 1',
     size: 'M',
     color: 'Black',
@@ -77,14 +74,23 @@ productStore.$patch({
 })
 
 // Component REFS and STATE
-const itemInCart = ref(cart?.Item?.filter(item => item.productId === product.pid)?.length);
+const itemInCart = ref(undefined);
 const numberOfProductInCart = ref(0);
 
 // WATCHERS
 watch(
-  () => itemInCart.value, 
+  () => cart.value, 
+  (newValue) => {
+    itemInCart.value = newValue.Item.find(item => item.productId === product.value.pid)
+}, {deep: true})
+watch(
+  () => itemInCart.value?.quantity, 
   (newValue) => {
     numberOfProductInCart.value = newValue;
+}, {deep: true})
+
+onMounted(() => {
+  cartStore.getCart();
 })
 
 </script> 

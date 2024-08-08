@@ -1,6 +1,6 @@
 import { Request } from "@brainspore/transport";
-import { appApiBaseUrl } from "@/environments";
+import { APPAPIBASEURL } from "@/environments";
 import AuthService  from "@/packages/auth/AuthService";
-const _request = new Request(AuthService, appApiBaseUrl);
+const _request = new Request(AuthService, APPAPIBASEURL);
 
 export  { _request };

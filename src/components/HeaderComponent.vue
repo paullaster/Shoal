@@ -16,10 +16,11 @@
           <a @click="()=>router.push({name: 'auth'})" ><v-icon>mdi-account-outline</v-icon><span v-if="lgAndUp">account</span></a>
         </li>
         <li class="cart-menu">
-          <a href="#"
+          <button
+          @click="()=>router.push({name: 'cart'})"
             ><v-icon>mdi-cart-outline</v-icon>
             <v-badge color="#ED1E79" :content="cartCount" inline v-if="cartCount"></v-badge>
-            <span v-if="lgAndUp"> cart </span></a
+            <span v-if="lgAndUp"> cart </span></button
           >
         </li>
       </ul>
