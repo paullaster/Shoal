@@ -1,5 +1,5 @@
 <template>
-  <header class="header-wrapper" v-if="showHeader">
+  <header class="header-wrapper">
     <h1 class="header-title">Noels Fish Delivery</h1>
     <nav class="header-nav">
       <ul>
@@ -50,24 +50,7 @@ const { cart } = storeToRefs(cartStore);
 
 // Component State
 const cartCount = ref(0)
-const showHeader = ref(true);
-
-router.afterEach(() => {
-  cartCount.value = cart?.Item?.length || 0
-})
-
-// WATCH
-watch(
-  () =>route.name,
-  (name) => {
-  if (name === 'auth') {
-    showHeader.value = false;
-  } 
-  if (name === 'search'){
-    showHeader.value = false;
-  }
-});
-
+// WATCHERS
 watch(
   () => cart.value,
   (cart) => {
