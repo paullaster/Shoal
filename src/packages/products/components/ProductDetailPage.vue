@@ -89,10 +89,6 @@ watch(
     numberOfProductInCart.value = newValue;
 }, {deep: true})
 
-onMounted(() => {
-  cartStore.getCart();
-})
-
 </script> 
 
 <style scoped>

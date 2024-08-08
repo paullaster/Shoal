@@ -25,6 +25,7 @@
         </li>
       </ul>
     </nav>
+    <SidebarComponent />
   </header>
 </template>
 
@@ -35,6 +36,7 @@ import { useCartStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
+import SidebarComponent from './SidebarComponent.vue';
 
 // ROUTES
 const router = useRouter()

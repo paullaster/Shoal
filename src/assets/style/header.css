@@ -1,6 +1,7 @@
 .header-wrapper {
     display: flex;
     flex-direction: column;
+    position: relative;
     & .header-title {
         color: var(--vt-c-primary);
         font-size: 2rem;

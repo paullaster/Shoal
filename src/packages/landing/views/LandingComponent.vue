@@ -16,32 +16,7 @@ const globalStore = useGlobalStore();
 const categoryStore = useProductStore();
 
 // STORE ACTIONS
-const { setMenu } = globalStore;
 const { getCategories, getProducts } = categoryStore;
-
-const menus = [
-    {
-        name: 'Home',
-        path: '/',
-        icon: 'mdi-home-circle-outline',
-    },
-    {
-        name: 'Categories',
-        path: '/categories',
-        icon: '',
-    },
-    {
-        name: 'Account',
-        path: '/Help',
-        icon: '',
-    },
-    {
-        name: 'More',
-        path: '/more',
-        icon: '',
-    }
-];
-setMenu(menus);
 
 onMounted(() => {
     // getProducts();
