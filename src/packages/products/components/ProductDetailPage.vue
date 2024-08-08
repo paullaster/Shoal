@@ -49,7 +49,7 @@ const setupStore = useSetupStore()
 const cartStore = useCartStore();
 
 // STORE STATES AND GETTERS
-const { product, products } = storeToRefs(productStore)
+const { product } = storeToRefs(productStore)
 const { currency } = storeToRefs(setupStore)
 const {cart} = storeToRefs(cartStore);
 
