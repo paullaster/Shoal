@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import constants from "./constants";
 import { _request } from "@/service";
-import { useToast } from "vue-toastification";
 import AuthService from "@/packages/auth/AuthService";
 import WebStorage from "@/util/storage";
 import { APPNAME } from "@/environments";
@@ -46,7 +45,7 @@ export const useCartStore = defineStore('cart', {
                         console.error(error);
                     });
             } catch (error) {
-                return useToast().error(error.message);
+                return this.toast.error(error.message);
             } finally {
                 this.getCart();
             }
@@ -67,7 +66,7 @@ export const useCartStore = defineStore('cart', {
                     method: 'GET',
                 })
             } catch (error) {
-                return useToast().error(error.message);
+                return this.toast.error(error.message);
             }
         },
         async updateCart(productID, type = 'add') {
@@ -89,7 +88,7 @@ export const useCartStore = defineStore('cart', {
                     return;
                 }
             } catch (error) {
-                return useToast().error(error.message);
+                return this.toast.error(error.message);
             }finally {
                 this.getCart();
             }

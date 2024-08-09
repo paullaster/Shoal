@@ -3,7 +3,11 @@
     <h1 class="header-title">Noels Fish Delivery</h1>
     <nav class="header-nav">
       <ul>
-        <li><v-icon>mdi-menu</v-icon></li>
+        <li v-if="!lgAndUp">
+          <v-btn variant="text" @click="()=>globalStore.toggleSidebarNavigation(true)">
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
+        </li>
         <li>
           <a @click="()=>router.push({name: 'landing'})" ><img :src="HeaderLogo" alt="Noel Fish Delivery" /></a>
         </li>
@@ -25,14 +29,14 @@
         </li>
       </ul>
     </nav>
-    <SidebarComponent />
+    <SidebarComponent v-if="showsidebarNavigation || lgAndUp" />
   </header>
 </template>
 
 <script setup>
 import HeaderLogo from '@/assets/logo/logo-header.png'
 import { useDisplay } from 'vuetify/lib/framework.mjs'
-import { useCartStore } from '@/store';
+import { useCartStore, useGlobalStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -47,7 +51,9 @@ const { lgAndUp } = useDisplay()
 
 // STORE
 const cartStore = useCartStore();
+const globalStore = useGlobalStore();
 const { cart } = storeToRefs(cartStore);
+const { showsidebarNavigation } = storeToRefs(globalStore);
 
 
 // Component State

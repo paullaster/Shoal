@@ -1,9 +1,9 @@
 <template>
   <aside class="sidebar-container">
     <div class="close-and-logo">
-      <span>
+      <v-btn variant="text" @click="()=>globalStore.toggleSidebarNavigation(false)">
         <v-icon>mdi-window-close</v-icon>
-      </span>
+      </v-btn>
       <LogoComponent width="200px" @click="() => router.push('/')" />
     </div>
     <div class="support">
@@ -15,7 +15,7 @@
           </router-link>
         </li>
         <li>
-          <router-link>
+          <router-link :to="{name: 'auth'}">
             <span>My account</span>
             <v-icon>mdi-chevron-right</v-icon>
           </router-link>
@@ -38,7 +38,7 @@
         <span>See All</span>
       </router-link>
     </div>
-    <div>
+    <div class="categories-nav-list">
       <ul>
         <li v-for="category in categories" :key="category.cid">
           <router-link>

@@ -4,6 +4,7 @@ export const useGlobalStore = defineStore("global", {
     state: () => {
         return {
             menus: [],
+            showsidebarNavigation: false,
         }
     },
     getters: {
@@ -14,6 +15,15 @@ export const useGlobalStore = defineStore("global", {
             try {
                 this.$patch({
                     menus: payload
+                })
+            } catch (error) {
+                this.toast.error(error.message);
+            }
+        },
+        toggleSidebarNavigation(payload) {
+            try {
+                this.$patch({
+                    showsidebarNavigation: payload
                 })
             } catch (error) {
                 this.toast.error(error.message);

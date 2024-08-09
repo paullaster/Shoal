@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingComponent from '@/packages/landing/views/LandingComponent.vue'
+import { useGlobalStore } from '@/store';
 const router = createRouter({
   history: createWebHistory(import.meta.env.VUE_APP_URL),
   routes: [
@@ -55,6 +56,14 @@ const router = createRouter({
       name: 'search',
     },
   ]
+});
+
+router.beforeEach((to, from, next) => {
+  useGlobalStore().toggleSidebarNavigation(false);
+  if(to.name === from.name) {
+    useGlobalStore().toggleSidebarNavigation(false);
+  }
+  next();
 })
 
 export default router
