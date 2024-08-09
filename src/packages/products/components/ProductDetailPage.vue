@@ -38,10 +38,13 @@
 
 <script setup>
 import { useProductStore, useSetupStore, useCartStore } from '@/store'
+import stringToBase64AndReverse from "@/util/stringToBase64AndReverse";
 import { storeToRefs } from 'pinia'
-import { onMounted, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
+import { useRoute } from 'vue-router';
 
 // ROUTES
+const route = useRoute();
 
 // STORE
 const productStore = useProductStore()
@@ -54,24 +57,7 @@ const { currency } = storeToRefs(setupStore)
 const {cart} = storeToRefs(cartStore);
 
 // STORE ACTIONS
-// productStore.getProduct(stringToBase64AndReverse.fromBase64String(route.params.productId))
-// cartStore.getCart();
-
-// @TODO: remove
-productStore.$patch({
-  product: {
-    pid: '1',
-    name: 'Product 1',
-    size: 'M',
-    color: 'Black',
-    image: 'http://192.168.0.103:3500/public/image/products/AAAK9NF5RL8VZ.png',
-    description: `lorem ipsum dolor sit amet, 
-    consectetur adipiscing elit in a just. pure and transparent.
-     Lore maur tincidunt et just eu just et just eu just eu just eu just eu just eu just eu just et`,
-    price: 19.99,
-    quantity: 10
-  }
-})
+productStore.getProduct(stringToBase64AndReverse.fromBase64String(route.params.productId));
 
 // Component REFS and STATE
 const itemInCart = ref(undefined);
@@ -79,15 +65,15 @@ const numberOfProductInCart = ref(0);
 
 // WATCHERS
 watch(
-  () => cart.value, 
-  (newValue) => {
-    itemInCart.value = newValue.Item.find(item => item.productId === product.value.pid)
-}, {deep: true})
+  () => [product.value, cart.value], 
+  () => {
+    itemInCart.value = cart.value.Item.find(item => item.productId === product.value.pid)
+}, {deep: true, immediate: true})
 watch(
-  () => itemInCart.value?.quantity, 
+  () => itemInCart.value, 
   (newValue) => {
-    numberOfProductInCart.value = newValue;
-}, {deep: true})
+    numberOfProductInCart.value = newValue.quantity;
+}, {deep: true, immediate: true})
 
 </script> 
 
