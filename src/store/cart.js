@@ -13,6 +13,7 @@ export const useCartStore = defineStore('cart', {
     },
     getters: {
         itemsInCart: (state) => state.cart?.Item?.reduce((sum, item) => sum + item.quantity, 0),
+        cartTotal: (state) => state.cart?.Item?.reduce((sum, item) => (sum + (Number(item.price) * Number(item.quantity))).toFixed(2), 0),
     },
     actions: {
         async createCart(payload) {
@@ -81,7 +82,11 @@ export const useCartStore = defineStore('cart', {
                         if (type === 'add') {
                             product.quantity++;
                         } else if (type ==='remove') {
-                            product.quantity--;
+                            if (Number(product.quantity) === 1) {
+                                this.cart.Item = this.cart.Item.filter((item) => item.productId !== productID);
+                            }else {
+                                product.quantity--;
+                            }
                         }
                         WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     }
@@ -92,6 +97,35 @@ export const useCartStore = defineStore('cart', {
             }finally {
                 this.getCart();
             }
-        }
+        },
+        async removeItemFromCart(productID) {
+            try {
+                this.getCart();
+                if (!AuthService.isAuthenticated()) {
+                    if (!Object.keys(this.cart).length) {
+                        return;
+                    }
+                    this.cart.Item = this.cart.Item.filter((item) => item.productId !== productID);
+                    WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
+                    return;
+                }
+                _request.axiosRequest({
+                    url: constants.cart,
+                    method: 'DELETE',
+                })
+                   .then((res) => {
+                        this.$patch({
+                            cart: res.data,
+                        });
+                    })
+                   .catch((error) => {
+                        console.error(error);
+                    });
+            } catch (error) {
+                return this.toast.error(error.message);
+            } finally {
+                this.getCart();
+            }
+        },
     },
 });

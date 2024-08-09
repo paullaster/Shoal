@@ -13,7 +13,7 @@ class ColorHelper {
           return {
             lead: '#5867DD',
             admin: '#FFB04C',
-            primary: '#5867DD',
+            primary: '#ED1E79',
             secondary: '#FFB04C',
             accent: '#8792E4',
             error: '#FF5252',
