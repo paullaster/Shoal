@@ -23,7 +23,7 @@
           <button
           @click="()=>router.push({name: 'cart'})"
             ><v-icon>mdi-cart-outline</v-icon>
-            <v-badge color="#ED1E79" :content="cartCount" inline v-if="cartCount"></v-badge>
+            <v-badge color="#ED1E79" :content="itemsInCart" inline v-if="itemsInCart"></v-badge>
             <span v-if="lgAndUp"> cart </span></button
           >
         </li>
@@ -38,7 +38,6 @@ import HeaderLogo from '@/assets/logo/logo-header.png'
 import { useDisplay } from 'vuetify/lib/framework.mjs'
 import { useCartStore, useGlobalStore } from '@/store';
 import { storeToRefs } from 'pinia';
-import { ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import SidebarComponent from './SidebarComponent.vue';
 
@@ -52,20 +51,13 @@ const { lgAndUp } = useDisplay()
 // STORE
 const cartStore = useCartStore();
 const globalStore = useGlobalStore();
-const { cart } = storeToRefs(cartStore);
+const { itemsInCart } = storeToRefs(cartStore);
 const { showsidebarNavigation } = storeToRefs(globalStore);
 
 
 // Component State
-const cartCount = ref(0)
 // WATCHERS
-watch(
-  () => cart.value,
-  (cart) => {
-    cartCount.value = cart?.Item?.reduce((sum, item) => sum + item.quantity, 0);
-  },
-  { immediate: true, deep: true }
-)
+
 </script>
 
 <style scoped>

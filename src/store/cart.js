@@ -12,7 +12,7 @@ export const useCartStore = defineStore('cart', {
         }
     },
     getters: {
-        cartGetter: (state) => (key) => state[key]
+        itemsInCart: (state) => state.cart?.Item?.reduce((sum, item) => sum + item.quantity, 0),
     },
     actions: {
         async createCart(payload) {

@@ -66,6 +66,3 @@ const setupStore = useSetupStore()
 const { categories } = storeToRefs(setupStore)
 const { menus } = storeToRefs(globalStore)
 </script>
-
-<style scoped>
-</style>

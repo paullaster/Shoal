@@ -3,31 +3,31 @@
     <section class="cart-wrapper-card">
       <h2 class="cart-wrapper-card-heading">
         <v-btn icon="mdi-arrow-left-thin" class="mr-4" elevation="0" @click="router.back()"></v-btn>
-        <span>Shopping Bag ({{ 1 }})</span>
+        <span>Shopping Bag ({{ itemsInCart }})</span>
       </h2>
-      <div class="cart-wrapper-card-items">
+      <div class="cart-wrapper-card-items" v-for="item in cart?.Item" :key="item?.productId">
         <div class="cart-wrapper-card-items-image">
           <v-avatar class="square-avatar">
             <v-img
-              src="http://192.168.0.103:3500/public/image/products/AAA70GIZE5AUV.png"
-              alt="colored-phts"
+              :src="item?.image"
+              alt="product photos"
             >
             </v-img>
           </v-avatar>
         </div>
         <div class="cart-wrapper-card-items-details">
           <p class="cart-wrapper-card-items-details-name-attribute">
-              <span>Product Name</span>
-              <span>(Medi)</span>
-              <span> - red</span>
+              <span>{{ item?.name }}</span>
+              <span>({{ item?.size }})</span>
+              <span> - {{item.color}}</span>
           </p>
           <p class="cart-wrapper-card-items-details-price">
-            <span>{{ currency }}</span><span>{{ amount }}</span>
+            <span>{{ currency }}</span><span>{{ item?.price }}</span>
           </p>
         </div>
         <div class="cart-wrapper-card-items-action">
               <v-btn size="x-small" icon="mdi-minus" elevation="0" class="icon-btn-bg-color"></v-btn>
-              <input :value="quantity" type="number" min="1" readOnly class="remove-cart-input-bg" />
+              <input :value="item?.quantity" type="number" min="1" readOnly class="remove-cart-input-bg" />
               <v-btn  size="x-small" icon="mdi-plus" elevation="0" class="icon-btn-bg-color"></v-btn>
         </div>
       </div>
@@ -47,6 +47,8 @@
 </template>
 
 <script setup>
+import { useCartStore, useSetupStore } from '@/store';
+import { storeToRefs } from 'pinia';
 import { ref } from 'vue'
 import { useRouter } from 'vue-router';
 
@@ -55,8 +57,11 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 
-
-const currency = ref('$')
+// STORE AND STORE ACTIONS
+const setupStore = useSetupStore();
+const cartStore = useCartStore();
+const { currency } = storeToRefs(setupStore);
+const { itemsInCart, cart } = storeToRefs(cartStore)
 const amount = ref(23)
 const quantity = ref(1)
 </script>
