@@ -67,12 +67,12 @@ const numberOfProductInCart = ref(0);
 watch(
   () => [product.value, cart.value], 
   () => {
-    itemInCart.value = cart.value.Item.find(item => item.productId === product.value.pid)
+    itemInCart.value = cart.value.Item?.find(item => item.productId === product.value.pid)
 }, {deep: true, immediate: true})
 watch(
   () => itemInCart.value, 
   (newValue) => {
-    numberOfProductInCart.value = newValue.quantity;
+    numberOfProductInCart.value = newValue?.quantity;
 }, {deep: true, immediate: true})
 
 </script> 

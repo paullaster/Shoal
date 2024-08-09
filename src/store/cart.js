@@ -30,7 +30,9 @@ export const useCartStore = defineStore('cart', {
                         productExistsInCart.quantity += payload.quantity;
                         return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     }
-                    return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Item: [...this.cart.Item, payload] });
+                    WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Item: [...this.cart.Item, payload] });
+                    this.toast.success("Item was successfully added to cart");
+                    return;
                 }
                 _request.axiosRequest({
                     url: constants.cart,
@@ -90,6 +92,7 @@ export const useCartStore = defineStore('cart', {
                         }
                         WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     }
+                    this.toast.success(type === 'add' ? 'Item was successfully added to cart' : 'Cart was successfully updated');                    
                     return;
                 }
             } catch (error) {

@@ -55,6 +55,59 @@ const router = createRouter({
       component: () => import('@/components/SearchComponent.vue'),
       name: 'search',
     },
+    {
+      path: '/:catchAll(.*)',
+      component: () => import('@/components/NotFoundComponent.vue'),
+      name: 'notFound',
+      title: 'Not Found'
+    },
+    {
+      path: '/admin',
+      name: 'admin',
+      redirect: {name: 'adminAuth'},
+      title: 'Admin',
+      children:[
+        {
+          path: 'auth',
+          name: 'adminAuth',
+          component: () => import('@/packages/admin/auth/views/AdminAuth.vue'),
+          title: 'Admin Login',
+        },
+        // {
+        //   path: 'products',
+        //   name: 'adminProducts',
+        //   component: () => import('@/packages/admin/views/ProductsComponent.vue'),
+        // },
+        // {
+        //   path: 'categories',
+        //   name: 'adminCategories',
+        //   component: () => import('@/packages/admin/views/CategoriesComponent.vue'),
+        // },
+        // {
+        //   path: 'orders',
+        //   name: 'adminOrders',
+        //   component: () => import('@/packages/admin/views/OrdersComponent.vue'),
+        // },
+        // {
+        //   path: 'users',
+        //   name: 'adminUsers',
+        //   component: () => import('@/packages/admin/views/UsersComponent.vue'),
+        // },
+        // {
+        //   path: 'settings',
+        //   name: 'adminSettings',
+        //   component: () => import('@/packages/'),
+        // },
+      ],
+      // beforeEnter: (to, from, next) => {
+      //   const user = useGlobalStore().getUser();
+      //   if (user && user.role === 'admin') {
+      //     next();
+      //   } else {
+      //     next({ name: 'landing' });
+      //   }
+      // },
+    }
   ]
 });
 

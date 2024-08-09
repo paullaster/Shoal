@@ -48,6 +48,8 @@ cartStore.getCart();
 
 const showHeader = ref(null);
 // WATCH
+
+//@TODO:  Handle this route guards
 watch(
   () =>route,
   (route) => {
@@ -55,6 +57,12 @@ watch(
     return showHeader.value = false;
   } 
   if (route.name === 'search'){
+    return showHeader.value = false;
+  }
+  if(route.name === 'notFound'){
+    return showHeader.value = false;
+  }
+  if(route.path.includes('admin')){
     return showHeader.value = false;
   }else {
     return showHeader.value = true;

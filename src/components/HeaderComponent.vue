@@ -14,7 +14,7 @@
       </ul>
       <ul class="reare-nav">
         <li>
-          <a @click="()=>console.log('search')" v-if="route.name !== 'landing'"><v-icon>mdi-magnify</v-icon></a>
+          <a @click="()=>router.push({name: 'search'})" v-if="route.name !== 'landing'"><v-icon>mdi-magnify</v-icon></a>
         </li>
         <li>
           <a @click="()=>router.push({name: 'auth'})" ><v-icon>mdi-account-outline</v-icon><span v-if="lgAndUp">account</span></a>

@@ -2,7 +2,7 @@
     <section class="search-page-wrapper">
         <div  class="search-input-wrapper">
             <v-icon>mdi-magnify</v-icon>
-            <input type="search" placeholder="search products, categories and catalogues">
+            <input type="search" placeholder="search products, categories and catalogues" @focus="setSearchPage">
         </div>
         <div class="search-page-result" v-if="focused">
             search page
@@ -11,11 +11,16 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-const focused = ref(false);
+// ROUTES & ROUTER
+const route = useRoute();
+const router = useRouter();
+const { name } = route;
+function setSearchPage(){
+ if (name === 'landing') {
+    router.push({name: 'search'});
+ }
+}
+
 </script>
-
-<style lang="scss" scoped>
-
-</style>
