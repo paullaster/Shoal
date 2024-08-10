@@ -132,7 +132,7 @@ export const useProductStore = defineStore("product", {
           text: 'Add new Category',
           icon:'mdi-shape-plus-outline',
           id: 'add-new-category',
-          path: {name: 'createProduct'}
+          path: {name: 'createCategory'}
         }
       ],
     }
@@ -180,6 +180,46 @@ export const useProductStore = defineStore("product", {
       } catch (error) {
         this.toast.error(error.message);
       }
+    },
+    async createProduct(product) {
+      return await _request.axiosRequest({
+        url: constants.products,
+        method: "POST",
+        data: product,
+      })
+    },
+    uploadProductImages(payload, entity = ''){
+      try {
+        this.setLoading(true);
+        _request.axiosRequest({
+          url: constants.images,
+          method: "POST",
+          data: payload,
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+         .then(() => {
+           this.setLoading(false);
+           this.toast.success(`${entity} uploaded successfully`)
+         })
+         .catch((err) => {
+            console.error(err);
+            this.setLoading(false);
+            this.toast.error(`Error uploading ${entity}`)
+          });
+      } catch (error) {
+        console.error(error);
+        this.setLoading(false);
+        this.toast.error(`Error uploading ${entity}`)
+      }
+    },
+    async createCategory(category) {
+      return await _request.axiosRequest({
+        url: constants.categories,
+        method: "POST",
+        data: category,
+      })
     },
   }
 })

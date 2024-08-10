@@ -5,4 +5,5 @@ export default {
     login: 'auth/login',
     register:'auth/register',
     logout: 'auth/logout',
+    images: 'assets/images',
 }

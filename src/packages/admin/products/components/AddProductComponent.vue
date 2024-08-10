@@ -12,7 +12,7 @@
               <v-text-field
                 v-model="product.name"
                 label="Product Name"
-                required
+                :rules="rules.name"
                 variant="outlined"
               />
             </v-col>
@@ -23,7 +23,7 @@
                 item-value="cid"
                 item-title="name"
                 label="Product Category"
-                required
+                :rules="rules.category"
                 variant="outlined"
               ></v-select>
             </v-col>
@@ -31,7 +31,7 @@
               <v-text-field
                 v-model="product.description"
                 label="Product Description"
-                required
+                :rules="rules.description"
                 variant="outlined"
               />
             </v-col>
@@ -40,7 +40,7 @@
                 v-model="product.price"
                 type="number"
                 label="Product Price"
-                required
+                :rules="rules.price"
                 variant="outlined"
               />
             </v-col>
@@ -48,17 +48,27 @@
               <v-text-field
                 v-model="product.quantity"
                 label="Product Quantity"
-                required
+                :rules="rules.quantity"
                 variant="outlined"
               >
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="product.color" label="Product Color" variant="outlined">
+              <v-text-field 
+              v-model="product.color" 
+              label="Product Color" 
+              variant="outlined"
+              :rules="rules.color"
+              >
               </v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-text-field v-model="product.size" label="Product Size" variant="outlined">
+              <v-text-field 
+              v-model="product.size" 
+              label="Product Size" 
+              variant="outlined"
+              :rules="rules.size"
+              >
               </v-text-field>
             </v-col>
             <v-col cols="12">
@@ -101,10 +111,10 @@
 </template>
 
 <script setup>
-import { useSetupStore } from '@/store'
+import { useProductStore, useSetupStore } from '@/store'
 import ColorHelper from '@/util/ColorHelper'
 import { storeToRefs } from 'pinia'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 
@@ -113,6 +123,7 @@ const router = useRouter()
 
 // STORES AND STORES ACTIONS
 const setupStore = useSetupStore()
+const productStore = useProductStore()
 const { categories } = storeToRefs(setupStore)
 
 // COMPONENT REFS/INTERAL STATE
@@ -127,8 +138,36 @@ const product = ref({
   images: []
 })
 const imagePreview = ref(1);
+const productForm = ref(null);
 
-
+// COMPUTED
+const rules = computed(()=>{
+  return {
+    name: [(v) =>!!v || 'Product Name is required'],
+    price: [
+      (v) => !!v || 'Price is required',
+      (v) => v >= 0 || 'Price must be a positive number'
+    ],
+    quantity: [
+      (v) =>!!v || 'Quantity is required',
+      (v) => v % 1 === 0 || 'Quantity must be a whole number',
+      (v) => v >= 1 || 'Quantity must be a positive number',
+    ],
+    color: [
+      (v) =>!!v || 'Product Color is required'
+    ],
+    size: [
+      (v) =>!!v || 'Product Size is required'
+    ],
+    category: [
+      (v) =>!!v || 'Product Category is required',
+    ],
+    description: [
+      (v) =>!!v || 'Product Description is required',
+      (v) => v.length <= 2000 || 'Description must not exceed 1000 characters'
+    ]
+  }
+})
 
 // HOOKS
 onMounted(()=>{
@@ -137,10 +176,33 @@ onMounted(()=>{
   setInterval(()=> imagePreview.value++, 10);
 })
 // COMPONENT METHONDS
-function addProduct() {}
+async function addProduct() {
+  try {
+    const { valid } = await productForm.value.validate();
+    if (!valid) {
+      useToast().error('Category information is not valid');
+      return
+    }
+    const {images, ...productPayload} = product.value;
+    productStore.createProduct(productPayload)
+    .then((product)=> {
+      const formData = new FormData();
+      images.forEach((file) => {
+        formData.append('images', file)
+      })
+      formData.append('productId', product.data.pid);
+      productStore.uploadProductImages(formData, 'product')
+    })
+    .catch((error) => {
+      console.error(error);
+      useToast().error('Failed to add product');
+    });
+  } catch (error) {
+    useToast().error(error.message);
+  }
+}
 function productImageUpload(files) {
   try {
-    console.log('change event')
     const filesArray = Array.from(files.target.files)
     filesArray.forEach((file) => {
       const reader = new FileReader()

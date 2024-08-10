@@ -106,7 +106,15 @@ const router = createRouter({
               meta: {
                 title: 'Create Product'
               }
-            }
+            },
+            {
+              path: 'products/category',
+              name: 'createCategory',
+              component: () => import('@/packages/admin/products/components/AddCategoryComponent.vue'),
+              meta: {
+                title: 'Create Category'
+              }
+            },
             // {
             //   path: 'orders',
             //   name: 'adminOrders',
