@@ -121,6 +121,20 @@ export const useProductStore = defineStore("product", {
         }
       ],
       product: {},
+      productActions: [
+        {
+          text: 'Create a new product',
+          icon: 'mdi-cart-arrow-down',
+          id: 'add-new-product',
+          path: {name: 'createProduct'}
+        },
+        {
+          text: 'Add new Category',
+          icon:'mdi-shape-plus-outline',
+          id: 'add-new-category',
+          path: {name: 'createProduct'}
+        }
+      ],
     }
   },
   getters: {

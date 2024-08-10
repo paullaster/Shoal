@@ -99,17 +99,25 @@ const router = createRouter({
                 title: 'Manage Products'
               }
             },
+            {
+              path: 'products/create',
+              name: 'createProduct',
+              component: () => import('@/packages/admin/products/components/AddProductComponent.vue'),
+              meta: {
+                title: 'Create Product'
+              }
+            }
+            // {
+            //   path: 'orders',
+            //   name: 'adminOrders',
+            //   component: () => import('@/packages/admin/views/OrdersComponent.vue'),
+            // },
           ],
           meta: {
             requiresAuth: true,
             title: 'Admin Dashboard Layout'
           }
         },
-        // {
-        //   path: 'orders',
-        //   name: 'adminOrders',
-        //   component: () => import('@/packages/admin/views/OrdersComponent.vue'),
-        // },
         // {
         //   path: 'users',
         //   name: 'adminUsers',

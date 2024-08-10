@@ -19,6 +19,12 @@ module.exports = {
     }
   ],
   parserOptions: {
-    ecmaVersion: 'latest'
+    ecmaVersion: 'latest',
+  },
+  rules: {
+    "vue/no-v-text-v-html-on-component": [
+    "error",
+    { "allow": ["v-list-item-title"] }
+  ],
   }
 }
