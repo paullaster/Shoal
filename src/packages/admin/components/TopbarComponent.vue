@@ -16,7 +16,7 @@
         <v-icon id="activate-toggle-btn-ctl-icon">mdi-account-circle</v-icon>
       </v-btn>
     </v-app-bar>
-  </template>
+  </template> 
   
   <script setup>
   import { storeToRefs } from 'pinia';

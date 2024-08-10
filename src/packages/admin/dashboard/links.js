@@ -7,6 +7,7 @@ export default [
         hasSubs: false,
         icon: "mdi-view-dashboard",
         title: "Dashboard",
+        id: 'Admindashboard',
     },
     {
         path: `/admin/${btoa(AuthService.getUser().id)}/users`,
@@ -14,6 +15,7 @@ export default [
         hasSubs: false,
         icon: "mdi-account-group",
         title: "Manage Users",
+        id: 'AdminManageUsers',
     },
     {
         path: `/admin/${btoa(AuthService.getUser().id)}/products`,
@@ -21,6 +23,7 @@ export default [
         hasSubs: false,
         icon: "mdi-shopping",
         title: "Manage Products",
+        id: 'AdminManageProducts',
     },
     {
         path: `/admin/${btoa(AuthService.getUser().id)}/orders`,
@@ -28,5 +31,6 @@ export default [
         hasSubs: false,
         icon: "mdi-cart-heart",
         title: "Manage Orders",
+        id: 'AdminManageOrders',
     }
 ];

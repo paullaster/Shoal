@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <section>
         manage products
-    </div>
+    </section>
 </template>
 
 <script setup>
