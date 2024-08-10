@@ -3,7 +3,14 @@ import { APPNAME } from "@/environments";
 import { useToast } from "vue-toastification";
 class AuthService {
     #token = null;
-    #user = null;
+    // #user = null;
+    #user = {
+        id: 1,
+        name: 'Super Admin',
+        email: 'super.admin@gmail.com',
+        role: 'Admin',
+        title: 'System Super Admin'
+    }
     constructor() {
         this.setToken = this.setToken.bind(this);
         this.setUser = this.setUser.bind(this);
@@ -13,7 +20,7 @@ class AuthService {
         this.login = this.login.bind(this);
         this.tokenResourcename = `${APPNAME.split(" ").join("")}_token`;
         this.userResourcename = `${APPNAME.split(" ").join("")}_user`;
-        this.init();
+        // this.init();
     }
 
     init() {

@@ -11,7 +11,7 @@ class ColorHelper {
     }
       colorsHelper(type) {
           return {
-            lead: '#5867DD',
+            Admin: '#ED1E79',
             admin: '#FFB04C',
             primary: '#ED1E79',
             secondary: '#FFB04C',

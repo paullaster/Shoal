@@ -15,6 +15,7 @@
   "dependencies": {
     "@brainspore/transport": "^0.0.8",
     "axios": "^1.6.8",
+    "lodash": "^4.17.21",
     "pinia": "^2.1.7",
     "vite-plugin-vuetify": "^2.0.3",
     "vue": "^3.4.21",

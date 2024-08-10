@@ -11,7 +11,7 @@ const router = createRouter({
     },
     {
       path: '/categories',
-      redirect: { name: 'category'},
+      redirect: { name: 'category' },
       children: [
         {
           path: ':category',
@@ -59,30 +59,52 @@ const router = createRouter({
       path: '/:catchAll(.*)',
       component: () => import('@/components/NotFoundComponent.vue'),
       name: 'notFound',
-      title: 'Not Found'
+      meta: {
+        title: 'Not Found'
+      }
     },
     {
       path: '/admin',
       name: 'admin',
-      redirect: {name: 'adminAuth'},
+      redirect: { name: 'adminAuth' },
       title: 'Admin',
-      children:[
+      children: [
         {
           path: 'auth',
           name: 'adminAuth',
           component: () => import('@/packages/admin/auth/views/AdminAuth.vue'),
-          title: 'Admin Login',
+          meta: {
+            title: 'Admin Login',
+          }
         },
-        // {
-        //   path: 'products',
-        //   name: 'adminProducts',
-        //   component: () => import('@/packages/admin/views/ProductsComponent.vue'),
-        // },
-        // {
-        //   path: 'categories',
-        //   name: 'adminCategories',
-        //   component: () => import('@/packages/admin/views/CategoriesComponent.vue'),
-        // },
+        {
+          path: ':adminId',
+          name: 'adminUserLayout',
+          component: () => import('@/layouts/AdminDashboardLayout.vue'),
+          redirect: { name: 'adminDashboard' },
+          children: [
+            {
+              path: 'dashboard',
+              name: 'adminDashboard',
+              component: () => import('@/packages/admin/dashboard/views/AdminDashboard.vue'),
+              meta: {
+                title: 'Admin Dashboard'
+              }
+            },
+            {
+              path: 'products',
+              name: 'manageProducts',
+              component: () => import('@/packages/admin/products/views/ManageProducts.vue'),
+              meta: {
+                title: 'Manage Products'
+              }
+            },
+          ],
+          meta: {
+            requiresAuth: true,
+            title: 'Admin Dashboard Layout'
+          }
+        },
         // {
         //   path: 'orders',
         //   name: 'adminOrders',
@@ -113,7 +135,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   useGlobalStore().toggleSidebarNavigation(false);
-  if(to.name === from.name) {
+  if (to.name === from.name) {
     useGlobalStore().toggleSidebarNavigation(false);
   }
   next();
