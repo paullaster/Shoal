@@ -3,7 +3,7 @@
     app class="align-center" 
     :color="ColorHelper.colorsHelper('primary')" 
     v-model="toggleNavBar"
-    @update:modelValue="()=>!lgAndUp && dashboardStore.setToggleNavbar()"
+    @update:modelValue="()=>!lgAndUp && dashboardStore.setToggleNavbar(null)"
     >
       <div>
         <v-avatar class="avatar mr-2" :color="ColorHelper.colorsHelper(user?.role === 'lead' ? 'accent' : user?.role)" size="60">
