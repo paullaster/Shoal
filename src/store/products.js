@@ -135,12 +135,32 @@ export const useProductStore = defineStore("product", {
           path: {name: 'createCategory'}
         }
       ],
+      showProductActions: false,
     }
   },
   getters: {
     productGetter: (state) => (key) => state[key]
   },
   actions: {
+    setProductActionsView(){
+      try {
+        document.addEventListener('click', (event) =>{
+          if(event.target.id === 'product_actions_activator_btn' || event.target.id === 'product_actions_activator_btn_icon') {
+            this.$patch({
+              showProductActions:!this.showProductActions,
+            })
+            return;
+          }else {
+            this.$patch({
+              showProductActions: false,
+            })
+          }
+        })
+      } catch (error) {
+        console.error(error);
+        this.toast.error("An error occurred while setting product actions view.");
+      }
+    },
     getProducts() {
       _request.axiosRequest({
         url: constants.products,

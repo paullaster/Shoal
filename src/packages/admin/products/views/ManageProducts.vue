@@ -7,8 +7,8 @@
           <h5 style="width: 80%; text-align: center; font-weight: 700">Product Managment</h5>
         </v-card-title>
         <v-card-actions style="display: flex; align-items: center">
-          <v-btn icon :color="ColorHelper.colorsHelper('primary')" block size="large">
-            <v-icon>mdi-dots-vertical</v-icon>
+          <v-btn icon :color="ColorHelper.colorsHelper('primary')" block size="large" id="product_actions_activator_btn" @click="productStore.setProductActionsView">
+            <v-icon id="product_actions_activator_btn_icon">mdi-dots-vertical</v-icon>
           </v-btn>
         </v-card-actions>
         <div
@@ -23,6 +23,7 @@
             box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
             min-height: 8rem;
           "
+          v-if="showProductActions"
         >
           <v-list-item
             v-for="action in productActions"
@@ -75,7 +76,7 @@ const router = useRouter()
 const setupStore = useSetupStore()
 const productStore = useProductStore()
 const { categories } = storeToRefs(setupStore)
-const { products, productActions } = storeToRefs(productStore)
+const { products, productActions, showProductActions } = storeToRefs(productStore)
 
 // FUCNTIONS
 function viewCategory() {}
