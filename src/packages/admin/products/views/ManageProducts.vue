@@ -7,7 +7,14 @@
           <h5 style="width: 80%; text-align: center; font-weight: 700">Product Managment</h5>
         </v-card-title>
         <v-card-actions style="display: flex; align-items: center">
-          <v-btn icon :color="ColorHelper.colorsHelper('primary')" block size="large" id="product_actions_activator_btn" @click="productStore.setProductActionsView">
+          <v-btn
+            icon
+            :color="ColorHelper.colorsHelper('primary')"
+            block
+            size="large"
+            id="product_actions_activator_btn"
+            @click="productStore.setProductActionsView"
+          >
             <v-icon id="product_actions_activator_btn_icon">mdi-dots-vertical</v-icon>
           </v-btn>
         </v-card-actions>
@@ -45,14 +52,16 @@
       <v-card-text>
         <v-list>
           <v-list-item v-for="category in categories" :key="category.cid" class="mb-6">
-            <v-list-item-content>
-              <v-list-item-title>{{ category.name }}</v-list-item-title>
-              <v-list-item-subtitle>
-                {{ products.filter((product) => category.cid === product.category).length }} items
-              </v-list-item-subtitle>
+            <v-list-item-content style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <v-list-item-title>{{ category.name }}</v-list-item-title>
+                <v-list-item-subtitle>
+                  {{ products.filter((product) => category.cid === product.category).length }} items
+                </v-list-item-subtitle>
+              </div>
               <v-list-item-action>
-                <v-btn text @click="viewCategory(category.cid)">
-                  <v-icon>mdi-chevron-right</v-icon>
+                <v-btn variant="text" @click="viewCategory(category.cid)">
+                  <v-icon size="25">mdi-chevron-right</v-icon>
                 </v-btn>
               </v-list-item-action>
             </v-list-item-content>
