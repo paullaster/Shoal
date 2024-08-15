@@ -3,7 +3,7 @@
   @click="()=>router.push({name: 'productDetails', params: {category: product.category,productId: stringToBase64AndReverse.toBase64String(product.pid)}})"
   >
     <div class="product-image">
-      <img :src="product?.image" alt="product" class="img-sm"/>
+      <img :src="product?.Images[0].url" alt="product" class="img-sm"/>
     </div>
     <div class="product-details">
       <p>
