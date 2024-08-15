@@ -18,11 +18,11 @@ const categoryStore = useProductStore();
 // STORE ACTIONS
 const { getCategories, getProducts } = categoryStore;
 
-onMounted(() => {
-    // getProducts();
-    // getCategories();
+// onMounted(() => {
+    getProducts();
+//     getCategories();
 
-})
+// })
 
 </script>
 

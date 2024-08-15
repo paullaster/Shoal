@@ -186,11 +186,13 @@ async function addProduct() {
     const {images, ...productPayload} = product.value;
     productStore.createProduct(productPayload)
     .then((product)=> {
+      product.value = {};
       const formData = new FormData();
       images.forEach((file) => {
-        formData.append('images', file)
+        formData.append('image', file)
       })
-      formData.append('productId', product.data.pid);
+      formData.append('id', product.data.pid);
+      formData.append('type', 'Product');
       productStore.uploadProductImages(formData, 'product')
     })
     .catch((error) => {

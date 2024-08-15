@@ -5,12 +5,23 @@ export const useGlobalStore = defineStore("global", {
         return {
             menus: [],
             showsidebarNavigation: false,
+            loading: false,
         }
     },
     getters: {
         globalGetter: (state) => (key) => state[key]
     },
     actions: {
+        setLoading(payload){
+            try {
+                this.$patch({
+                    loading: payload
+                })
+            } catch (error) {
+                console.error(error);
+                this.toastr.error('We encountered an error!');
+            }
+        },
         setMenu(payload) {
             try {
                 this.$patch({

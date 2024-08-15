@@ -31,8 +31,8 @@ const { products } = storeToRefs(productStore)
 const { categories } = storeToRefs(setupStore)
 
 // STORE ACTIONS
-// productStore.getProducts()
-// setupStore.getCategories()
+productStore.getProducts()
+setupStore.getCategories()
 
 
 // VARS

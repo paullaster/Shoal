@@ -70,7 +70,7 @@ watch(
 }, {deep: true, immediate: true});
 
 onMounted(() => {
-  // setupStore.getCategories();
+  setupStore.getCategories();
 });
 
 </script>

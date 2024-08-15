@@ -51,8 +51,15 @@
       </div>
       <v-card-text>
         <v-list>
-          <v-list-item v-for="category in categories" :key="category.cid" class="mb-6">
-            <v-list-item-content style="display: flex; align-items: center; justify-content: space-between;">
+          <v-list-item v-for="category in categories" :key="category.cid">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 2.4rem 0;
+              "
+            >
               <div>
                 <v-list-item-title>{{ category.name }}</v-list-item-title>
                 <v-list-item-subtitle>
@@ -64,7 +71,7 @@
                   <v-icon size="25">mdi-chevron-right</v-icon>
                 </v-btn>
               </v-list-item-action>
-            </v-list-item-content>
+            </div>
           </v-list-item>
         </v-list>
       </v-card-text>

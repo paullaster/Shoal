@@ -111,11 +111,13 @@
       const {images, ...categoryPayload} = category.value;
       productStore.createCategory(categoryPayload)
       .then((category)=> {
+        category.value = {};
         const formData = new FormData();
         images.forEach((file) => {
-          formData.append('images', file)
+          formData.append('image', file)
         })
-        formData.append('categoryId', category.data.cid);
+        formData.append('id', category.data.cid);
+        formData.append('type', 'Category');
         productStore.uploadProductImages(formData, 'category')
       })
       .catch((error) => {

@@ -5,32 +5,7 @@ import constnants from "./constants";
 export const useSetupStore = defineStore('setup', {
     state(){
         return {
-            categories: [
-                {
-                  cid: 'Cooked Meals',
-                  name: 'Cooked Meals',
-                  description: ' Freshly Packaged Cooked Hot Meals',
-                  createdAt: ' 2024-06-15 08:58:44',
-                  updatedAt: ' 2024-06-15 09:25:08',
-                  image: ' http://192.168.0.103:3500/public/image/products/AAA084LGOVUAM.png'
-                },
-                {
-                  cid: "Fried",
-                  name: 'Fried',
-                  description: ' Fried Foods',
-                  createdAt: ' 2024-06-15 11:34:18',
-                  updatedAt: ' 2024-06-15 11:34:18',
-                  image: ' http://192.168.0.103:3500/public/image/products/AAA084LGOVUAM.png'
-                },
-                {
-                  cid: 'Smoked',
-                  name: 'Smoked',
-                  description: ' Smoked Foods',
-                  createdAt: ' 2024-06-15 08:58:24',
-                  updatedAt: ' 2024-06-15 08:58:24',
-                  image: ' http://192.168.0.103:3500/public/image/products/AAA084LGOVUAM.png'
-                }
-              ],
+            categories: [],
             currency: 'KSH.',
         }
     },
