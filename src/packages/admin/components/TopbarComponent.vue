@@ -6,7 +6,7 @@
       <v-toolbar-title v-if="mdAndUp">{{ APPNAME }}</v-toolbar-title>
       <v-spacer></v-spacer>
       <span style="margin-inline: 0.8rem;">
-        Role: <v-chip :color="ColorHelper.colorsHelper(user?.role)">{{ user?.role?.toUpperCase() }}</v-chip>
+        Role: <v-chip :color="ColorHelper.colorsHelper(user?.type)">{{ user?.type?.toUpperCase() }}</v-chip>
       </span>
       <span style="margin-inline: 0.8rem;" v-if="mdAndUp">
         Title: <v-chip :color="ColorHelper.colorsHelper(user?.role)">{{ user?.title?.toUpperCase() }}</v-chip>

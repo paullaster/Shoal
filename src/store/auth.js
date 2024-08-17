@@ -16,7 +16,7 @@ export const useAuth = defineStore("auth", {
     actions: {
         setLoader(payload) {
             try {
-                useGlobalStore().setLoader(payload);
+                useGlobalStore().setLoading(payload);
             } catch (error) {
                 this.toast.error(error.message);
             }
@@ -53,10 +53,17 @@ export const useAuth = defineStore("auth", {
                     .then(async (response) => {
                         AuthService.login(response.data).then(async(user) => {
                             await this.setUser(user);
-                            router.push({
-                                name: 'userLayout',
-                                params: { user: btoa(user.id) },
-                            });
+                            if(user.type === 'admin') {
+                                router.push({
+                                    name: 'adminUserLayout',
+                                    params: { adminId: btoa(user.userId) },
+                                });
+                            }else {
+                                router.push({
+                                    name: 'admin',
+                                    params: { user: btoa(user.userId) },
+                                });
+                            }
                         })
                         this.setLoader(false);
                         this.toast.success(response.message);

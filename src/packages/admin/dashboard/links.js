@@ -2,7 +2,7 @@ import AuthService from "@/packages/auth/AuthService";
 
 export default [
     {
-        path: `/admin/${btoa(AuthService.getUser().id)}/dashboard`,
+        path: `/admin/${btoa(AuthService.getUser().userId)}/dashboard`,
         order: 1,
         hasSubs: false,
         icon: "mdi-view-dashboard",
@@ -10,7 +10,7 @@ export default [
         id: 'Admindashboard',
     },
     {
-        path: `/admin/${btoa(AuthService.getUser().id)}/users`,
+        path: `/admin/${btoa(AuthService.getUser().userId)}/users`,
         order: 3,
         hasSubs: false,
         icon: "mdi-account-group",
@@ -18,7 +18,7 @@ export default [
         id: 'AdminManageUsers',
     },
     {
-        path: `/admin/${btoa(AuthService.getUser().id)}/products`,
+        path: `/admin/${btoa(AuthService.getUser().userId)}/products`,
         order: 2,
         hasSubs: false,
         icon: "mdi-shopping",
@@ -26,7 +26,7 @@ export default [
         id: 'AdminManageProducts',
     },
     {
-        path: `/admin/${btoa(AuthService.getUser().id)}/orders`,
+        path: `/admin/${btoa(AuthService.getUser().userId)}/orders`,
         order: 4,
         hasSubs: false,
         icon: "mdi-cart-heart",

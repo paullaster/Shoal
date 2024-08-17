@@ -11,8 +11,8 @@ class ColorHelper {
     }
       colorsHelper(type) {
           return {
-            Admin: '#ED1E79',
-            admin: '#FFB04C',
+            admin: '#ED1E79',
+            customer: '#FFB04C',
             primary: '#ED1E79',
             secondary: '#FFB04C',
             accent: '#8792E4',

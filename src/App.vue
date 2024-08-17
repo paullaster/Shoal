@@ -6,7 +6,8 @@
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import { RouterView, useRoute } from 'vue-router'
 import { onMounted, ref, watch } from 'vue';
-import { useCartStore, useGlobalStore, useSetupStore } from './store';
+import { useAuth, useCartStore, useGlobalStore, useSetupStore } from './store';
+import AuthService from './packages/auth/AuthService';
 
 
 // ROUTES
@@ -17,6 +18,7 @@ const route = useRoute();
 const globalStore = useGlobalStore();
 const setupStore = useSetupStore();
 const cartStore = useCartStore();
+const authStore = useAuth();
 const { setMenu } = globalStore;
 
 const menus = [
@@ -44,6 +46,7 @@ const menus = [
 
 setMenu(menus);
 cartStore.getCart();
+authStore.setUser(AuthService.getUser());
 
 
 const showHeader = ref(null);

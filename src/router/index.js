@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingComponent from '@/packages/landing/views/LandingComponent.vue'
 import { useGlobalStore } from '@/store';
+import AuthService from '@/packages/auth/AuthService';
 const router = createRouter({
   history: createWebHistory(import.meta.env.VUE_APP_URL),
   routes: [
@@ -150,11 +151,32 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  const title = to.meta.title || 'Home';
+  document.title = 'Noels | '+ title;
   useGlobalStore().toggleSidebarNavigation(false);
   if (to.name === from.name) {
     useGlobalStore().toggleSidebarNavigation(false);
   }
-  next();
+  useGlobalStore().setLoading(true);
+  const { requiresAuth } = to.meta;
+  if (requiresAuth && !AuthService.isAuthenticated()) {
+    if (to.path.includes('admin')) {
+      next({ name: 'adminAuth' });
+    }else {
+      next({ name: 'landing' });
+    }
+  } else {
+    next();
+  }
+})
+router.beforeResolve( async (to) => {
+  if (to.meta.requiresAuth) {
+      return !!AuthService.isAuthenticated();
+  }
+})
+
+router.afterEach( () => {
+useGlobalStore().setLoading(false);
 })
 
 export default router
