@@ -128,12 +128,9 @@ async function checkUser() {
       username: formData.value.username,
       type: 'customer',
     };
-    authStore.login(payload);
+    authStore.getUser(payload);
   } catch (error) {
     useToast().error("We had an error, please try again later!");
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

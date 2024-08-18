@@ -78,16 +78,17 @@ export const useAuth = defineStore("auth", {
                 this.toast.error(error.message);
             }
         },
-        async activateConsoltium(payload) {
+        async getUser(payload) {
             try {
                 this.setLoader(true);
                 _request.axiosRequest({
-                    url: "/auth/activate",
+                    url: "/auth/get-user",
                     method: "POST",
                     data: payload,
                 })
                     .then(async (response) => {
                         this.setLoader(false);
+                        
                         this.toast.success(response.message);
                     })
                     .catch(async (error) => {
