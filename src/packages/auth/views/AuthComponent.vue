@@ -22,13 +22,15 @@
       <article class="form-container">
         <p>Type your email or phone number to login or create an account</p>
         <!-- Form -->
-        <v-form>
+        <v-form ref="customerLogin">
           <v-row>
             <v-col cols="12" sm="6">
               <v-text-field
                 label="Email or Phone Number"
-                v-model="formData.email"
+                v-model="formData.username"
+                hint="If using a phone number, you must provide country code followed by white space then your phone number"
                 variant="outlined"
+                :rules="rules.username"
               />
             </v-col>
           </v-row>
@@ -81,15 +83,56 @@
 
 <script setup>
 import LogoComponent from '@/components/LogoComponent.vue'
-import { ref } from 'vue'
+import { useAuth } from '@/store';
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router';
+import { useToast } from 'vue-toastification';
 
 const router = useRouter();
 
+// STORES
+const authStore = useAuth();
+
+// COMPONENT STATE
+const customerLogin = ref(null);
 const formData = ref({
-  email: ''
+  username: ''
 });
 
+
+// COMPUTED
+const rules = computed(()=>{
+  return {
+    username: [
+      v =>!!v || 'Username is required',
+      v => /^\S+@\S+\.\S+$/.test(v) || /^\+\d{1,4}\s\d{1,15}$/.test(v) || 'Invalid phone number or email'
+    ],
+    password: [
+      v =>!!v || 'Password is required',
+      v => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(v) || 
+      `Password must be at least 8 characters long
+       and contain at least one uppercase letter, 
+       one lowercase letter, one number, and one special character`
+    ]
+  }
+})
+
+// COMPONENT METHODS
+async function checkUser() {
+  try {
+    const { valid } = await customerLogin.value.validate();
+    if (!valid) {
+      return useToast().error("Please make sure you're providing a valid email address or phone number");
+    }
+    const payload = {
+      username: formData.value.username,
+      type: 'customer',
+    };
+    authStore.login(payload);
+  } catch (error) {
+    useToast().error("We had an error, please try again later!");
+  }
+}
 </script>
 
 <style lang="scss" scoped>

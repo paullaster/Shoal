@@ -35,11 +35,19 @@ const router = createRouter({
       path: '/checkout',
       name: 'checkout',
       component: () => import('@/packages/cart/components/CheckoutComponent.vue'),
+      meta: {
+        requiresAuth: true,
+        title: 'Checkout'
+      }
     },
     {
       path: '/auth',
       component: () => import('@/packages/auth/views/AuthComponent.vue'),
       name: 'auth',
+      meta: {
+        title: 'Login/Register',
+        requiresGuest: true
+      }
     },
     {
       path: '/profile',
@@ -163,7 +171,7 @@ router.beforeEach((to, from, next) => {
     if (to.path.includes('admin')) {
       next({ name: 'adminAuth' });
     }else {
-      next({ name: 'landing' });
+      next({ name: 'auth' });
     }
   } else {
     next();

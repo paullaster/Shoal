@@ -42,11 +42,11 @@
         <v-btn size="x-small" icon="mdi-check" elevation="0" class="cart-promo-btn"></v-btn>
       </div>
       <div class="cart-wrapper-card-total">
-        <p>Total: {{ currency }} {{ cartTotal }}</p>
+        <p>Subt Total: {{ currency }} {{ cartTotal }}</p>
       </div>
       <div class="cart-wrapper-card-checkout-actions">
         <button class="continue-Shopping" @click="()=>router.push({name: 'landing'})">Continue Shopping</button>
-        <button class="checkout-btn" ><v-icon icon="mdi-basket-check" class="mr.2"></v-icon> <span>Checkout</span></button>
+        <button class="checkout-btn" @click="()=>router.push({name: 'checkout'})"><v-icon icon="mdi-basket-check" class="mr.2"></v-icon> <span>Checkout</span></button>
       </div>
     </section>
     <section class="empty-cart" v-if="!itemsInCart">

@@ -93,6 +93,7 @@ const setupStore = useSetupStore()
 const productStore = useProductStore()
 const { categories } = storeToRefs(setupStore)
 const { products, productActions, showProductActions } = storeToRefs(productStore)
+productStore.getProducts();
 
 // FUCNTIONS
 function viewCategory() {}
