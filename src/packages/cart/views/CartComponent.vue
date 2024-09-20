@@ -9,7 +9,7 @@
         <div class="cart-wrapper-card-items-image">
           <v-avatar class="square-avatar">
             <v-img
-              :src="item?.image"
+              :src="item?.Images[0].url"
               alt="product photos"
             >
             </v-img>

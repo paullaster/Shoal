@@ -2,7 +2,7 @@
   <main class="product-wrapper">
     <section class="product-wrapper-card">
       <div class="product-wrapper-card--image-holder">
-        <img :src="product.image" alt="" />
+        <img :src="product.Images[0].url" alt="Product" />
       </div>
       <h4>{{ product.name }}, {{ product.size }} - {{ product.color }}</h4>
       <p>{{ product.description }}</p>
