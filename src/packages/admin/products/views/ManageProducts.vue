@@ -83,17 +83,40 @@
 import { useProductStore, useSetupStore } from '@/store'
 import ColorHelper from '@/util/ColorHelper'
 import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+// import { useRouter } from 'vue-router'
 
 // ROUTE & ROUTER
-const router = useRouter()
+// const router = useRouter()
 
 // STORES & STORE ACTIONS
 const setupStore = useSetupStore()
 const productStore = useProductStore()
 const { categories } = storeToRefs(setupStore)
 const { products, productActions, showProductActions } = storeToRefs(productStore)
-productStore.getProducts();
+
+// HOOKS
+onMounted(() => {
+  // Check if user is authenticated
+  // // Check if user has required permissions
+  // if (!setupStore.userHasPermission('manage_products')) {
+  //   router.push({ name: 'home' })
+  // }
+  // // Check if product actions view is set
+  // if (!productStore.productActionsView) {
+  //   productStore.setProductActionsView()
+  // }
+  // // Check if product actions are loaded
+  // if (!productActions.value.length) {
+  //   productStore.getProductActions()
+  // }
+  // // Check if product actions are shown
+  // if (!showProductActions) {
+  //   productStore.setShowProductActions()
+  // }
+  productStore.getProducts()
+  setupStore.getCategories()
+})
 
 // FUCNTIONS
 function viewCategory() {}

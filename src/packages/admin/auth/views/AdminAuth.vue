@@ -3,7 +3,7 @@
     <section>
       <v-card elevation="0" style=" height: 100vh;">
         <v-card-title >
-          <div class="admin-auth__logo" >
+          <div class="admin-auth__logo"  @click="()=>router.push({name: 'landing'})">
             <LogoComponent width="250px" />
           </div>
           <h2>Admin Login</h2>

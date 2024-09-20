@@ -116,7 +116,7 @@ import ColorHelper from '@/util/ColorHelper'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useToast } from 'vue-toastification'
+import { globalEventBus, useToast } from 'vue-toastification'
 
 // ROUTE & ROUTER
 const router = useRouter()
@@ -174,6 +174,9 @@ onMounted(()=>{
   // Initial image preview
   imagePreview.value = 1;
   setInterval(()=> imagePreview.value++, 10);
+  globalEventBus.on('goto-manage-product', () => {
+    router.push({ name: 'manageProducts'})
+  })
 })
 // COMPONENT METHONDS
 async function addProduct() {

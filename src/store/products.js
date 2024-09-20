@@ -3,6 +3,7 @@ import { _request } from "@/service";
 import constants from "./constants";
 import router from "@/router";
 import { useGlobalStore } from "./global";
+import { globalEventBus } from "vue-toastification";
 
 export const useProductStore = defineStore("product", {
   state: () => {
@@ -117,6 +118,7 @@ export const useProductStore = defineStore("product", {
          .then(() => {
            this.setLoading(false);
            this.toast.success(`${entity} uploaded successfully`)
+           globalEventBus.emit('goto-manage-product')
          })
          .catch((err) => {
             console.error(err);
