@@ -4,9 +4,10 @@
       <h2 class="category-wrapper-card-heading bg-c-primary cool-borderradius">
         {{ categories.find(c=>c?.cid?.trim() === route.params.category?.trim())?.description }}
       </h2>
-      <div :class="screenXExtraSmall ? '' : 'smAndUp'" :key="refreshProductView">
+      <div :class="screenXExtraSmall ? '' : 'smAndUp'" :key="refreshProductView" v-if="categoryProducts.length">
         <ProductListing v-for="product in categoryProducts"  :key="product.pid" :product="product"/>
       </div>
+      <div v-else style="height: 40vh; display:flex; align-items: center; font-weight: 500;">No products found in this category.</div>
     </section>
   </main>
 </template>

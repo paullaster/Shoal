@@ -50,7 +50,8 @@
         </div>
       </div>
       <v-card-text>
-        <v-list>
+
+        <v-list v-if="categories.length">
           <v-list-item v-for="category in categories" :key="category.cid">
             <div
               style="
@@ -73,6 +74,9 @@
               </v-list-item-action>
             </div>
           </v-list-item>
+        </v-list>
+        <v-list v-else>
+          <v-list-item>No categories found.</v-list-item>
         </v-list>
       </v-card-text>
     </v-card>

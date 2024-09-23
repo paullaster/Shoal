@@ -1,0 +1,9 @@
+.otp-main-view {
+    height: 96vh;
+    margin-top: 0 !important;
+    & > .otp-main-view-card {
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+}

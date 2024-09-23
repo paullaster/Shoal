@@ -74,3 +74,9 @@ background-color: var(--vt-c-secondary-light)
     font-weight: 400 !important;
     color: white !important;
 }
+
+.google-bg {
+    background-color: transparent !important;
+    color: #3685F4 !important;
+    border: 2px solid #ED1E79 !important;
+}

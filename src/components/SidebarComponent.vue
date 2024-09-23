@@ -42,7 +42,7 @@
       <ul>
         <li v-for="category in categories" :key="category.cid">
           <router-link>
-            <img :src="category.image" alt="Category" width="30px" height="30px" />
+            <img :src="category.Images[0].url" alt="Category" width="30px" height="30px" />
             <span>{{ category.name }}</span>
           </router-link>
         </li>

@@ -56,24 +56,14 @@ const showHeader = ref(null);
 watch(
   () =>route,
   (route) => {
-  if (route.name === 'auth') {
-    return showHeader.value = false;
-  } 
-  if (route.name === 'search'){
-    return showHeader.value = false;
-  }
-  if(route.name === 'notFound'){
-    return showHeader.value = false;
-  }
-  if(route.path.includes('admin')){
-    return showHeader.value = false;
-  }else {
-    return showHeader.value = true;
-  }
+    const headerless = route.matched.some((record) => record.meta.headerless);
+    showHeader.value = !headerless;
 }, {deep: true, immediate: true});
 
 onMounted(() => {
   setupStore.getCategories();
+  const headerless = route.matched.some((record) => record.meta.headerless);
+  showHeader.value = !headerless;
 });
 
 </script>

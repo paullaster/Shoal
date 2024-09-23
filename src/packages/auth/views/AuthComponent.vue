@@ -57,6 +57,12 @@
     <section class="social-login">
       <v-row class="my-6">
         <v-col col="12" class="my-4">
+          <v-btn block density="default" size="large" elevation="0" class="google-bg">
+            <v-img :src="googleIcon" width="1"></v-img>
+            <span class="social-login-caption" style="color: #ED1E79 !important;">Login with Google</span>
+          </v-btn>
+        </v-col>
+        <v-col col="12" class="my-4">
           <v-btn block density="default" size="large" class="facebook-bg">
             <v-icon> mdi-facebook </v-icon>
             <span class="social-login-caption">Login with Facebook</span>
@@ -84,9 +90,10 @@
 <script setup>
 import LogoComponent from '@/components/LogoComponent.vue'
 import { useAuth } from '@/store';
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router';
-import { useToast } from 'vue-toastification';
+import { globalEventBus, useToast } from 'vue-toastification';
+import googleIcon from "@/assets/images/google.svg";
 
 const router = useRouter();
 
@@ -97,6 +104,15 @@ const authStore = useAuth();
 const customerLogin = ref(null);
 const formData = ref({
   username: ''
+});
+
+
+// HOOKS
+onMounted(() => {
+  globalEventBus.on("set-otp-screen", (payload) => {
+    const uniqueCode = `${payload.username}:${payload.type}:${payload.loginType}`;
+    router.push({name: 'verifyAccount', params: {uniquCode: btoa(uniqueCode)}});
+  })
 });
 
 

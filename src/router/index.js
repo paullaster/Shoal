@@ -46,8 +46,29 @@ const router = createRouter({
       name: 'auth',
       meta: {
         title: 'Login/Register',
-        requiresGuest: true
+        requiresGuest: true,
+        headerless: true,
       }
+    },
+    {
+      path: '/auth/verify-account/:uniquCode',
+      name:'verifyAccount',
+      component: () => import('@/packages/auth/components/OTPComponent.vue'),
+      meta: {
+        title: 'Verify Account',
+        headerless: true,
+        requiresGuest: true,
+      },
+    },
+    {
+      path: '/auth/complete-profile/:uniquCode',
+      name:'completeProfile',
+      component: () => import('@/packages/auth/components/ProfileComponent.vue'),
+      meta: {
+        title: 'Complete Profile',
+        headerless: true,
+        requiresGuest: true,
+      },
     },
     {
       path: '/profile',
@@ -63,6 +84,11 @@ const router = createRouter({
       path: '/search',
       component: () => import('@/components/SearchComponent.vue'),
       name: 'search',
+      meta: {
+        title: 'Search',
+        headerless: true,
+        requiresGuest: true
+      }
     },
     {
       path: '/:catchAll(.*)',
@@ -76,7 +102,10 @@ const router = createRouter({
       path: '/admin',
       name: 'admin',
       redirect: { name: 'adminAuth' },
-      title: 'Admin',
+      meta: {
+        title: 'Admin',
+        headerless: true,
+      },
       children: [
         {
           path: 'auth',

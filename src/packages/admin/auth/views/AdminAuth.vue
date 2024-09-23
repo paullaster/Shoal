@@ -111,6 +111,7 @@ async function login() {
       useToast.error("Invalid information, please check the information provided to make sure it's correct");
       return;
     }
+    formData.value.password = btoa(formData.value.password);
     authStore.login(formData.value);
   } catch (error) {
     useToast().error("Sorry, We could not sign you in. Please try again later.");
