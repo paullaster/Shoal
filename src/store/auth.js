@@ -56,6 +56,10 @@ export const useAuth = defineStore("auth", {
                     data: payload,
                 })
                     .then(async (response) => {
+                        this.setLoader(false);
+                        this.$patch({
+                            loading: false,
+                        });
                         AuthService.login(response.data).then(async (user) => {
                             await this.setUser(user);
                             if (user.type === 'admin') {
@@ -64,16 +68,9 @@ export const useAuth = defineStore("auth", {
                                     params: { adminId: btoa(user.userId) },
                                 });
                             } else {
-                                router.push({
-                                    name: 'admin',
-                                    params: { user: btoa(user.userId) },
-                                });
+                                globalEventBus.emit('redirection')
                             }
                         })
-                        this.setLoader(false);
-                        this.$patch({
-                            loading: false,
-                        });
                         this.toast.success(response.message);
                     })
                     .catch(async (error) => {
@@ -105,7 +102,8 @@ export const useAuth = defineStore("auth", {
                         this.toast.success(response.message);
                         payload['loginType'] = response.data.loginType;
                         response?.data?.otp && globalEventBus.emit("set-otp-screen", payload);
-                        setTimeout(() => {
+                        response?.data?.exist && globalEventBus.emit("user-credentials", response.data.user);
+                        response?.data?.otp && setTimeout(() => {
                             globalEventBus.emit('start-otp-resend-timer');
                         }, 1000);
                     })

@@ -2,7 +2,7 @@
    <main class="complete-profile">
     <section class="complete-profile-card">
         <v-card elevation="0">
-            <v-card-title class="headline">Complete Profile</v-card-title>
+            <v-card-title class="headline">{{userData[3] === 'newAccount' ? 'Complete Profile' : 'Enter your password'}}</v-card-title>
             <v-card-text>
                <v-form ref="profileForm">
                 <v-row>
@@ -10,11 +10,11 @@
                         <v-label>Email</v-label>
                         <v-text-field variant="outlined" v-model="user.email" :readonly="userData[2] === 'email'" :rules="rules.email"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6">
+                    <v-col cols="12" sm="6" v-if="userData[3] === 'newAccount'">
                         <v-label>Name</v-label>
                         <v-text-field variant="outlined" v-model="user.name" placeholder="for example: John Doe" :rules="rules.name"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6">
+                    <v-col cols="12" sm="6" v-if="userData[3] === 'newAccount'">
                         <v-label>Phone number</v-label>
                         <v-text-field 
                         variant="outlined" 
@@ -56,7 +56,7 @@
                         :block="mdAndDown"
                         size="x-large"
                         >
-                            Update Profile
+                           {{userData[3] === 'newAccount' ? 'Update Profile' : 'Continue'}}
                         </v-btn>
                     </v-col>
                 </v-row>
@@ -73,8 +73,8 @@ import { useAuth } from '@/store';
 import ColorHelper from '@/util/ColorHelper';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { useToast } from 'vue-toastification';
+import { useRoute, useRouter } from 'vue-router';
+import { globalEventBus, useToast } from 'vue-toastification';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 // VUETIFY
@@ -82,6 +82,7 @@ const { mdAndDown } = useDisplay();
 
 // CLIENT ROUTE
 const route = useRoute()
+const router = useRouter()
 // COMPONENT STATE
 const user = ref({ name: '', email: '', password: '', phoneNumber: '' });
 const userData = ref(atob(route.params.uniquCode).split(":"));
@@ -94,12 +95,18 @@ const { loading } = storeToRefs(authStore);
 
 // HOOK
 onMounted(() => {
+    if (userData.value[3] !== 'newAccount') {
+        user.value.email = userData.value[0];
+    }
     if (userData.value[2] === 'email') {
         user.value.email = userData.value[0];
     }
     if (userData.value[2] === 'phone') {
         user.value.phoneNumber = userData.value[0];
     }
+    globalEventBus.on('redirection', () => {
+        router.push({name: route.query.redirectTo});
+    })
 });
 
 // COMPUTED
@@ -132,9 +139,15 @@ async function updateProfile () {
         if (!valid) {
             return useToast().warning("The information provided is not valid");
         }
+
         user.value.password = btoa(user.value.password);
-        await authStore.updateProfile(user.value, userData.value);
-        user.value =  { ... user.value, name: '', [userData.value[2] === 'email' ? 'phoneNumber' : 'email']: '', password: ''};
+        if(userData.value[3] === 'newAccount') {
+            await authStore.updateProfile(user.value, userData.value);
+            user.value =  { ... user.value, name: '', [userData.value[2] === 'email' ? 'phoneNumber' : 'email']: '', password: ''};
+        }else {
+            await authStore.login({username: user.value.email, password: user.value.password});
+            user.value =  { ... user.value, password: ''};
+        }
     } catch (error) {
         useToast().error(error?.message);
     }

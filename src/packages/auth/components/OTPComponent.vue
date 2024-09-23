@@ -61,7 +61,7 @@ onMounted(() => {
     setResendOTPTimer();
   });
   globalEventBus.on("complete-profile", (data) => {
-    router.push({name: 'completeProfile', params: {uniquCode: data}})
+    router.push({name: 'completeProfile', params: {uniquCode: data}, query: {...route.query}})
   })
 });
 

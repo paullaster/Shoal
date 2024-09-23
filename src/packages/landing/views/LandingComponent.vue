@@ -8,21 +8,18 @@
 <script setup>
 import DisplayCard from '../components/DisplayCard.vue';
 import SearchComponent from '@/components/SearchComponent.vue';
-import {useGlobalStore, useProductStore } from "@/store";
+import { useProductStore } from "@/store";
 import { onMounted } from 'vue';
 
 // STORE
-const globalStore = useGlobalStore();
 const categoryStore = useProductStore();
 
 // STORE ACTIONS
-const { getCategories, getProducts } = categoryStore;
+const { getProducts } = categoryStore;
 
-// onMounted(() => {
+onMounted(() => {
     getProducts();
-//     getCategories();
-
-// })
+})
 
 </script>
 

@@ -44,6 +44,9 @@ const router = createRouter({
       path: '/auth',
       component: () => import('@/packages/auth/views/AuthComponent.vue'),
       name: 'auth',
+      query: {
+        redirectTo: 'landing',
+      },
       meta: {
         title: 'Login/Register',
         requiresGuest: true,
@@ -66,6 +69,16 @@ const router = createRouter({
       component: () => import('@/packages/auth/components/ProfileComponent.vue'),
       meta: {
         title: 'Complete Profile',
+        headerless: true,
+        requiresGuest: true,
+      },
+    },
+    {
+      path: '/auth/credentials/:uniquCode',
+      name:'userCredentials',
+      component: () => import('@/packages/auth/components/ProfileComponent.vue'),
+      meta: {
+        title: 'User credentials',
         headerless: true,
         requiresGuest: true,
       },
@@ -200,15 +213,15 @@ router.beforeEach((to, from, next) => {
     if (to.path.includes('admin')) {
       next({ name: 'adminAuth' });
     }else {
-      next({ name: 'auth' });
+      next({ name: 'auth', query: { redirectTo: to.name} });
     }
   } else {
     next();
   }
 })
 router.beforeResolve( async (to) => {
-  if (to.meta.requiresAuth) {
-      return !!AuthService.isAuthenticated();
+  if (to.meta.requiresGuest) {
+      return !AuthService.isAuthenticated();
   }
 })
 

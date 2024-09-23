@@ -9,7 +9,7 @@
     </section>
     <section class="logo-section">
       <article class="logo">
-        <LogoComponent width="100px" />
+        <LogoComponent width="100px" @click="()=>router.push({name: 'landing'})" />
       </article>
     </section>
     <section class="auth-intro">
@@ -91,11 +91,12 @@
 import LogoComponent from '@/components/LogoComponent.vue'
 import { useAuth } from '@/store';
 import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { globalEventBus, useToast } from 'vue-toastification';
 import googleIcon from "@/assets/images/google.svg";
 
 const router = useRouter();
+const route = useRoute();
 
 // STORES
 const authStore = useAuth();
@@ -111,7 +112,11 @@ const formData = ref({
 onMounted(() => {
   globalEventBus.on("set-otp-screen", (payload) => {
     const uniqueCode = `${payload.username}:${payload.type}:${payload.loginType}`;
-    router.push({name: 'verifyAccount', params: {uniquCode: btoa(uniqueCode)}});
+    router.push({name: 'verifyAccount', params: {uniquCode: btoa(uniqueCode)}, query: {...route.query}});
+  })
+  globalEventBus.on("user-credentials", (payload) => {
+    const uniqueCode = `${payload.email}:${payload.phoneNumber}:${payload.type}:${payload.id}`;
+    router.push({name: 'userCredentials', params: {uniquCode: btoa(uniqueCode)}, query: {...route.query}});
   })
 });
 
