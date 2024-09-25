@@ -12,32 +12,35 @@ export const useCartStore = defineStore('cart', {
         }
     },
     getters: {
-        itemsInCart: (state) => state.cart?.Item?.reduce((sum, item) => sum + item.quantity, 0),
-        cartTotal: (state) => state.cart?.Item?.reduce((sum, item) => Number(sum + (Number(item.price) * Number(item.quantity))), 0),
+        itemsInCart: (state) => state.cart?.Items?.reduce((sum, item) => sum + item.quantity, 0),
+        cartTotal: (state) => state.cart?.Items?.reduce((sum, item) => Number(sum + (Number(item.price) * Number(item.quantity))), 0),
     },
     actions: {
         async createCart(payload) {
             try {
                 this.getCart();
+                const cartItem = {...payload};
+                cartItem.image = cartItem.Images[0].url;
+                delete cartItem.Images;
                 if (!AuthService.isAuthenticated()) {
-                    payload.quantity = 1;
-                    payload.productId = payload.pid;
+                    cartItem.quantity = 1;
+                    cartItem.productId = cartItem.pid;
                     if (!Object.keys(this.cart).length) {
-                        return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Item: [payload] });
+                        return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [cartItem] });
                     }
-                    const productExistsInCart = this.cart.Item.find((product) => product.productId === payload.productId);
+                    const productExistsInCart = this.cart.Item.find((product) => product.productId === cartItem.productId);
                     if (productExistsInCart) {
-                        productExistsInCart.quantity += payload.quantity;
+                        productExistsInCart.quantity += cartItem.quantity;
                         return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     }
-                    WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Item: [...this.cart.Item, payload] });
+                    WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [...this.cart.Item, cartItem] });
                     this.toast.success("Item was successfully added to cart");
                     return;
                 }
                 _request.axiosRequest({
                     url: constants.cart,
                     method: 'POST',
-                    data: payload,
+                    data: {item: cartItem},
                 })
                     .then((res) => {
                         this.$patch({
@@ -67,6 +70,14 @@ export const useCartStore = defineStore('cart', {
                 _request.axiosRequest({
                     url: constants.cart,
                     method: 'GET',
+                })
+                .then((response) => {
+                    this.$patch({
+                        cart: response.data,
+                    });
+                })
+                .catch((error) => {
+                    this.toast.error(error.message);
                 })
             } catch (error) {
                 return this.toast.error(error.message);

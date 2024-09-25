@@ -17,7 +17,7 @@
           <a @click="()=>router.push({name: 'search'})" v-if="route.name !== 'landing'"><v-icon>mdi-magnify</v-icon></a>
         </li>
         <li>
-          <a @click="()=>router.push({name: 'auth', query: { redirectTo: route.name}})" ><v-icon>mdi-account-outline</v-icon><span v-if="lgAndUp">account</span></a>
+          <a @click="()=>router.push({name: 'auth', query: { redirectTo: route.fullPath}})" ><v-icon>mdi-account-outline</v-icon><span v-if="lgAndUp">account</span></a>
         </li>
         <li class="cart-menu">
           <button

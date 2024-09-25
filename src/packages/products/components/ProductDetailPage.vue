@@ -1,8 +1,8 @@
 <template>
   <main class="product-wrapper">
-    <section class="product-wrapper-card">
+    <section class="product-wrapper-card" v-if="Object.keys(product).length">
       <div class="product-wrapper-card--image-holder">
-        <img :src="product.Images[0].url" alt="Product" />
+        <img :src="product?.Images[0]?.url" alt="Product" />
       </div>
       <h4>{{ product.name }}, {{ product.size }} - {{ product.color }}</h4>
       <p>{{ product.description }}</p>
@@ -40,7 +40,7 @@
 import { useProductStore, useSetupStore, useCartStore } from '@/store'
 import stringToBase64AndReverse from "@/util/stringToBase64AndReverse";
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router';
 
 // ROUTES
@@ -57,7 +57,10 @@ const { currency } = storeToRefs(setupStore)
 const {cart} = storeToRefs(cartStore);
 
 // STORE ACTIONS
-productStore.getProduct(stringToBase64AndReverse.fromBase64String(route.params.productId));
+
+onMounted(() => {
+  productStore.getProduct(stringToBase64AndReverse.fromBase64String(route.params.productId));
+})
 
 // Component REFS and STATE
 const itemInCart = ref(undefined);
@@ -67,7 +70,7 @@ const numberOfProductInCart = ref(0);
 watch(
   () => [product.value, cart.value], 
   () => {
-    itemInCart.value = cart.value.Item?.find(item => item.productId === product.value.pid)
+    itemInCart.value = cart.value.Items?.find(item => item.productPid === product.value.pid)
 }, {deep: true, immediate: true})
 watch(
   () => itemInCart.value, 

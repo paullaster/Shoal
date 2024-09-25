@@ -45,7 +45,7 @@ const router = createRouter({
       component: () => import('@/packages/auth/views/AuthComponent.vue'),
       name: 'auth',
       query: {
-        redirectTo: 'landing',
+        redirectTo: '/',
       },
       meta: {
         title: 'Login/Register',
@@ -213,7 +213,7 @@ router.beforeEach((to, from, next) => {
     if (to.path.includes('admin')) {
       next({ name: 'adminAuth' });
     }else {
-      next({ name: 'auth', query: { redirectTo: to.name} });
+      next({ name: 'auth', query: { redirectTo: to.fullPath} });
     }
   } else {
     next();

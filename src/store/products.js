@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { _request } from "@/service";
 import constants from "./constants";
-import router from "@/router";
 import { useGlobalStore } from "./global";
 import { globalEventBus } from "vue-toastification";
 
@@ -75,24 +74,23 @@ export const useProductStore = defineStore("product", {
       try {
         const product = this.products.find(p => p.pid === productId);
         if (!product) {
-          return router.back();
+          return  _request.axiosRequest({
+            url: `${constants.products}/${productId}`,
+            method: "GET",
+
+        })
+           .then(res => {
+                this.$patch({
+                    product: res.data
+                })
+            })
+           .catch(err => {
+                this.toast.error(err.message);
+            });
         }
         this.$patch({
           product: product,
         })
-        // _request.axiosRequest({
-        //     url: `${constants.products}/${productId}`,
-        //     method: "GET",
-
-        // })
-        //    .then(res => {
-        //         this.$patch({
-        //             product: res.data
-        //         })
-        //     })
-        //    .catch(err => {
-        //         this.toast.error(err.message);
-        //     });
       } catch (error) {
         this.toast.error(error.message);
       }

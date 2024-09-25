@@ -105,7 +105,7 @@ onMounted(() => {
         user.value.phoneNumber = userData.value[0];
     }
     globalEventBus.on('redirection', () => {
-        router.push({name: route.query.redirectTo});
+        router.push(route.query.redirectTo) || router.push('/');
     })
 });
 

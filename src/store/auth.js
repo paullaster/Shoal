@@ -99,7 +99,6 @@ export const useAuth = defineStore("auth", {
                 })
                     .then(async (response) => {
                         this.setLoader(false);
-                        this.toast.success(response.message);
                         payload['loginType'] = response.data.loginType;
                         response?.data?.otp && globalEventBus.emit("set-otp-screen", payload);
                         response?.data?.exist && globalEventBus.emit("user-credentials", response.data.user);

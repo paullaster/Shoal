@@ -5,11 +5,11 @@
         <v-btn icon="mdi-arrow-left-thin" class="mr-4" elevation="0" @click="router.back()"></v-btn>
         <span>Shopping Bag ({{ itemsInCart }})</span>
       </h2>
-      <div class="cart-wrapper-card-items" v-for="item in cart?.Item" :key="item?.productId">
+      <div class="cart-wrapper-card-items" v-for="item in cart?.Items" :key="item?.productId">
         <div class="cart-wrapper-card-items-image">
           <v-avatar class="square-avatar">
             <v-img
-              :src="item?.Images[0].url"
+              :src="item?.image"
               alt="product photos"
             >
             </v-img>
@@ -19,14 +19,14 @@
           <p class="cart-wrapper-card-items-details-name-attribute">
               <span>{{ item?.name }}</span>
               <span>({{ item?.size }})</span>
-              <span> - {{item.color}}</span>
+              <span> - {{item?.color}}</span>
           </p>
           <p class="cart-wrapper-card-items-details-price">
             <span>{{ currency }}</span><span>{{ item?.price }}</span>
           </p>
           <div>
             <v-btn variant="outlined" size="x-small">
-              <v-icon icon="mdi-trash-can-outline" size="18" class="mr-2" @click="async()=> await cartStore.removeItemFromCart(item.productId)"></v-icon>
+              <v-icon icon="mdi-trash-can-outline" size="18" class="mr-2" @click="()=> cartStore.removeItemFromCart(item.productId)"></v-icon>
               <span>Remove</span>
             </v-btn>
           </div>
