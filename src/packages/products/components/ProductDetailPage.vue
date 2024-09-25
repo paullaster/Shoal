@@ -22,7 +22,7 @@
         <v-btn  class="bg-c-primary">
           <v-icon >mdi-phone-outline</v-icon>
         </v-btn>
-        <v-btn @click="async () =>await cartStore.createCart(product)" class="bg-c-primary" v-if="!numberOfProductInCart">
+        <v-btn @click="async () =>await cartStore.createCart({...product, quantity: 1})" class="bg-c-primary" v-if="!numberOfProductInCart">
           <v-icon class="mr-2">mdi-cart-plus</v-icon>
           <span>Add to Cart</span>
         </v-btn>

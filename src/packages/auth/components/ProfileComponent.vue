@@ -69,8 +69,9 @@
 </template>
 
 <script setup>
-import { useAuth } from '@/store';
+import { useAuth, useCartStore } from '@/store';
 import ColorHelper from '@/util/ColorHelper';
+import stringToBase64AndReverse from '@/util/stringToBase64AndReverse';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -91,6 +92,7 @@ const profileForm = ref(null);
 
 // APP STORE
 const authStore = useAuth();
+const cartStore  = useCartStore();
 const { loading } = storeToRefs(authStore);
 
 // HOOK
@@ -105,7 +107,9 @@ onMounted(() => {
         user.value.phoneNumber = userData.value[0];
     }
     globalEventBus.on('redirection', () => {
-        router.push(route.query.redirectTo) || router.push('/');
+        router.push(stringToBase64AndReverse.fromBase64String(route.query.redirectTo)) || router.push('/');
+        cartStore.checkLocalCacheCart();
+        cartStore.getCart();
     })
 });
 

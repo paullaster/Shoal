@@ -18,29 +18,29 @@ export const useCartStore = defineStore('cart', {
     actions: {
         async createCart(payload) {
             try {
-                this.getCart();
-                const cartItem = {...payload};
+                const cartItem = { ...payload };
                 cartItem.image = cartItem.Images[0].url;
-                delete cartItem.Images;
                 if (!AuthService.isAuthenticated()) {
-                    cartItem.quantity = 1;
+                    this.getCart();
                     cartItem.productId = cartItem.pid;
+                    cartItem.productPid = cartItem.productId
                     if (!Object.keys(this.cart).length) {
                         return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [cartItem] });
                     }
-                    const productExistsInCart = this.cart.Item.find((product) => product.productId === cartItem.productId);
+                    const productExistsInCart = this.cart.Items.find((product) => product.productPid === cartItem.productPid);
                     if (productExistsInCart) {
                         productExistsInCart.quantity += cartItem.quantity;
                         return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     }
-                    WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [...this.cart.Item, cartItem] });
+                    WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [...this.cart.Items, cartItem] });
                     this.toast.success("Item was successfully added to cart");
                     return;
                 }
+                delete cartItem.Images;
                 _request.axiosRequest({
                     url: constants.cart,
                     method: 'POST',
-                    data: {item: cartItem},
+                    data: { item: cartItem },
                 })
                     .then((res) => {
                         this.$patch({
@@ -56,37 +56,52 @@ export const useCartStore = defineStore('cart', {
                 this.getCart();
             }
         },
-        getCart() {
+        getCart(getFromCashe = false) {
             try {
-                if (!AuthService.isAuthenticated()) {
+                if (!AuthService.isAuthenticated() || getFromCashe) {
                     const cart = WebStorage.GetFromWebStorage('local', `${APPNAME.split(" ").join("")}_cart`);
                     if (cart) {
-                        this.$patch({
+                        !getFromCashe && this.$patch({
                             cart: cart,
                         });
                     }
-                    return;
+                    return getFromCashe ? cart : "";
                 }
                 _request.axiosRequest({
                     url: constants.cart,
                     method: 'GET',
                 })
-                .then((response) => {
-                    this.$patch({
-                        cart: response.data,
-                    });
-                })
-                .catch((error) => {
-                    this.toast.error(error.message);
-                })
+                    .then((response) => {
+                        this.$patch({
+                            cart: response.data,
+                        });
+                    })
+                    .catch((error) => {
+                        this.toast.error(error.message);
+                    })
+            } catch (error) {
+                return this.toast.error(error.message);
+            }
+        },
+        checkLocalCacheCart() {
+            try {
+                const cart = WebStorage.GetFromWebStorage('local', `${APPNAME.split(" ").join("")}_cart`);
+                console.log(cart);
+                if (cart) {
+                    cart.Items.forEach((item) => {
+                        this.createCart(item).then(() => {
+                            this.removeItemFromCart(item.productId, true);
+                        });
+                    })
+                }
             } catch (error) {
                 return this.toast.error(error.message);
             }
         },
         async updateCart(productID, type = 'add') {
             try {
-                this.getCart();
                 if (!AuthService.isAuthenticated()) {
+                    this.getCart();
                     if (!Object.keys(this.cart).length) {
                         return;
                     }
@@ -94,32 +109,37 @@ export const useCartStore = defineStore('cart', {
                     if (product) {
                         if (type === 'add') {
                             product.quantity++;
-                        } else if (type ==='remove') {
+                        } else if (type === 'remove') {
                             if (Number(product.quantity) === 1) {
                                 this.cart.Item = this.cart.Item.filter((item) => item.productId !== productID);
-                            }else {
+                            } else {
                                 product.quantity--;
                             }
                         }
                         WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     }
-                    this.toast.success(type === 'add' ? 'Item was successfully added to cart' : 'Cart was successfully updated');                    
+                    this.toast.success(type === 'add' ? 'Item was successfully added to cart' : 'Cart was successfully updated');
                     return;
                 }
             } catch (error) {
                 return this.toast.error(error.message);
-            }finally {
+            } finally {
                 this.getCart();
             }
         },
-        async removeItemFromCart(productID) {
+        async removeItemFromCart(productID, removeCache = false) {
             try {
-                this.getCart();
-                if (!AuthService.isAuthenticated()) {
+                if (!AuthService.isAuthenticated() || removeCache) {
+                    const cart = this.getCart(removeCache ?? false);
                     if (!Object.keys(this.cart).length) {
                         return;
                     }
-                    this.cart.Item = this.cart.Item.filter((item) => item.productId !== productID);
+                    if (removeCache) {
+                        cart.Items = cart.Items.filter((item) => item.productId !== productID);
+                        WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, cart);
+                        return;
+                    }
+                    this.cart.Item = this.cart.Items.filter((item) => item.productId !== productID);
                     WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     return;
                 }
@@ -127,12 +147,12 @@ export const useCartStore = defineStore('cart', {
                     url: constants.cart,
                     method: 'DELETE',
                 })
-                   .then((res) => {
+                    .then((res) => {
                         this.$patch({
                             cart: res.data,
                         });
                     })
-                   .catch((error) => {
+                    .catch((error) => {
                         console.error(error);
                     });
             } catch (error) {

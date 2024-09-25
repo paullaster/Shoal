@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LandingComponent from '@/packages/landing/views/LandingComponent.vue'
 import { useGlobalStore } from '@/store';
 import AuthService from '@/packages/auth/AuthService';
+import stringToBase64AndReverse from '@/util/stringToBase64AndReverse';
 const router = createRouter({
   history: createWebHistory(import.meta.env.VUE_APP_URL),
   routes: [
@@ -201,8 +202,6 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const title = to.meta.title || 'Home';
-  document.title = 'Noels | '+ title;
   useGlobalStore().toggleSidebarNavigation(false);
   if (to.name === from.name) {
     useGlobalStore().toggleSidebarNavigation(false);
@@ -213,7 +212,7 @@ router.beforeEach((to, from, next) => {
     if (to.path.includes('admin')) {
       next({ name: 'adminAuth' });
     }else {
-      next({ name: 'auth', query: { redirectTo: to.fullPath} });
+      next({ name: 'auth', query: { redirectTo: stringToBase64AndReverse(to.fullPath)} });
     }
   } else {
     next();
@@ -225,8 +224,10 @@ router.beforeResolve( async (to) => {
   }
 })
 
-router.afterEach( () => {
+router.afterEach( (to) => {
 useGlobalStore().setLoading(false);
+const title = to.meta.title || 'Home';
+  document.title = 'Noels | '+ title;
 })
 
 export default router
