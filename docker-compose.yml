@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d
+    depends_on:
+      - node
+
+  node:
+    build: .
+    volumes:
+      - ./:/app

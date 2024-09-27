@@ -1,6 +1,12 @@
 <template>
   <HeaderComponent v-if="showHeader"/>
-  <RouterView />
+  <router-view v-slot="{Component, route}">
+    <transition>
+    <keep-alive>
+     <component :is="Component" :key="route.path"/>
+    </keep-alive>
+    </transition>
+  </router-view>
 </template>
 <script setup>
 import HeaderComponent from '@/components/HeaderComponent.vue'
@@ -49,7 +55,7 @@ cartStore.getCart();
 authStore.setUser(AuthService.getUser());
 
 
-const showHeader = ref(null);
+const showHeader = ref(true);
 // WATCH
 
 //@TODO:  Handle this route guards

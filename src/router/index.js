@@ -175,6 +175,7 @@ const router = createRouter({
           ],
           meta: {
             requiresAuth: true,
+            isAdmin: true,
             title: 'Admin Dashboard Layout'
           }
         },
@@ -221,6 +222,9 @@ router.beforeEach((to, from, next) => {
 router.beforeResolve( async (to) => {
   if (to.meta.requiresGuest) {
       return !AuthService.isAuthenticated();
+  }
+  if (to.matched.some((record) => record.meta.isAdmin)) {
+    return AuthService.isAuthenticated() && AuthService.getUser().type === 'admin';
   }
 })
 
