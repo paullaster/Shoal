@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:80"
     volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/default.conf:/etc/nginx/conf.d/deliveries-app.conf
     depends_on:
       - node
 
