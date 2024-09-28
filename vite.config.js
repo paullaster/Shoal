@@ -5,15 +5,14 @@ import vue from '@vitejs/plugin-vue'
 import VueDevTools from 'vite-plugin-vue-devtools'
 import vuetify from 'vite-plugin-vuetify'
 import { VitePWA } from 'vite-plugin-pwa'
-import browserslist from 'browserslist'
-import { browserslistToTargets } from "lightningcss";
 
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), VueDevTools(), vuetify({
     autoImport: { labs: true }
-  }), VitePWA({
+  }),
+  VitePWA({
     registerType: 'autoUpdate',
     devOptions: {
       enabled: true
@@ -53,21 +52,18 @@ export default defineConfig({
         }
       ]
     }
-  }), sentryVitePlugin({
+  }),
+  sentryVitePlugin({
     org: "brainspore-llc",
     project: "noelsdeliveries"
   })],
   css: {
-    preprocessorMaxWorkers: 2,
-    transformer: 'lightningcss',
-    lightningcss: {
-      targets: browserslistToTargets(browserslist('>= 0.25%'))
-    },
-  },
+  preprocessorMaxWorkers: 2,
+},
   build: {
     cssCodeSplit: true,
     cssTarget: 'es2015',
-    cssMinify: 'lightningcss',
+    cssMinify: 'esbuild',
     assetsInlineLimit: 2048,
     minify: 'esbuild',
     target: 'es2015',
