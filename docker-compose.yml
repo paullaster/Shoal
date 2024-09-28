@@ -1,31 +1,11 @@
 services:
-  nginx:
-    image: nginx:alpine
-    container_name: noelsdeliveries-client-nginx-app
-    ports:
-      - 80:80
-    volumes:
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - node
-    networks:
-      - noelsdeliveries-client
-
-  node:
+  app:
     build: .
     ports:
-      - 3000:80
-    container_name: noelsdeliveries-client-app
-    volumes:
-      - ./:/app
-    command: npm run build
+      - "3000:80"
+    restart: always
     networks:
       - noelsdeliveries-client
-
-  # redis:
-  #   image: redis:alpine
-  #   networks:
-  #     - noelsdeliveries-client
 
 networks:
   noelsdeliveries-client:
