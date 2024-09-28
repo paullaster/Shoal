@@ -15,7 +15,7 @@ FROM nginx:stable-alpine AS production-stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 
 # Add nginx config
-COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 # RUN envsubst /app < /temp/prod.conf > /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
