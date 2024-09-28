@@ -67,26 +67,6 @@ export default defineConfig({
     assetsInlineLimit: 2048,
     minify: 'esbuild',
     target: 'es2015',
-    rollupOptions: {
-      external: ['vuetify/lib'],
-      output: {
-        globals: {
-          vuetify: 'Vuetify'
-        },
-        format: 'esm',
-        entryFileNames: '[name].[hash].js',
-        assetFileNames: '[name].[hash][extname]',
-        dir: 'dist',
-        publicDir: 'public',
-        assetDir: 'public',
-        chunkDir: 'dist/[name]',
-      },
-      preserveEntrySignatures: 'strict',
-      treeshake: {
-        moduleSideEffects: false,
-
-      },
-    },
     sourcemap: true,
     chunkSizeWarningLimit: 1000,
     brotliSizeWarningLimit: 1000,
