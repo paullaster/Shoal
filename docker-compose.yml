@@ -14,7 +14,7 @@ services:
   node:
     build: .
     ports:
-      - 3000:80
+      - 3001:80
     container_name: noelsdeliveries-client-app
     volumes:
       - ./:/app
