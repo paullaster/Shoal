@@ -3,7 +3,7 @@ services:
     image: nginx:alpine
     container_name: noelsdeliveries-client-nginx-app
     ports:
-      - "3000:80"
+      - 80:80
     volumes:
       - ./docker/nginx/default.conf:/etc/nginx/conf.d/deliveries-app.conf
     depends_on:
@@ -13,6 +13,8 @@ services:
 
   node:
     build: .
+    ports:
+      - 3000:80
     volumes:
       - ./:/app
     command: npm run build
