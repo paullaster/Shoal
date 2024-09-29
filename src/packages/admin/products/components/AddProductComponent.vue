@@ -28,12 +28,12 @@
               ></v-select>
             </v-col>
             <v-col cols="12">
-              <v-text-field
+              <v-textarea
                 v-model="product.description"
                 label="Product Description"
                 :rules="rules.description"
                 variant="outlined"
-              />
+              ></v-textarea>
             </v-col>
             <v-col cols="12">
               <v-text-field

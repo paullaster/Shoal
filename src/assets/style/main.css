@@ -2,11 +2,13 @@
 @import './auth.css';
 @import './base.css';
 @import './cart.css';
+@import './checkout.css';
 @import './categories.css';
 @import './displaycard.css';
 @import './header.css';
 @import './landing.css';
 @import './otpview.css';
+@import './paymentmethod.css';
 @import './product.css';
 @import './productListing.css';
 @import './profile.css';

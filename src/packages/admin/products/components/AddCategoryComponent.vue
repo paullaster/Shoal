@@ -17,12 +17,12 @@
                 />
               </v-col>
               <v-col cols="12">
-                <v-text-field
+                <v-textarea
                   v-model="category.description"
                   label="Category Description"
                   :rules="rules.description"
                   variant="outlined"
-                />
+                ></v-textarea>
               </v-col>
               <v-col cols="12">
                 <v-file-input

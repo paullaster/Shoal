@@ -1,0 +1,19 @@
+.payment-method {
+    & > .fieldset-mobile {
+        text-align: center;
+        border: .1rem solid rgba(0, 0, 0, 0.068);
+        border-radius: .8rem;
+
+       & > .express-checkout-mobile {
+         display: flex;
+         align-items: center;
+         flex-direction: column;
+         padding-inline: 1.6rem;
+
+         & > div {
+             margin:1rem 0;
+             width: 100%;
+         }
+        }
+    }
+}
