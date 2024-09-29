@@ -226,6 +226,10 @@ router.beforeResolve( async (to) => {
   if (to.matched.some((record) => record.meta.isAdmin)) {
     return AuthService.isAuthenticated() && AuthService.getUser().type === 'admin';
   }
+
+  if (!to.path.includes('/admin')) {
+    return AuthService.isAuthenticated() && AuthService.getUser().type !== 'admin';
+  }
 })
 
 router.afterEach( (to) => {
