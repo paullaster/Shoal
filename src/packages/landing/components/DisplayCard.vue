@@ -8,7 +8,7 @@
         </div>
         <CategoriesListing />
         <UserHistory />
-        <SearchHistory />
+        <!-- <SearchHistory /> -->
     </section>
 </template>
 

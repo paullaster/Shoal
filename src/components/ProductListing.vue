@@ -1,10 +1,12 @@
 <template>
   <article class="product-listing-wrapper cool-shadow cool-borderradius" 
   @click="()=>router.push({name: 'productDetails', params: {category: product.category,productId: stringToBase64AndReverse.toBase64String(product.pid)}})"
+  :style="
+  `
+  background-image: linear-gradient(to bottom, #4d80807c, #4d808080), url(${product?.Images[0].url});
+  `
+  "
   >
-    <div class="product-image">
-      <img :src="product?.Images[0].url" alt="product" class="img-sm"/>
-    </div>
     <div class="product-details">
       <p>
         {{ product?.name }}
@@ -20,7 +22,7 @@ import { defineProps } from 'vue'
 import { useSetupStore } from '@/store'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router';
-import stringToBase64AndReverse from '@/util/stringToBase64AndReverse';
+import stringToBase64AndReverse from '@/util/stringToBase64AndReverse'
 defineProps({
   product: {
     type: Object,

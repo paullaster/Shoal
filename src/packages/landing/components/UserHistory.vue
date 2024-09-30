@@ -17,9 +17,5 @@ import { storeToRefs } from 'pinia';
 // STORE
 const productStore = useProductStore();
 const {products} = storeToRefs(productStore);
-const userHistory = ref("Frequently Viewed");
+const userHistory = ref("Our products");
 </script>
-
-<style lang="scss" scoped>
-
-</style>
