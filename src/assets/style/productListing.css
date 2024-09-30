@@ -35,7 +35,7 @@
           color: var(--vt-c-text-dark);
         }
         & > .product-details-price {
-          font-size: x-large;
+          font-size: medium;
           font-weight: 700;
           color: var(--vt-c-primary);
         }

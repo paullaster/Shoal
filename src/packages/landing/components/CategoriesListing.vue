@@ -20,6 +20,3 @@ const setupStore = useSetupStore();
 const { categories } = storeToRefs(setupStore);
 
 </script>
-
-<style lang="scss" scoped>
-</style>
