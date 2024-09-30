@@ -1,23 +1,28 @@
 <template>
     <div class="payment-method">
-        <fieldset class="fieldset-mobile">
-            <legend>Express Checkout</legend>
+        <div class="fieldset-mobile">
             <div class="express-checkout-mobile">
                 <div class="mpesa">
                     <v-btn
                     size="large"
                     block
+                    style="
+                    display: flex;
+                    align-items: center;
+                    "
                     >
-                    <img :src="mpesaLogo" alt="MPESA" />
-                    <span>Mpesa</span>
+                    <img :src="mpesaLogo" alt="MPESA"  style="display: block; margin-right: .2rem;"/>
+                    <span style="display: block;">Mpesa</span>
                 </v-btn>
                 </div>
             </div>
-        </fieldset>
+        </div>
 
-        <div>
-            <div>
-                <span></span><span>or pay with card</span><span></span>
+        <div class="division-line">
+            <div class="division-line-card">
+                <span class="openning-line"></span>
+                <span>or pay with card</span>
+                <span class="closing-line"></span>
             </div>
         </div>
         <div>
@@ -32,6 +37,7 @@
                             <v-text-field
                                 v-model="cardNumber"
                                 label="Card Number"
+                                placeholder="Enter Card Number"
                                 variant="outlined"
                                 :rules="[required]"
                             >
@@ -42,6 +48,14 @@
 
                         </template>
                         </v-text-field>
+                        <div class="accepted-card-logos">
+                            <div>
+                                <v-img :src="visaLogo" tag="img" width="10%"></v-img>
+                            </div>
+                            <div>
+                                <v-img :src="mastercardLogo" tag="img" width="10%"></v-img>
+                            </div>
+                        </div>
                         </v-col>
                         <v-col cols="6">
                             <v-text-field
@@ -49,6 +63,7 @@
                                 placeholder="MM/YY"
                                 variant="outlined"
                                 :rules="[required]"
+                                @input="formatExpiryDate"
                             />
                         </v-col>
                         <v-col cols="6">
@@ -70,5 +85,17 @@
 <script setup>
 import mpesaLogo from "@/assets/images/M-PESA_LOGO-01.svg"
 // import googleLogo from "@/assets/images/google.svg"
+import visaLogo from "@/assets/images/Visa_Inc._logo.svg"
+import mastercardLogo from "@/assets/images/Mastercard-logo.svg"
+
+
+// COMPONENT METHODS
+function formatExpiryDate(event) {
+    switch (event.target.value.length) {
+        case 2:
+            event.target.value += "/";
+            break;
+    }
+}
 
 </script>

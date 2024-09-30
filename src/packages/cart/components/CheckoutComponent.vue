@@ -25,19 +25,39 @@
         </v-stepper-item>
       </v-stepper>
       <v-stepper-vertical v-else>
-          <v-stepper-vertical-item>
+          <!-- <v-stepper-vertical-item>
             <template v-slot:title>
               <v-icon class="mx-3">mdi-truck-fast</v-icon>
               <span>Shipping Address</span>
             </template>
             <component :is="ShippingAddress"></component>
-          </v-stepper-vertical-item>
+            <template v-slot:next>
+                <v-btn :color="ColorHelper.colorsHelper('primary')" variant="flat">
+                    <span>continue to Payments</span>
+                </v-btn>
+            </template>
+            <template v-slot:prev v-if="true">
+                <v-btn>
+                    <span></span>
+                </v-btn>
+            </template>
+          </v-stepper-vertical-item> -->
         <v-stepper-vertical-item>
           <template v-slot:title>
             <v-icon class="mx-3">mdi-credit-card</v-icon>
             <span>Payment method</span>
         </template>
         <component :is="PaymentMethod"></component>
+        <template v-slot:next>
+            <v-btn :color="ColorHelper.colorsHelper('primary')" variant="flat">
+                <span>Pay {{  }} NOW </span>
+            </v-btn>
+        </template>
+        <template v-slot:prev>
+            <v-btn>
+                <span></span>
+            </v-btn>
+        </template>
         </v-stepper-vertical-item>
         <v-stepper-vertical-item>
           <template v-slot:default>
@@ -57,6 +77,7 @@ import PaymentMethod from './PaymentMethod.vue'
 import ShippingAddress from './ShippingAddress.vue'
 import checkoutSummary from './checkoutSummary.vue'
 import { VStepperVertical } from 'vuetify/lib/labs/components.mjs'
+import ColorHelper from '@/util/ColorHelper'
 
 //VUETIFY
 const { mdAndDown } = useDisplay()
