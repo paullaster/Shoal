@@ -4,6 +4,42 @@
       <div class="product-wrapper-card--image-holder">
         <img :src="product?.Images[0]?.url" alt="Product" />
       </div>
+      <div class="product-detailedpage-close-btn-holder">
+       <v-btn
+       v-tooltip="'Close'"
+       icon
+       elevation="0"
+       class="vbtn-close-bg"
+       @click="closeProductDetailPage"
+       >
+        <v-icon 
+        class="mr-2"
+        :color="ColorHelper.colorsHelper('error')"
+        >
+          mdi-close
+        </v-icon>
+       </v-btn>
+      </div>
+      <div class="product-detailpage-interaction-btn-holder">
+        <v-btn @click="async () => await addToWishlist(product.pid)"
+          icon
+          class="bg-c-primary"
+          v-if="!numberOfProductInWishlist"
+          v-tooltip="'Add to Wishlist'"
+          elevation="0"
+          >
+          <v-icon class="mr-2" :color="ColorHelper.colorsHelper('primary')">mdi-heart-outline</v-icon>
+          <span v-if="lgAndUp">Add to Wishlist</span>
+        </v-btn>
+        <v-btn @click="openShareDialog" class="bg-c-primary"
+        v-tooltip="'Share'"
+        icon
+        elevation="0"
+        >
+          <v-icon class="mr-2" :color="ColorHelper.colorsHelper('primary')">mdi-share-variant</v-icon>
+          <span v-if="lgAndUp">Share</span>
+        </v-btn>
+      </div>
       <h4>{{ product.name }}, {{ product.size }} - {{ product.color }}</h4>
       <p>{{ product.description }}</p>
       <h1>
@@ -38,13 +74,20 @@
 
 <script setup>
 import { useProductStore, useSetupStore, useCartStore } from '@/store'
+import ColorHelper from '@/util/ColorHelper';
 import stringToBase64AndReverse from "@/util/stringToBase64AndReverse";
 import { storeToRefs } from 'pinia'
 import { onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import { useDisplay } from 'vuetify/lib/framework.mjs';
+
+
+// VUETIFY
+const { lgAndUp} = useDisplay();
 
 // ROUTES
 const route = useRoute();
+const router = useRouter();
 
 // STORE
 const productStore = useProductStore()
@@ -65,6 +108,7 @@ onMounted(() => {
 // Component REFS and STATE
 const itemInCart = ref(undefined);
 const numberOfProductInCart = ref(0);
+const numberOfProductInWishlist = ref(0);
 
 // WATCHERS
 watch(
@@ -78,6 +122,12 @@ watch(
     numberOfProductInCart.value = newValue?.quantity;
 }, {deep: true, immediate: true})
 
+
+
+// COMPONENT METHODS
+function closeProductDetailPage() {
+  router.back();
+}
 </script> 
 
 <style scoped>

@@ -1,13 +1,13 @@
 .product-wrapper {
     padding: .8rem;
     & .product-wrapper-card {
+        position: relative;
         & .product-wrapper-card--image-holder {
             width: 100%;
             height: auto;
             overflow: hidden;
             background-color: transparent;
             border-radius: 1rem;
-            margin-bottom: 1rem;
             & img {
                 box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
                 width: 100%;
@@ -19,6 +19,23 @@
             margin-bottom: 0;
             font-size: var(--font-medium);
         }
+    }
+}
+.product-detailedpage-close-btn-holder {
+    position: absolute;
+    top: 0;
+    & > .vbtn-close-bg {
+        background-color: transparent;
+        border: .1rem solid #21212123;
+    }
+}
+ .product-detailpage-interaction-btn-holder {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    & > .bg-c-primary {
+        background-color: transparent !important;
     }
 }
 .product-detailpage-btn-holder{
