@@ -40,7 +40,7 @@
                   :rules="[required]"
                 >
                   <template v-slot:append-inner>
-                    <v-icon color="primary" size="24"> mdi-credit-card </v-icon>
+                    <v-icon size="30" :color="ColorHelper.colorsHelper('secondary')"> mdi-credit-card </v-icon>
                   </template>
                 </v-text-field>
                 <div class="accepted-card-logos">
@@ -154,9 +154,10 @@ function payWithMpesa() {
                 key: 'submit',
                 props: {
                   tag: 'button',
-                  color: `${ColorHelper.colorsHelper('primary')}`,
+                  color: `${ColorHelper.colorsHelper('secondary')}`,
                   variant: 'flat',
-                  block: true
+                  size: 'large',
+                  block: true,
                 },
                 caption: `proceed to pay  ${currency.value}${amountToPay.value}`,
                 handler: (obj) => {
