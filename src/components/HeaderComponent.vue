@@ -1,6 +1,5 @@
 <template>
   <header class="header-wrapper">
-    <!-- <h1 class="header-title">Noels Deliveries</h1> -->
     <nav class="header-nav">
       <ul>
         <li v-if="!lgAndUp">
