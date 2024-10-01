@@ -56,6 +56,7 @@ Sentry.init({
 });
 
 app.config.errorHandler = (err, instance, info) => {
+    console.log(err, info)
     Sentry.captureException(err, { extra: { instance, info } });
 }
 

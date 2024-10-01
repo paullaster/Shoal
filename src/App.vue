@@ -1,8 +1,8 @@
 <template>
   <HeaderComponent v-if="showHeader"/>
-  <router-view v-slot="{Component, route}">
+  <router-view v-slot="{Component}">
     <transition>
-     <component :is="Component" :key="route.path"/>
+     <component :is="Component"/>
     </transition>
   </router-view>
 </template>

@@ -213,7 +213,7 @@ router.beforeEach((to, from, next) => {
     if (to.path.includes('admin')) {
       next({ name: 'adminAuth' });
     }else {
-      next({ name: 'auth', query: { redirectTo: stringToBase64AndReverse(to.fullPath)} });
+      next({ name: 'auth', query: { redirectTo: stringToBase64AndReverse.toBase64String(to.fullPath)} });
     }
   } else {
     next();
@@ -230,6 +230,7 @@ router.beforeResolve( async (to) => {
   if (!to.path.includes('/admin')) {
     return AuthService.isAuthenticated() && AuthService.getUser().type !== 'admin';
   }
+  return true;
 })
 
 router.afterEach( (to) => {
