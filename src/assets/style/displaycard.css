@@ -1,4 +1,5 @@
 .display-card-wrapper {
+    margin-inline: -.4rem !important;
     & > .categories {
         margin: 1rem 0;
         & > ul {

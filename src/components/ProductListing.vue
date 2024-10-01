@@ -15,7 +15,7 @@
       <p class="product-details-name">
         {{ product?.name }}
       </p>
-      <p class="product-details-price">{{ currency }} {{ product?.price }}</p>
+      <p class="product-details-price" disabled>{{ currency }} {{ product?.price }}</p>
     </div>
     <div class="available"></div>
   </article>

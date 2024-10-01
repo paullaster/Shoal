@@ -10,7 +10,7 @@
       }
       .productlisting-image {
         width: 100%;
-        height: 30vh;
+        height: 25vh;
         background-repeat: no-repeat;
         background-size: cover;
         background-position: center;
@@ -30,7 +30,7 @@
         & > .product-details-price {
           font-size: medium;
           font-weight: 700;
-          color: var(--vt-c-primary);
+          color: #00000073;
         }
       }
 }
