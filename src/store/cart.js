@@ -161,5 +161,40 @@ export const useCartStore = defineStore('cart', {
                 this.getCart();
             }
         },
+        async getCheckoutCart() {
+            return await _request.axiosRequest({
+                url: constants.cart,
+                method: 'GET',
+            });
+        },
+        async checkout(payload) {
+            try {
+                console.log('Checking...');
+                // this.setLoader(true);
+                _request.axiosRequest({
+                    url: 'checkout',
+                    method: 'POST',
+                    data: payload,
+                })
+                   .then((res) => {
+                        console.log(res);
+                        this.$patch({
+                            cart: {},
+                        });
+                        this.toast.success("We've sent you payment notification on your phone, please proceed to make payment then comeback");
+                    })
+                   .catch((error) => {
+                        this.toast.error(error.message);
+                    })
+                   .finally(() => {
+                        this.setLoader(false);
+                    });
+            } catch (error) {
+                this.setLoader(false);
+                return this.toast.error(error.message);
+            } finally {
+                this.getCart();
+            }
+        }
     },
 });

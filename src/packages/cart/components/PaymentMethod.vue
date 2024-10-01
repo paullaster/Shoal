@@ -6,7 +6,7 @@
           <v-btn
             size="large"
             block
-            style="display: flex; align-items: center; border: .1rem solid var(--vt-c-secondary)"
+            style="display: flex; align-items: center"
             @click="payWithMpesa"
           >
             <img :src="mpesaLogo" alt="MPESA" style="display: block; margin-right: 0.2rem" />
@@ -75,13 +75,34 @@ import mpesaLogo from '@/assets/images/M-PESA_LOGO-01.svg'
 // import googleLogo from "@/assets/images/google.svg"
 import visaLogo from '@/assets/images/Visa_Inc._logo.svg'
 import mastercardLogo from '@/assets/images/Mastercard-logo.svg'
-import { useAuth, useGlobalStore } from '@/store'
+import { useAuth, useCartStore, useGlobalStore, useSetupStore } from '@/store'
 import { storeToRefs } from 'pinia'
 import ColorHelper from '@/util/ColorHelper'
+import { globalEventBus, useToast } from 'vue-toastification'
+import { onMounted, ref } from 'vue'
 
 const authStore = useAuth()
 const globalStore = useGlobalStore()
+const setupStore = useSetupStore()
+const cartStore = useCartStore()
 const { user } = storeToRefs(authStore)
+const { currency } = storeToRefs(setupStore)
+const { cart } = storeToRefs(cartStore);
+
+// COMPONENT STATE
+const amountToPay = ref(0)
+
+// COMPONENT HOOKS
+onMounted(()=> {
+  globalEventBus.on("procedd-to-pay-with-mpesa", (obj)=> {
+    const payload = {
+      ...obj,
+      checkoutId: cart.value.cartId,
+    }
+    cartStore.checkout(payload);
+  })
+});
+
 
 // COMPONENT METHODS
 function formatExpiryDate(event) {
@@ -93,51 +114,72 @@ function formatExpiryDate(event) {
 }
 
 function payWithMpesa() {
-  // Placeholder for MPESA payment logic
-  console.log('MPESA payment initiated dialog')
-  const dialogValue = {
-    show: true,
-    description: 'Complete Mpesa Checkout',
-    controls: {
-      inputs: [
-        {
-          prop: 'mpesaNumber',
-          model: `${user.value.phoneNumber}`,
-          component: 'v-text-field',
-          props: {
-            tag: 'input',
-            label: 'Enter Your MPESA Number',
-            type: 'text',
-            variant: 'outlined',
-            rules: () => {
-              return [
-                (v) => !!v || 'Mpesa number is required',
-                (v) => /^\+\d{1,2}\s?\d{4,14}$/.test(v) || 'Invalid Mpesa number'
-              ]
-            }
-          },
-          cols: 12
-        }
-      ],
-      actions: [
-        {
-          key: 'submit',
-          props: {
-            tag: 'button',
-            color: `${ColorHelper.colorsHelper('primary')}`,
-            variant: 'flat',
-            block: true,
-          },
-          caption: `proceed to pay KSH. 5000`,
-          handler: () => {
-            console.log('Mpesa payment submitted')
-            // Placeholder for MPESA payment submission logic
-            globalStore.setDynamicDialog(null)
+  try {
+    // Placeholder for MPESA payment logic
+    console.log('Initiating MPESA Payment Dialog dialog')
+    cartStore
+      .getCheckoutCart()
+      .then((response) => {
+        amountToPay.value = response.data.Items.reduce(
+          (sum, runningVal) => sum + parseFloat(runningVal.totalPrice),
+          0
+        )
+        amountToPay.value += parseFloat(response.data.shippingRate);
+        const dialogValue = {
+          show: true,
+          description: 'Complete Mpesa Checkout',
+          controls: {
+            inputs: [
+              {
+                prop: 'mpesaNumber',
+                model: `${user.value.phoneNumber?.split(" ").join("")}`,
+                component: 'v-text-field',
+                props: {
+                  tag: 'input',
+                  label: 'Enter Your MPESA Number',
+                  type: 'text',
+                  variant: 'outlined',
+                  rules: [
+                      (v) => !!v || 'Mpesa number is required',
+                      (v) => /^\+\d{1,2}\s?\d{4,14}$/.test(v) || 'Invalid Mpesa number'
+                    ]
+                },
+                cols: 12
+              }
+            ],
+            actions: [
+              {
+                key: 'submit',
+                props: {
+                  tag: 'button',
+                  color: `${ColorHelper.colorsHelper('primary')}`,
+                  variant: 'flat',
+                  block: true
+                },
+                caption: `proceed to pay  ${currency.value}${amountToPay.value}`,
+                handler: (obj) => {
+                  globalEventBus.emit("procedd-to-pay-with-mpesa", obj);
+                  // Placeholder for MPESA payment submission logic
+                  globalStore.setDynamicDialog({show: false})
+                }
+              }
+            ]
           }
         }
-      ]
-    }
+        return globalStore.setDynamicDialog(dialogValue);
+      })
+      .catch((err) => {
+        console.error('Error fetching checkout cart:', err)
+        return useToast().error(
+          err.response.data.message ||
+            err.message ||
+            'Sorry, We ran into an error, Please try again later'
+        )
+      });
+  } catch (error) {
+    console.error('Error fetching checkout cart:', error)
+    globalStore.setDynamicDialog({show: false})
+    return useToast().error(error.message || 'Sorry, We ran into an error, Please try again later!')
   }
-  globalStore.setDynamicDialog(dialogValue)
 }
 </script>

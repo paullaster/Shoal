@@ -7,8 +7,8 @@
                 tag="div"
                 style="
                  position: relative;
-                 padding-top: 4rem !important;
-                 padding-bottom: 1.6rem !important;
+                 padding-top: 5.6rem !important;
+                 padding-bottom: 4.8rem !important;
                 "
                 >
                     <v-card-actions tag="div"
@@ -23,10 +23,10 @@
                     v-tooltip="'Close dialog'"
                     tag="button"
                     >
-                    <v-icon :color="ColorHelper.colorsHelper('error')" @click="globalStore.setDynamicDialog(null)">mdi-close</v-icon>
+                    <v-icon :color="ColorHelper.colorsHelper('error')" @click="globalStore.setDynamicDialog({show: false})">mdi-close</v-icon>
                 </v-btn>
                 </v-card-actions>
-                    <v-card-title style="padding-left: 1.4rem !important;">
+                    <v-card-title style="padding-left: 1.6rem !important;">
                         {{ dynamicDialog.description }}
                     </v-card-title>
                     <v-card-text>
@@ -46,6 +46,7 @@
                                 <v-btn 
                                 v-for="(action) in dynamicDialog.controls.actions" :key="action.key"
                                 v-bind="action.props"
+                                @click="()=>action.handler({phoneNumber: dynamicDialog.controls.inputs[0].model})"
                                 >
                                     {{  action.caption }}
                                 </v-btn>
