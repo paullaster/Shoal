@@ -7,7 +7,6 @@
          display: flex;
          align-items: center;
          flex-direction: column;
-         padding-inline: 1.6rem;
 
          & > div {
              width: 100%;

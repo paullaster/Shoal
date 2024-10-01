@@ -8,9 +8,11 @@
             block
             style="display: flex; align-items: center"
             @click="payWithMpesa"
+            :color="ColorHelper.colorsHelper('secondary')"
+            variant="flat"
           >
-            <img :src="mpesaLogo" alt="MPESA" style="display: block; margin-right: 0.2rem" />
-            <span style="display: block">Mpesa</span>
+          <span style="display: block; font-weight: bold;">PAY WITH </span>
+            <img :src="mpesaLogo" alt="MPESA" style="display: block; margin-left: 0.2rem" />
           </v-btn>
         </div>
       </div>

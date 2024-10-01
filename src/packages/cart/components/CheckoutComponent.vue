@@ -44,8 +44,10 @@
           </v-stepper-vertical-item> -->
         <v-stepper-vertical-item>
           <template v-slot:title>
-            <v-icon class="mx-3">mdi-credit-card</v-icon>
-            <span>Payment method</span>
+           <div style="display: flex; align-items: center;">
+            <v-icon class="mx-3" :color="ColorHelper.colorsHelper('secondary')" size="40">mdi-credit-card</v-icon>
+            <h3 style="font-weight: 500;">Payment Methods</h3>
+           </div>
         </template>
         <component :is="PaymentMethod"></component>
         <template v-slot:next>
