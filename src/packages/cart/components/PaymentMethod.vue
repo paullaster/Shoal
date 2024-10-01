@@ -6,7 +6,7 @@
           <v-btn
             size="large"
             block
-            :style="`display: flex; align-items: center; border: .1rem solid ${ColorHelper.colorsHelper('primary')}`"
+            style="display: flex; align-items: center; border: .1rem solid var(--vt-c-secondary)"
             @click="payWithMpesa"
           >
             <img :src="mpesaLogo" alt="MPESA" style="display: block; margin-right: 0.2rem" />
