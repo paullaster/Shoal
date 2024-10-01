@@ -7,7 +7,7 @@ export const useGlobalStore = defineStore("global", {
             showsidebarNavigation: false,
             loading: false,
             dynamicDialog: {
-                show: true,
+                show: false,
             },
         }
     },
