@@ -5,13 +5,15 @@
      <component :is="Component"/>
     </transition>
   </router-view>
+  <DynamicDialog />
 </template>
 <script setup>
 import HeaderComponent from '@/components/HeaderComponent.vue'
 import { RouterView, useRoute } from 'vue-router'
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, watch, defineAsyncComponent } from 'vue';
 import { useAuth, useCartStore, useGlobalStore, useSetupStore } from './store';
 import AuthService from './packages/auth/AuthService';
+const DynamicDialog = defineAsyncComponent(() => import("@/components/DynamicDialog.vue"));
 
 
 // ROUTES

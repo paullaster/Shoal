@@ -6,6 +6,9 @@ export const useGlobalStore = defineStore("global", {
             menus: [],
             showsidebarNavigation: false,
             loading: false,
+            dynamicDialog: {
+                show: true,
+            },
         }
     },
     getters: {
@@ -35,6 +38,15 @@ export const useGlobalStore = defineStore("global", {
             try {
                 this.$patch({
                     showsidebarNavigation: payload
+                })
+            } catch (error) {
+                this.toast.error(error.message);
+            }
+        },
+         setDynamicDialog(payload) {
+            try {
+                this.$patch({
+                    dynamicDialog: payload
                 })
             } catch (error) {
                 this.toast.error(error.message);
