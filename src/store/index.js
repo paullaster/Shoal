@@ -4,3 +4,4 @@ export * from './setup';
 export * from './cart';
 export * from './auth';
 export * from './dashboard';
+export * from './profile';

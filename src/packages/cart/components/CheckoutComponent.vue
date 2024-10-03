@@ -24,18 +24,24 @@
           </template>
         </v-stepper-item>
       </v-stepper>
-      <v-stepper-vertical v-else>
+      <v-stepper-vertical v-else v-model="verticalStep">
           <v-stepper-vertical-item>
             <template v-slot:icon>
               <v-icon siz="50" >mdi-truck-fast</v-icon>
             </template>
             <template v-slot:title>
-              <span>Shipping Address</span>
+              <div style="display: flex; align-items: center;">
+            <h3 style="font-weight: 500;">Shipping Address</h3>
+           </div>
             </template>
             <component :is="ShippingAddress"></component>
             <template v-slot:next>
-                <v-btn :color="ColorHelper.colorsHelper('primary')" variant="flat">
-                    <span>continue to Payments</span>
+                  <v-btn :color="ColorHelper.colorsHelper('primary')" variant="text" block 
+                :style="` padding: 1.4rem 0;`"
+                @click="commitAddressAndNext"
+                >
+                    <span style="font-weight: 600;">continue to Payments</span>
+                    <v-icon :color="ColorHelper.colorsHelper('primary')" size="30" left> mdi-chevron-right </v-icon>
                 </v-btn>
             </template>
             <template v-slot:prev v-if="true">
@@ -84,7 +90,29 @@ import ShippingAddress from './ShippingAddress.vue'
 import checkoutSummary from './checkoutSummary.vue'
 import { VStepperVertical } from 'vuetify/lib/labs/components.mjs'
 import ColorHelper from '@/util/ColorHelper'
+import { globalEventBus, useToast } from 'vue-toastification'
+import { onMounted, ref } from 'vue'
 
 //VUETIFY
 const { mdAndDown } = useDisplay()
+
+
+const verticalStep = ref(0);
+
+// HOOKS
+onMounted(() => {
+  globalEventBus.on('moveToPayments', () => {
+    verticalStep.value = 1;
+  })
+})
+
+
+// METHODS
+function commitAddressAndNext() {
+  try {
+    globalEventBus.emit('commitAddress');
+  } catch (error) {
+    useToast().error(error.message);
+  }
+}
 </script>

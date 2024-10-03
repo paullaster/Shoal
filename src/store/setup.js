@@ -1,22 +1,45 @@
 import { defineStore } from "pinia";
 import { _request } from "@/service";
-import constnants from "./constants";
+import constants from "./constants";
 
 export const useSetupStore = defineStore('setup', {
     state(){
         return {
             categories: [],
             currency: 'KSH.',
+            countries: [],
+            countriesLoading: true,
         }
     },
     getters: {
         setupGetter: (state) => (key) => state[key]
     },
     actions: {
+        getCountriesList() {
+            this.$patch({
+                countriesLoading: true,
+            });
+            _request.axiosRequest({
+                method: 'GET',
+                url: constants.setup('countries'),
+            })
+           .then((res) => {
+            this.$patch({
+                countriesLoading: false,
+                countries: res.data,
+            });
+ 
+           }).catch((error)=> {
+            this.toast.error( error.response.data.message || error.message);
+            this.$patch({
+                countriesLoading: false,
+            });
+           });
+        },
         getCategories(){
             _request.axiosRequest({
                 method: 'GET',
-                url: constnants.categories,
+                url: constants.categories,
             })
             .then((res) => {
                 this.$patch({

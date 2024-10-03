@@ -6,4 +6,7 @@ export default {
     register:'auth/register',
     logout: 'auth/logout',
     images: 'assets/image',
+    setup: (setupUrl) => {
+        return `setups/${setupUrl}`;
+    },
 }
