@@ -98,20 +98,22 @@ export const useCartStore = defineStore('cart', {
                 return this.toast.error(error.message);
             }
         },
-        async updateCart(productID, type = 'add') {
+        async updateCart(productID, type = 'add', oncart = false) {
             try {
-                if (!AuthService.isAuthenticated()) {
+                if (!oncart) {
                     this.getCart();
                     if (!Object.keys(this.cart).length) {
                         return;
                     }
-                    const product = this.cart.Item.find((item) => item.productId === productID);
+                }
+                if (!AuthService.isAuthenticated()) {
+                    const product = this.cart.Items.find((item) => item.productId === productID);
                     if (product) {
                         if (type === 'add') {
                             product.quantity++;
                         } else if (type === 'remove') {
                             if (Number(product.quantity) === 1) {
-                                this.cart.Item = this.cart.Item.filter((item) => item.productId !== productID);
+                                this.cart.Items = this.cart.Items.filter((item) => item.productId !== productID);
                             } else {
                                 product.quantity--;
                             }
@@ -120,6 +122,22 @@ export const useCartStore = defineStore('cart', {
                     }
                     this.toast.success(type === 'add' ? 'Item was successfully added to cart' : 'Cart was successfully updated');
                     return;
+                } else {
+                    const product = !oncart && this.cart.Items.find((item) => item.productPid === productID);
+                    _request.axiosRequest({
+                        url: `${constants.cart}/${product.itemId || productID}`,
+                        method: 'PATCH',
+                        data: { quantity: type === 'add' ? 1 : -1 },
+                    })
+                        .then((response) => {
+                            this.$patch({
+                                cart: response.data,
+                            });
+                            this.toast.success(type === 'add' ? 'Item was successfully added to cart' : 'Cart was successfully updated');
+                        })
+                        .catch((error) => {
+                            this.toast.error(error.message);
+                        });
                 }
             } catch (error) {
                 return this.toast.error(error.message);
@@ -144,7 +162,7 @@ export const useCartStore = defineStore('cart', {
                     return;
                 }
                 _request.axiosRequest({
-                    url: constants.cart,
+                    url: `${constants.cart}/${productID}`,
                     method: 'DELETE',
                 })
                     .then((res) => {
@@ -176,17 +194,17 @@ export const useCartStore = defineStore('cart', {
                     method: 'POST',
                     data: payload,
                 })
-                   .then((res) => {
+                    .then((res) => {
                         console.log(res);
                         this.$patch({
                             cart: {},
                         });
                         this.toast.success("We've sent you payment notification on your phone, please proceed to make payment then comeback");
                     })
-                   .catch((error) => {
+                    .catch((error) => {
                         this.toast.error(error.message);
                     })
-                   .finally(() => {
+                    .finally(() => {
                         this.setLoader(false);
                     });
             } catch (error) {

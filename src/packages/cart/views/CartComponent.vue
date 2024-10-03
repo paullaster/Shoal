@@ -25,16 +25,16 @@
             <span>{{ currency }}</span><span>{{ item?.price }}</span>
           </p>
           <div>
-            <v-btn variant="outlined" size="x-small">
-              <v-icon icon="mdi-trash-can-outline" size="18" class="mr-2" @click="()=> cartStore.removeItemFromCart(item.productId)"></v-icon>
+            <v-btn variant="outlined" size="x-small" @click="()=> cartStore.removeItemFromCart(item.itemId)">
+              <v-icon icon="mdi-trash-can-outline" size="18" class="mr-2" ></v-icon>
               <span>Remove</span>
             </v-btn>
           </div>
         </div>
         <div class="cart-wrapper-card-items-action">
-              <v-btn size="x-small" icon="mdi-minus" elevation="0" class="icon-btn-bg-color" @click="()=>cartStore.updateCart(item.productId, 'remove')"></v-btn>
+              <v-btn size="x-small" icon="mdi-minus" elevation="0" class="icon-btn-bg-color" @click="()=>cartStore.updateCart(item.itemId, 'remove', true)"></v-btn>
               <input :value="item?.quantity" type="number" min="1" readOnly class="remove-cart-input-bg" />
-              <v-btn  size="x-small" icon="mdi-plus" elevation="0" class="icon-btn-bg-color" @click="()=>cartStore.updateCart(item.productId, 'add')"></v-btn>
+              <v-btn  size="x-small" icon="mdi-plus" elevation="0" class="icon-btn-bg-color" @click="()=>cartStore.updateCart(item.itemId, 'add', true)"></v-btn>
         </div>
       </div>
       <div class="cart-wrapper-card-promo">

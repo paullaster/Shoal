@@ -24,12 +24,12 @@
         align-items: center;
         & > .product-details-name {
           font-size: large;
-          font-weight: 700;
+          font-weight: 500;
           color: var(--vt-c-text-dark);
         }
         & > .product-details-price {
           font-size: medium;
-          font-weight: 700;
+          font-weight: 500;
           color: #00000073;
         }
       }
