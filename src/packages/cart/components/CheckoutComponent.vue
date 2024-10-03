@@ -25,9 +25,11 @@
         </v-stepper-item>
       </v-stepper>
       <v-stepper-vertical v-else>
-          <!-- <v-stepper-vertical-item>
+          <v-stepper-vertical-item>
+            <template v-slot:icon>
+              <v-icon siz="50" >mdi-truck-fast</v-icon>
+            </template>
             <template v-slot:title>
-              <v-icon class="mx-3">mdi-truck-fast</v-icon>
               <span>Shipping Address</span>
             </template>
             <component :is="ShippingAddress"></component>
@@ -41,11 +43,13 @@
                     <span></span>
                 </v-btn>
             </template>
-          </v-stepper-vertical-item> -->
+          </v-stepper-vertical-item>
         <v-stepper-vertical-item>
+          <template v-slot:icon>
+            <v-icon :color="ColorHelper.colorsHelper('secondary')" siz="50" >mdi-credit-card</v-icon>
+          </template>
           <template v-slot:title>
            <div style="display: flex; align-items: center;">
-            <v-icon class="mx-3" :color="ColorHelper.colorsHelper('secondary')" size="40">mdi-credit-card</v-icon>
             <h3 style="font-weight: 500;">Payment Methods</h3>
            </div>
         </template>

@@ -1,3 +1,13 @@
-.payment-method {
-    
+.v-stepper-vertical-item__avatar {
+    height: 50px !important;
+    width: 50px !important;
+}
+.v-stepper-vertical-item__avatar.v-avatar .v-icon {
+    font-size: 2.4rem !important;
+}
+
+.v-stepper-vertical-item:not(:last-child):before {
+    left: 48px !important;
+    top: 65px !important;
+    height: calc(100% - 50px) !important;
 }

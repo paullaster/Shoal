@@ -16,7 +16,12 @@
                             </v-text-field>
                         </v-col>
                         <v-col cols="12">
-                            <v-textarea label="Address"  variant=outlined></v-textarea>
+                            <v-textarea 
+                            label="Address"  
+                            variant="outlined"
+                            placeholder="Please enter your correct address. We'll use this address to deliver your order! for example, (Nicobon Appartment, Biashara Street, Mlolongo, Machakos County, Kenya)
+                            "
+                            ></v-textarea>
                         </v-col>
                         <v-col cols="6">
                             <v-text-field label="City"  variant=outlined ></v-text-field>
