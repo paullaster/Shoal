@@ -231,13 +231,13 @@ import { useDisplay } from 'vuetify/lib/framework.mjs'
 const { mdAndDown } = useDisplay()
 
 // ROUTES
-const route = useRoute();
+const route = useRoute()
 
 // APP STORE
 const setupStore = useSetupStore()
 const profileStore = useProfile()
 const { countriesLoading, countries } = storeToRefs(setupStore)
-const { address, addressSelected } = storeToRefs(profileStore)
+const { address, addressSelected, addAnotherAddress, forceChangeUpgate } = storeToRefs(profileStore)
 
 // COMPONENT INERNAL STATE
 const checkoutAddress = ref({
@@ -253,18 +253,23 @@ const checkoutAddress = ref({
 const addressOnFocused = ref(false)
 const shipping_address_form = ref(null)
 const addNewOrUpdateAddress = ref(false)
-const tempCountry = ref('');
+const tempCountry = ref('')
 // HOOKS
 onMounted(() => {
   // Fetch countries data
 
   setupStore.getCountriesList()
   profileStore.fetchAddress()
+  profileStore.$patch({
+    addAnotherAddress: false,
+    editAddressform: false,
+    forceChangeUpgate: 1,
+  })
   globalEventBus.on('commitAddress', () => {
     saveCheckoutAddress()
   })
   globalEventBus.on('updateAddress', () => {
-    updatecheckoutAddress();
+    updatecheckoutAddress()
   })
 })
 
@@ -286,11 +291,11 @@ const rules = computed(() => {
     ],
     street: [
       (v) => !!v || 'Street is required',
-      (v) => v.length >= 5 || 'Street must be at least 5 characters long',
+      (v) => v.length >= 2 || 'Street must be at least 5 characters long',
       (v) =>
         /^[A-Za-z0-9\s]*$/.test(v) || 'Street can only contain alphanumeric characters and spaces'
     ],
-    streetCode: [(v) => v >= 3 || 'Street Code must be at least 3 characters long'],
+    // streetCode: [(v) => v >= 3 || 'Street Code must be at least 3 characters long'],
     town: [(v) => !!v || 'Town is required']
   }
 })
@@ -298,18 +303,18 @@ const rules = computed(() => {
 // UI UPDATES
 watch(
   () => route,
-  async(route) => {
+  async (route) => {
     if (route.name === 'checkout') {
       if (route.query.address && route.query.edit === 'true') {
-        const addr = 
-        address.value.length ?
-        (
-          address.value.find(
-            (ad) => ad.addressId === stringToBase64AndReverse.fromBase64String(route.query.address)
-          ) 
-        ) :
-        (await profileStore.fetchAddressById(stringToBase64AndReverse.fromBase64String(route.query.address)))
-        await profileStore.setSelectedAddress(addr);
+        const addr = address.value.length
+          ? address.value.find(
+              (ad) =>
+                ad.addressId === stringToBase64AndReverse.fromBase64String(route.query.address)
+            )
+          : await profileStore.fetchAddressById(
+              stringToBase64AndReverse.fromBase64String(route.query.address)
+            )
+        await profileStore.setSelectedAddress(addr)
       } else {
         checkoutAddress.value = {
           country: '',
@@ -324,26 +329,26 @@ watch(
       }
     }
   },
-  { immediate: true, deep: true}
+  { immediate: true, deep: true }
 )
 watch(
   () => addressSelected.value,
-  async(selected) => {
+  async (selected) => {
     if (Object.keys(selected).length) {
       checkoutAddress.value = {
         ...selected,
-        country: selected.country?.split(':')[2],
+        country: selected.country?.split(':')[2]
       }
       tempCountry.value = checkoutAddress.value.country
-      addNewOrUpdateAddress.value = true;
+      addNewOrUpdateAddress.value = true
       profileStore.$patch({
-      editAddressform: true
-    })
+        editAddressform: true
+      })
     } else {
       profileStore.$patch({
-      editAddressform: false
-    })
-      tempCountry.value = '';
+        editAddressform: false
+      })
+      tempCountry.value = ''
       checkoutAddress.value = {
         country: '',
         address: '',
@@ -354,10 +359,10 @@ watch(
         streetCode: '',
         town: ''
       }
-      addNewOrUpdateAddress.value = false;
+      addNewOrUpdateAddress.value = false
     }
   },
-  { immediate: true, deep: true}
+  { immediate: true, deep: true }
 )
 
 // COMPONENT METHODS
@@ -426,7 +431,7 @@ async function saveCheckoutAddress() {
     const { valid } = await shipping_address_form.value.validate()
     if (valid) {
       // Save checkout address to your backend API
-      if ( typeof checkoutAddress.value.country === 'object') {
+      if (typeof checkoutAddress.value.country === 'object') {
         checkoutAddress.value.country = `${checkoutAddress.value.country.cca2}:${checkoutAddress.value.country.cca3}:${checkoutAddress.value.country.name.common}`
       }
       const addressPayload = checkoutAddress.value
@@ -434,10 +439,10 @@ async function saveCheckoutAddress() {
         .saveProfileAddress(addressPayload)
         .then((result) => {
           profileStore.$patch({
-            address: result.data
+            address: result.data,
           })
           useToast().success('Shipping address saved successfully!')
-          globalEventBus.emit('moveToPayments')
+          addAnotherAddress.value ? CloseAddressForm() : globalEventBus.emit('moveToNext', 1)
         })
         .catch((error) => {
           useToast().error(
@@ -454,10 +459,10 @@ async function saveCheckoutAddress() {
     useToast().error(error.message)
   }
 }
-function addNewAddressAction () {
+function addNewAddressAction() {
   try {
     addNewOrUpdateAddress.value = true
-    tempCountry.value = '';
+    tempCountry.value = ''
     checkoutAddress.value = {
       country: '',
       address: '',
@@ -467,18 +472,21 @@ function addNewAddressAction () {
       street: '',
       streetCode: '',
       town: ''
-    };
+    }
+    profileStore.$patch({
+      addAnotherAddress: true
+    })
   } catch (error) {
     useToast().error(error.message)
   }
 }
-function editAddress (address) {
+function editAddress(address) {
   try {
-    profileStore.setSelectedAddress(address);
-    const url = new URL(location);
-    url.searchParams.set('edit', 'true');
-    url.searchParams.set('address', stringToBase64AndReverse.toBase64String(address.addressId));
-    window.history.pushState({}, '', url);
+    profileStore.setSelectedAddress(address)
+    const url = new URL(location)
+    url.searchParams.set('edit', 'true')
+    url.searchParams.set('address', stringToBase64AndReverse.toBase64String(address.addressId))
+    window.history.pushState({}, '', url)
   } catch (error) {
     profileStore.$patch({
       editAddressform: false
@@ -486,9 +494,9 @@ function editAddress (address) {
     useToast().error(error.message)
   }
 }
-function CloseAddressForm () {
+function CloseAddressForm() {
   try {
-    addNewOrUpdateAddress.value = false;
+    addNewOrUpdateAddress.value = false
     checkoutAddress.value = {
       country: '',
       address: '',
@@ -498,59 +506,63 @@ function CloseAddressForm () {
       street: '',
       streetCode: '',
       town: ''
-    };
-    profileStore.setSelectedAddress({});
-    const url = new URL(location);
-    url.searchParams.delete('edit');
-    url.searchParams.delete('address');
-    window.history.pushState({}, '', url);
+    }
+    profileStore.setSelectedAddress({})
+    const url = new URL(location)
+    url.searchParams.delete('edit')
+    url.searchParams.delete('address')
+    window.history.pushState({}, '', url)
     profileStore.$patch({
-      editAddressform: false
+      editAddressform: false,
+      forceChangeUpgate: 3,
+      addAnotherAddress: false,
     })
   } catch (error) {
     profileStore.$patch({
-      editAddressform: false
+      editAddressform: false,
+      forceChangeUpgate: 4,
+      addAnotherAddress: false,
     })
     useToast().error(error.message)
   }
 }
-async function updatecheckoutAddress () {
+async function updatecheckoutAddress() {
   try {
     const { valid } = await shipping_address_form.value.validate()
     if (!valid) {
       useToast().error('Please fill out all required fields correctly.')
       return
     }
-      // Update checkout address to your backend API
-      if ( 
-        typeof checkoutAddress.value.country === 'string' &&
-        checkoutAddress.value.country?.includes(":")
-      ) {
-        checkoutAddress.value.country = tempCountry.value;
-      }
-      if (typeof checkoutAddress.value.country === 'object') {
-        checkoutAddress.value.country = `${checkoutAddress.value.country.cca2}:${checkoutAddress.value.country.cca3}:${checkoutAddress.value.country.name.common}`
-      }
-      const addressPayload = checkoutAddress.value
-      profileStore
-       .updateProfileAddress(addressPayload)
-       .then((result) => {
-          profileStore.$patch({
-            address: result.data,
-            forceChangeUpgate: 2,
-          })
-          CloseAddressForm();
-          useToast().success('Shipping address updated successfully!')
+    // Update checkout address to your backend API
+    if (
+      typeof checkoutAddress.value.country === 'string' &&
+      checkoutAddress.value.country?.includes(':')
+    ) {
+      checkoutAddress.value.country = tempCountry.value
+    }
+    if (typeof checkoutAddress.value.country === 'object') {
+      checkoutAddress.value.country = `${checkoutAddress.value.country.cca2}:${checkoutAddress.value.country.cca3}:${checkoutAddress.value.country.name.common}`
+    }
+    const addressPayload = checkoutAddress.value
+    profileStore
+      .updateProfileAddress(addressPayload)
+      .then((result) => {
+        profileStore.$patch({
+          address: result.data,
+          forceChangeUpgate: 2
         })
-       .catch((error) => {
-          useToast().error(
-            error.response.data.message ||
-              error.message ||
-              'We ran into an error when updating address!'
-          )
-        })
-      } catch (error) {
-        useToast().error(error.message)
-      }
+        CloseAddressForm()
+        useToast().success('Shipping address updated successfully!')
+      })
+      .catch((error) => {
+        useToast().error(
+          error.response.data.message ||
+            error.message ||
+            'We ran into an error when updating address!'
+        )
+      })
+  } catch (error) {
+    useToast().error(error.message)
+  }
 }
 </script>

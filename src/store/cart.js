@@ -9,6 +9,9 @@ export const useCartStore = defineStore('cart', {
     state() {
         return {
             cart: {},
+            amountToPay: 0,
+            subTotalAmount: 0,
+            shippingAmount: 0,
         }
     },
     getters: {
@@ -16,6 +19,33 @@ export const useCartStore = defineStore('cart', {
         cartTotal: (state) => state.cart?.Items?.reduce((sum, item) => Number(sum + (Number(item.price) * Number(item.quantity))), 0),
     },
     actions: {
+        async setCheckoutAmounToPay() {
+                const amountToPay = {
+                    value: 0,
+                    subtotal: 0,
+                    shipping: 0,
+                };
+                this
+                    .getCheckoutCart()
+                    .then((response) => {
+                        amountToPay.value = response.data.Items.reduce(
+                            (sum, runningVal) => sum + parseFloat(runningVal.totalPrice),
+                            0
+                        )
+                        amountToPay.subtotal += amountToPay.value;
+                        amountToPay.shipping += parseFloat(response.data.shippingRate);
+                        amountToPay.value += parseFloat(response.data.shippingRate);
+                        this.$patch({
+                            amountToPay: amountToPay.value,
+                            subTotalAmount: amountToPay.subtotal,
+                            shippingAmount: amountToPay.shipping,
+                        })
+                    })
+                    .catch((error) => {
+                        console.error('Error retrieving checkout cart:', error)
+                        this.toast.error('Error retrieving checkout cart')
+                    })
+        },
         async createCart(payload) {
             try {
                 const cartItem = { ...payload };
@@ -86,7 +116,6 @@ export const useCartStore = defineStore('cart', {
         checkLocalCacheCart() {
             try {
                 const cart = WebStorage.GetFromWebStorage('local', `${APPNAME.split(" ").join("")}_cart`);
-                console.log(cart);
                 if (cart) {
                     cart.Items.forEach((item) => {
                         this.createCart(item).then(() => {

@@ -95,7 +95,7 @@ const { cart } = storeToRefs(cartStore);
 const amountToPay = ref(0)
 
 // COMPONENT HOOKS
-onMounted(()=> {
+onMounted(async ()=> {
   globalEventBus.on("procedd-to-pay-with-mpesa", (obj)=> {
     const payload = {
       ...obj,
@@ -103,6 +103,7 @@ onMounted(()=> {
     }
     cartStore.checkout(payload);
   })
+  await cartStore.setCheckoutAmounToPay()
 });
 
 
@@ -114,11 +115,11 @@ function formatExpiryDate(event) {
       break
   }
 }
+function payWithCard() {}
 
 function payWithMpesa() {
   try {
     // Placeholder for MPESA payment logic
-    console.log('Initiating MPESA Payment Dialog dialog')
     cartStore
       .getCheckoutCart()
       .then((response) => {

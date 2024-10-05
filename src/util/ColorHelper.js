@@ -15,6 +15,7 @@ class ColorHelper {
             customer: '#FFB04C',
             primary: '#ED1E79',
             secondary: '#FFB04C',
+            solidgrey: ' #828282',
             accent: '#8792E4',
             error: '#FF5252',
             warning: '#FFC107',

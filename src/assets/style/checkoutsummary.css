@@ -1,0 +1,16 @@
+.checkout-summary {
+    .totalTextTypography {
+        font-weight: 700;
+        font-size: 2rem;
+        line-height: 2.5rem;
+        margin-bottom: 1rem;
+    }
+     .checkoutlinesCard {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        & > p {
+            font-weight: 500;
+        }
+     }
+}

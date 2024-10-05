@@ -10,6 +10,7 @@ export const useProfile = defineStore('profile', {
             address: [],
             addressSelected: {},
             editAddressform: false,
+            addAnotherAddress: false,
             forceChangeUpgate: 1,
         }
     },
