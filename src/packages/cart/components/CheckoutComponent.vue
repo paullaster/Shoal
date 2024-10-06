@@ -24,7 +24,7 @@
           </template>
         </v-stepper-item>
       </v-stepper>
-      <v-stepper-vertical v-else v-model="verticalStep">
+      <v-stepper-vertical v-else v-model="verticalStep" elevation="0" >
         <v-stepper-vertical-item>
           <template v-slot:icon>
             <v-icon :color="ColorHelper.colorsHelper(address.length ? 'success':'solidgrey')" siz="50">mdi-truck-fast</v-icon>
@@ -36,12 +36,19 @@
           </template>
           <component :is="ShippingAddress"></component>
           <template v-slot:next>
+            <div
+            style="
+            display: flex;
+            justify-content: flex-start;
+            position: absolute;
+            right: 4%;
+            "
+            >
             <v-btn
               :color="ColorHelper.colorsHelper('primary')"
               :variant="editAddressform || addAnotherAddress ? 'flat' : 'text'"
-              block
-              :style="` padding: 1.4rem 0;`"
               @click="performAction"
+              :disabled="false"
             >
               <span style="font-weight: 600">{{ btnCaption() }}</span>
               <v-icon
@@ -53,8 +60,9 @@
                 mdi-chevron-right
               </v-icon>
             </v-btn>
+          </div>
           </template>
-          <template v-slot:prev v-if="true">
+          <template v-slot:prev>
             <v-btn>
               <span></span>
             </v-btn>
@@ -71,15 +79,43 @@
           </template>
           <component :is="checkoutSummary"></component>
           <template v-slot:next>
-            <v-btn variant="text" @click="moveBackAction(0)">
-              <v-icon size="40"> mdi-chevron-left </v-icon>
+            <div
+            style="
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+            "
+            >
+            <v-btn variant="text" @click="moveBackAction(0)"
+            style=" 
+            margin-left:-1.6rem !important;
+            "
+            >
+              <v-icon size="40" class="mx-0"> mdi-chevron-left </v-icon>
               <span>Back</span>
             </v-btn>
+          </div>
           </template>
           <template v-slot:prev>
-            <v-btn :color="ColorHelper.colorsHelper('primary')" variant="flat" @click="initiateAction">
+            <div
+            style="
+            display: flex;
+            justify-content: flex-end;
+            width: 100%;
+            "
+            >
+            <v-btn 
+            :color="ColorHelper.colorsHelper('primary')" 
+            variant="text" 
+            @click="initiateAction"
+            style=" 
+            margin-right:0 !important;
+            "
+            >
               <span>Proceed to Pay</span>
+              <v-icon size="40"> mdi-chevron-right </v-icon>
             </v-btn>
+            </div>
           </template>
         </v-stepper-vertical-item>
         <v-stepper-vertical-item>
@@ -93,15 +129,31 @@
           </template>
           <component :is="PaymentMethod"></component>
           <template v-slot:prev>
-            <v-btn :color="ColorHelper.colorsHelper('primary')" variant="flat">
+            <div
+            style="
+            display: flex;
+            justify-content: flex-end;
+           width: 100%;
+            "
+            >
+            <v-btn :color="ColorHelper.colorsHelper('primary')" variant="flat" style="margin-right: 0;">
               <span>Pay {{ currency }}{{ amountToPay }} NOW </span>
             </v-btn>
+          </div>
           </template>
           <template v-slot:next>
+            <div
+            style="
+            display: flex;
+            justify-content: flex-start;
+            position: absolute; left: 2%;
+            "
+            >
             <v-btn variant="text" @click="moveBackAction(1)">
               <v-icon size="40"> mdi-chevron-left </v-icon>
               <span style="font-weight: 500">back</span>
             </v-btn>
+          </div>
           </template>
         </v-stepper-vertical-item>
       </v-stepper-vertical>

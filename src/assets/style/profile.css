@@ -5,7 +5,7 @@
         display: flex;
         align-items: center;
         & > .v-card {
-            padding: 2rem;
+            /* padding: 2rem; */
             display: flex;
             justify-content: center;
             align-items: flex-start;
