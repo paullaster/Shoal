@@ -24,8 +24,8 @@
           </template>
         </v-stepper-item>
       </v-stepper>
-      <v-stepper-vertical v-else v-model="verticalStep" elevation="0" >
-        <v-stepper-vertical-item>
+      <v-stepper-vertical v-else v-model="verticalStep" elevation="0">
+        <v-stepper-vertical-item elevation="0">
           <template v-slot:icon>
             <v-icon :color="ColorHelper.colorsHelper(address.length ? 'success':'solidgrey')" siz="50">mdi-truck-fast</v-icon>
           </template>
@@ -68,7 +68,7 @@
             </v-btn>
           </template>
         </v-stepper-vertical-item>
-        <v-stepper-vertical-item>
+        <v-stepper-vertical-item elevation="0">
           <template v-slot:icon>
             <v-icon :color="ColorHelper.colorsHelper(verticalStep >= 1 ? 'success':'solidgrey')" >mdi-file-document-edit-outline</v-icon>
           </template>
@@ -118,7 +118,7 @@
             </div>
           </template>
         </v-stepper-vertical-item>
-        <v-stepper-vertical-item>
+        <v-stepper-vertical-item elevation="0">
           <template v-slot:icon>
             <v-icon :color="ColorHelper.colorsHelper(verticalStep === 2 ? 'secondary' : 'solidgrey')" siz="50">mdi-credit-card</v-icon>
           </template>

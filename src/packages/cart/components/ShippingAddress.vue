@@ -53,7 +53,7 @@
                     {{ address.street }},
                     {{ address.town }}
                     {{ address.city }}
-                    {{ address.zip }}, {{ address.country?.split(':')[2] }}
+                    {{ address.zip }}, {{ getCountry(address.country)}}
                   </p>
                   <div
                     v-if="address.default"
@@ -125,13 +125,14 @@
                     variant="outlined"
                     label="Country/Region"
                     :items="countries"
-                    item-title="name.common"
+                    :item-title="(item)=> item?.name ? `${item?.flag} ${item?.name?.common}` : `` "
                     return-object
                     v-model="checkoutAddress.country"
                     clearable
                     :loading="countriesLoading"
                     :disabled="countriesLoading"
                     :rules="rules.country"
+                    placeholder="Select Country"
                   >
                   </v-autocomplete>
                 </v-col>
@@ -337,7 +338,7 @@ watch(
     if (Object.keys(selected).length) {
       checkoutAddress.value = {
         ...selected,
-        country: selected.country?.split(':')[2]
+        country: JSON.parse(selected.country)
       }
       tempCountry.value = checkoutAddress.value.country
       addNewOrUpdateAddress.value = true
@@ -432,7 +433,12 @@ async function saveCheckoutAddress() {
     if (valid) {
       // Save checkout address to your backend API
       if (typeof checkoutAddress.value.country === 'object') {
-        checkoutAddress.value.country = `${checkoutAddress.value.country.cca2}:${checkoutAddress.value.country.cca3}:${checkoutAddress.value.country.name.common}`
+        checkoutAddress.value.country = JSON.stringify({
+          flag: checkoutAddress.value.country.flag,
+          cca2: checkoutAddress.value.country.cca2,
+          cca3: checkoutAddress.value.country.cca3,
+          name: {common: checkoutAddress.value.country.name.common},
+        })
       }
       const addressPayload = checkoutAddress.value
       profileStore
@@ -534,14 +540,13 @@ async function updatecheckoutAddress() {
       return
     }
     // Update checkout address to your backend API
-    if (
-      typeof checkoutAddress.value.country === 'string' &&
-      checkoutAddress.value.country?.includes(':')
-    ) {
-      checkoutAddress.value.country = tempCountry.value
-    }
     if (typeof checkoutAddress.value.country === 'object') {
-      checkoutAddress.value.country = `${checkoutAddress.value.country.cca2}:${checkoutAddress.value.country.cca3}:${checkoutAddress.value.country.name.common}`
+      checkoutAddress.value.country = JSON.stringify({
+          flag: checkoutAddress.value.country.flag,
+          cca2: checkoutAddress.value.country.cca2,
+          cca3: checkoutAddress.value.country.cca3,
+          name: {common: checkoutAddress.value.country.name.common},
+        })
     }
     const addressPayload = checkoutAddress.value
     profileStore
@@ -561,6 +566,14 @@ async function updatecheckoutAddress() {
             'We ran into an error when updating address!'
         )
       })
+  } catch (error) {
+    useToast().error(error.message)
+  }
+}
+function getCountry(countryObj) {
+  try {
+    countryObj = JSON.parse(countryObj);
+    return `${countryObj.flag} ${countryObj.name?.common}`;
   } catch (error) {
     useToast().error(error.message)
   }
