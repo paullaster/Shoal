@@ -5,7 +5,7 @@
   <div class="productlisting-image"
   :style="
   `
-  background-image: linear-gradient(to bottom, #4d80807c, #4d808080), url(${product?.Images[0].url});
+  background-image:url(${product?.Images[0].url});
   `
   "
   >

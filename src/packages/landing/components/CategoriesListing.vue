@@ -4,7 +4,7 @@
       <li v-for="category in categories" :key="category.cid">
         <router-link :to="{ name: 'category', params: { category: category.cid } }">
           <img :src="category.Images[0].url" alt="category" />
-          <span>{{ category.description }}</span>
+          <span>{{ category.name }}</span>
         </router-link>
       </li>
     </ul>

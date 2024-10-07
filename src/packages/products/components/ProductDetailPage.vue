@@ -50,6 +50,11 @@
         <h3>Available in stock</h3>
         <p>{{ product.quantity }}</p>
       </div>
+      <div 
+      v-html="product.recipeTips"
+      class="instructionVideoEmbedder"
+      >
+      </div>
       <div>
         <h3>Description</h3>
         <p>{{ product.description }}</p>

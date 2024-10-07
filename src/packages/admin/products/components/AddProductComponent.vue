@@ -72,6 +72,15 @@
               </v-text-field>
             </v-col>
             <v-col cols="12">
+              <v-textarea
+              v-model="product.recipeTips" 
+              label="Add link for recipe tips" 
+              variant="outlined"
+              :rules="rules.recipeTips"
+              >
+              </v-textarea>
+            </v-col>
+            <v-col cols="12">
               <v-file-input
                 :rules="[(v) => v.length <= 2 || 'You can only upload up to 2 images']"
                 accept="image/*"
@@ -135,6 +144,7 @@ const product = ref({
   quantity: 1,
   color: '',
   size: '',
+  recipeTips: '',
   images: []
 })
 const imagePreview = ref(1);
@@ -165,7 +175,7 @@ const rules = computed(()=>{
     description: [
       (v) =>!!v || 'Product Description is required',
       (v) => v.length <= 2000 || 'Description must not exceed 1000 characters'
-    ]
+    ],
   }
 })
 
