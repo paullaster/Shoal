@@ -231,7 +231,7 @@ export const useCartStore = defineStore('cart', {
                         this.toast.success("We've sent you payment notification on your phone, please proceed to make payment then comeback");
                     })
                     .catch((error) => {
-                        this.toast.error(error.message);
+                        this.toast.error(error.response.data.message || error.message, "We ran into an error, please try again later.");
                     })
                     .finally(() => {
                         this.setLoader(false);
