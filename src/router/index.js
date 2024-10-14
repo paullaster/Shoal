@@ -90,9 +90,22 @@ const router = createRouter({
       component: () => import('@/packages/auth/components/ProfileComponent.vue'),
     },
     {
-      path: '/:user/orders',
+      path: '/orders',
       name: 'orders',
       component: () => import('@/packages/orders/views/OrdersComponent.vue'),
+      meta: {
+        title: 'Orders',
+        requiresAuth: true,
+      }
+    },
+    {
+      path: '/orders/:orderId',
+      name: 'orderDetails',
+      component: () => import('@/packages/orders/components/OrderDetails.vue'),
+      meta: {
+        title: 'Order details',
+        requiresAuth: true,
+      }
     },
     {
       path: '/search',

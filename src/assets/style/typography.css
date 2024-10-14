@@ -1,3 +1,7 @@
 ul {
     list-style: none;
 }
+main {
+    min-height: 40vh;
+    margin-bottom: 2rem;
+}

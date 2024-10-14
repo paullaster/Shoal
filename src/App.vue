@@ -5,6 +5,7 @@
      <component :is="Component"/>
     </transition>
   </router-view>
+  <FooterComponents />
   <DynamicDialog />
 </template>
 <script setup>
@@ -14,6 +15,7 @@ import { onMounted, ref, watch, defineAsyncComponent } from 'vue';
 import { useAuth, useCartStore, useGlobalStore, useSetupStore } from './store';
 import AuthService from './packages/auth/AuthService';
 const DynamicDialog = defineAsyncComponent(() => import("@/components/DynamicDialog.vue"));
+import FooterComponents from './components/FooterComponents.vue';
 
 
 // ROUTES

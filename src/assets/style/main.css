@@ -6,8 +6,11 @@
 @import './checkoutsummary.css';
 @import './categories.css';
 @import './displaycard.css';
+@import './footer.css';
 @import './header.css';
 @import './landing.css';
+@import './orderdetail.css';
+@import './orders.css';
 @import './otpview.css';
 @import './paymentmethod.css';
 @import './product.css';

@@ -136,8 +136,8 @@
            width: 100%;
             "
             >
-            <v-btn :color="ColorHelper.colorsHelper('primary')" variant="flat" style="margin-right: 0;">
-              <span>Pay {{ currency }}{{ amountToPay }} NOW </span>
+            <v-btn :color="ColorHelper.colorsHelper('primary')" variant="text" style="margin-right: 0; font-weight: 900">
+              <span style="font-weight: 800">Pay {{ currency }}{{ amountToPay }} NOW </span>
             </v-btn>
           </div>
           </template>
