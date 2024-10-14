@@ -11,8 +11,12 @@
                         <v-text-field variant="outlined" v-model="user.email" :readonly="userData[2] === 'email'" :rules="rules.email"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" v-if="userData[3] === 'newAccount'">
-                        <v-label>Name</v-label>
-                        <v-text-field variant="outlined" v-model="user.name" placeholder="for example: John Doe" :rules="rules.name"></v-text-field>
+                        <v-label>First Name</v-label>
+                        <v-text-field variant="outlined" v-model="user.firstName" placeholder="for example: John" :rules="rules.firstName"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" v-if="userData[3] === 'newAccount'">
+                        <v-label>Last Name</v-label>
+                        <v-text-field variant="outlined" v-model="user.lastName" placeholder="for example: Doe" :rules="rules.lastName"></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" v-if="userData[3] === 'newAccount'">
                         <v-label>Phone number</v-label>
@@ -85,7 +89,7 @@ const { mdAndDown } = useDisplay();
 const route = useRoute()
 const router = useRouter()
 // COMPONENT STATE
-const user = ref({ name: '', email: '', password: '', phoneNumber: '' });
+const user = ref({ firstName: '', lastName: '', email: '', password: '', phoneNumber: '' });
 const userData = ref(atob(route.params.uniquCode).split(":"));
 const showPassword = ref(false);
 const profileForm = ref(null);
@@ -116,8 +120,12 @@ onMounted(() => {
 // COMPUTED
 const rules = computed(() => {
     return {
-        name: [
-            v =>!!v || 'Name is required',
+        firstName: [
+            v =>!!v || 'First name is required',
+            v => /^[a-zA-Z\s]+$/.test(v) || 'Name should only contain letters and spaces'
+        ],
+        lastName: [
+            v =>!!v || 'Last name is required',
             v => /^[a-zA-Z\s]+$/.test(v) || 'Name should only contain letters and spaces'
         ],
         email: [

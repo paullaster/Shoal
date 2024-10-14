@@ -20,7 +20,7 @@
           height="40"
           text="Verify"
           variant="flat"
-          width="70%"
+          :block="mdAndDown"
           :disabled="otp.length!== 6"
           @click.prevent="verifyOTP()"
         ></v-btn>
@@ -39,6 +39,11 @@ import Helper from '@/util/Helper';
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { globalEventBus } from 'vue-toastification';
+import { useDisplay } from 'vuetify/lib/framework.mjs';
+
+
+// VUETIFY
+const { mdAndDown } = useDisplay();
 
 // CLIENT ROUTING
 const route = useRoute()
