@@ -16,7 +16,7 @@
                 Contact Us
             </h4>
             <p>
-                Address: 00100 South B, Nairo, Kenya, 254 <br />
+                Address: 00100 South B, Nairobi, Kenya <br />
                 Phone: (+254) 990- 49181 <br />
                 Email: {{CONTACTEMAIL}} <br />
             </p>

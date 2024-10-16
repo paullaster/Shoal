@@ -250,6 +250,10 @@ router.afterEach( (to) => {
 useGlobalStore().setLoading(false);
 const title = to.meta.title || 'Home';
   document.title = 'Noels | '+ title;
+  scroll({
+    top: 0,
+    behavior:'smooth'
+  })
 })
 
 export default router
