@@ -24,12 +24,14 @@
     </div>
     <div class="navigation-menus">
       <ul>
-        <li v-for="menu in menus" :key="menu.path">
-          <router-link :to="menu.path">
-            <v-icon class="mr-4">{{ menu.icon }}</v-icon>
-            <span>{{ menu.name }}</span>
-          </router-link>
-        </li>
+        <template v-for="menu in menus" :key="menu.path">
+          <li v-if="menu.enabled">
+            <router-link :to="menu.path">
+              <v-icon class="mr-4">{{ menu.icon }}</v-icon>
+              <span>{{ menu.name }}</span>
+            </router-link>
+          </li>
+        </template>
       </ul>
     </div>
     <div class="categories">

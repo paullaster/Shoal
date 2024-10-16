@@ -34,21 +34,25 @@ const menus = [
         name: 'Orders',
         path: '/orders',
         icon: 'mdi-hoop-house',
+        enabled: AuthService.isAuthenticated()
     },
-    {
-        name: 'Vouchers',
-        path: '/vouchers',
-        icon: 'mdi-ticket-percent-outline',
-    },
+    // {
+    //     name: 'Vouchers',
+    //     path: '/vouchers',
+    //     icon: 'mdi-ticket-percent-outline',
+    // enabled: true
+    // },
     {
         name: 'Saved Items',
         path: '/saved-items',
         icon: 'mdi-bookmark-outline',
+        enabled: AuthService.isAuthenticated()
     },
     {
         name: 'More',
         path: '/more',
         icon: 'mdi-unfold-more-vertical',
+        enabled: true
     }
 ];
 
