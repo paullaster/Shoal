@@ -26,6 +26,7 @@
                         placeholder="for example: +254 700258098" 
                         :readonly="userData[2] === 'phone'"
                         :rules="rules.phoneNumber"
+                        @update:modelValue="formatPhoneNumberInput"
                         ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6">
@@ -166,5 +167,14 @@ async function updateProfile () {
 }
 function toggleShowPassword () {
     showPassword.value =!showPassword.value;
+}
+
+function formatPhoneNumberInput(val) {
+    try {
+        const formattedPhoneNumber = val.replace(/[^\d]/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '+$1 $2$3');
+        user.value.phoneNumber = formattedPhoneNumber;
+    } catch (error) {
+        useToast().error(error.message);
+    }
 }
 </script>
