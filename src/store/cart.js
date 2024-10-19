@@ -129,7 +129,6 @@ export const useCartStore = defineStore('cart', {
         },
         async updateCart(productID, type = 'add', oncart = false) {
             try {
-                console.log({productID, type, oncart})
                 if (!oncart) {
                     this.getCart();
                     if (!Object.keys(this.cart).length) {

@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingComponent from '@/packages/landing/views/LandingComponent.vue'
-import { useGlobalStore } from '@/store';
+import { useGlobalStore, useSearch } from '@/store';
 import AuthService from '@/packages/auth/AuthService';
 import stringToBase64AndReverse from '@/util/stringToBase64AndReverse';
 const router = createRouter({
@@ -114,7 +114,6 @@ const router = createRouter({
       meta: {
         title: 'Search',
         headerless: true,
-        requiresGuest: true
       }
     },
     {
@@ -219,6 +218,9 @@ router.beforeEach((to, from, next) => {
   useGlobalStore().toggleSidebarNavigation(false);
   if (to.name === from.name) {
     useGlobalStore().toggleSidebarNavigation(false);
+  }
+  if (from.name === 'search') {
+    useSearch().$reset();
   }
   useGlobalStore().setLoading(true);
   const { requiresAuth } = to.meta;
