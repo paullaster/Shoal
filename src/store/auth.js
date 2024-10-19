@@ -39,9 +39,10 @@ export const useAuth = defineStore("auth", {
                     user: {},
                 });
                 await AuthService.logout();
-            } catch (error) {
                 this.setLoader(false);
+            } catch (error) {
                 this.toast.error(error.message);
+                this.setLoader(false);
             }
         },
         async login(payload) {
@@ -56,10 +57,10 @@ export const useAuth = defineStore("auth", {
                     data: payload,
                 })
                     .then(async (response) => {
-                        this.setLoader(false);
                         this.$patch({
                             loading: false,
                         });
+                        this.setLoader(false);
                         AuthService.login(response.data).then(async (user) => {
                             await this.setUser(user);
                             if (user.type === 'admin') {
@@ -98,21 +99,21 @@ export const useAuth = defineStore("auth", {
                     data: payload,
                 })
                     .then(async (response) => {
-                        this.setLoader(false);
                         payload['loginType'] = response.data.loginType;
                         response?.data?.otp && globalEventBus.emit("set-otp-screen", payload);
                         response?.data?.exist && globalEventBus.emit("user-credentials", response.data.user);
                         response?.data?.otp && setTimeout(() => {
                             globalEventBus.emit('start-otp-resend-timer');
                         }, 1000);
+                        this.setLoader(false);
                     })
                     .catch(async (error) => {
-                        this.setLoader(false);
                         this.toast.error(error?.response?.data?.message || error.message || customError);
+                        this.setLoader(false);
                     });
             } catch (error) {
-                this.setLoader(false);
                 this.toast.error(error.message);
+                this.setLoader(false);
             }
         },
         async resetPassword(payload) {

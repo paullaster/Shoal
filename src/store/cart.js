@@ -4,6 +4,7 @@ import { _request } from "@/service";
 import AuthService from "@/packages/auth/AuthService";
 import WebStorage from "@/util/storage";
 import { APPNAME } from "@/environments";
+import { useGlobalStore } from "./global";
 
 export const useCartStore = defineStore('cart', {
     state() {
@@ -19,6 +20,14 @@ export const useCartStore = defineStore('cart', {
         cartTotal: (state) => state.cart?.Items?.reduce((sum, item) => Number(sum + (Number(item.price) * Number(item.quantity))), 0),
     },
     actions: {
+        setGlobalLoader(payload) {
+            try {
+                useGlobalStore().setLoading(payload);
+            } catch (error) {
+                console.error(error);
+                this.toast.error('An error occurred.');
+            }
+        },
         async setCheckoutAmounToPay() {
                 const amountToPay = {
                     value: 0,
@@ -48,6 +57,7 @@ export const useCartStore = defineStore('cart', {
         },
         async createCart(payload) {
             try {
+                this.setGlobalLoader(true);
                 const cartItem = { ...payload };
                 cartItem.image = cartItem.Images[0].url;
                 if (!AuthService.isAuthenticated()) {
@@ -55,15 +65,18 @@ export const useCartStore = defineStore('cart', {
                     cartItem.productId = cartItem.pid;
                     cartItem.productPid = cartItem.productId
                     if (!Object.keys(this.cart).length) {
+                        this.setGlobalLoader(false);
                         return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [cartItem] });
                     }
                     const productExistsInCart = this.cart.Items.find((product) => product.productPid === cartItem.productPid);
                     if (productExistsInCart) {
                         productExistsInCart.quantity += cartItem.quantity;
+                        this.setGlobalLoader(false);
                         return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     }
                     WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [...this.cart.Items, cartItem] });
                     this.toast.success("Item was successfully added to cart");
+                    this.setGlobalLoader(false);
                     return;
                 }
                 delete cartItem.Images;
@@ -76,11 +89,14 @@ export const useCartStore = defineStore('cart', {
                         this.$patch({
                             cart: res.data,
                         });
+                        this.setGlobalLoader(false);
                     })
                     .catch((error) => {
                         console.error(error);
+                        this.setGlobalLoader(false);
                     });
             } catch (error) {
+                this.setGlobalLoader(false);
                 return this.toast.error(error.message);
             } finally {
                 this.getCart();
