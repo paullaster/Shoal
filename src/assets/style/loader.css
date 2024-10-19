@@ -1,0 +1,46 @@
+/* HTML: <div class="loader"></div> */
+.loader-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999999;
+    opacity: 1;
+    pointer-events: none;
+    animation: fade-in 0.5s;
+  
+}
+.loader {
+    height: 15px;
+    aspect-ratio: 4;
+    display: grid;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999999;
+  }
+  .loader:before,
+  .loader:after {
+    content: "";
+    grid-area: 1/1;
+    --_g: no-repeat radial-gradient(farthest-side,#ED1E79 94%,#0000);
+    background:
+      var(--_g) left,
+      var(--_g) right;
+    background-size: 25% 100%;
+    animation: l34 1s infinite; 
+    transform: translate(var(--d,0)) rotate(0);
+  }
+  .loader:after {
+    --d: 37.5%;
+    animation-delay: .5s;
+  }
+  @keyframes l34 {
+    50%,100% {transform: translate(var(--d,0)) rotate(.5turn)}
+  }

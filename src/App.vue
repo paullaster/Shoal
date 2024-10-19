@@ -7,6 +7,7 @@
   </router-view>
   <FooterComponents />
   <DynamicDialog />
+  <LoaderComponent v-if="loading" />
 </template>
 <script setup>
 import HeaderComponent from '@/components/HeaderComponent.vue'
@@ -16,6 +17,8 @@ import { useAuth, useCartStore, useGlobalStore, useSetupStore } from './store';
 import AuthService from './packages/auth/AuthService';
 const DynamicDialog = defineAsyncComponent(() => import("@/components/DynamicDialog.vue"));
 import FooterComponents from './components/FooterComponents.vue';
+import LoaderComponent from './components/LoaderComponent.vue';
+import { storeToRefs } from 'pinia';
 
 
 // ROUTES
@@ -27,6 +30,7 @@ const globalStore = useGlobalStore();
 const setupStore = useSetupStore();
 const cartStore = useCartStore();
 const authStore = useAuth();
+const { loading } = storeToRefs(globalStore);
 const { setMenu } = globalStore;
 
 const menus = [
