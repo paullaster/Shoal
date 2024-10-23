@@ -25,7 +25,7 @@
             <span>{{ currency }}</span><span>{{ item?.price }}</span>
           </p>
           <div>
-            <v-btn variant="outlined" size="x-small" @click="()=> cartStore.removeItemFromCart(item.itemId)">
+            <v-btn variant="outlined" size="x-small" @click="()=> cartStore.removeItemFromCart(item.productId)">
               <v-icon icon="mdi-trash-can-outline" size="18" class="mr-2" ></v-icon>
               <span>Remove</span>
             </v-btn>

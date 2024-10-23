@@ -202,7 +202,7 @@ export const useCartStore = defineStore('cart', {
                         WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, cart);
                         return;
                     }
-                    this.cart.Item = this.cart.Items.filter((item) => item.productId !== productID);
+                    this.cart.Items = this.cart.Items.filter((item) => item.productId !== productID);
                     WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     return;
                 }
