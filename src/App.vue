@@ -1,5 +1,16 @@
 <template>
-  <HeaderComponent v-if="showHeader"/>
+  <div class="app">
+    <template v-if="lgAndUp">
+    <div style="display: flex; justify-content: center; align-items: center; width: 100vw;">
+       <p style="text-align: center;">
+        We're working on the desktop view and it will be available soon. Kindly access the app using your mobile device.
+       <br />
+       Thank you for your continued support. ):
+       </p>
+    </div>
+  </template>
+  <template v-else>
+    <HeaderComponent v-if="showHeader"/>
   <router-view v-slot="{Component}">
     <transition>
      <component :is="Component"/>
@@ -8,6 +19,8 @@
   <FooterComponents />
   <DynamicDialog />
   <LoaderComponent v-if="loading" />
+  </template>
+  </div>
 </template>
 <script setup>
 import HeaderComponent from '@/components/HeaderComponent.vue'
@@ -19,6 +32,11 @@ const DynamicDialog = defineAsyncComponent(() => import("@/components/DynamicDia
 import FooterComponents from './components/FooterComponents.vue';
 import LoaderComponent from './components/LoaderComponent.vue';
 import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify/lib/framework.mjs';
+
+
+// VUETIFY
+const { lgAndUp } = useDisplay()
 
 
 // ROUTES
