@@ -2,7 +2,7 @@
     <v-app style="width: 100dvw; padding-inline: .8rem;">
       <SideBarComponent />
       <TopbarComponentVue />
-      <v-main >
+      <v-main tag="main">
         <v-container style="width: 100%; padding-inline: 0 !important;">
           <router-view></router-view>
         </v-container>
@@ -41,9 +41,3 @@
     }
   }, 60000)
   </script>
-    
-    <style>
-  .v-application {
-    font-family: 'Roboto', sans-serif;
-  }
-  </style>

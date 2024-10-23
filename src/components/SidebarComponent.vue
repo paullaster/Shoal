@@ -15,7 +15,7 @@
           </router-link>
         </li>
         <li>
-          <router-link :to="{name: 'auth'}">
+          <router-link :to="AuthService.isAuthenticated() ? {name: 'userProfile'}:{name: 'auth'}">
             <span>My account</span>
             <v-icon>mdi-chevron-right</v-icon>
           </router-link>
@@ -58,6 +58,7 @@ import LogoComponent from '@/components/LogoComponent.vue'
 import { useRouter } from 'vue-router'
 import { useGlobalStore, useSetupStore } from '@/store'
 import { storeToRefs } from 'pinia'
+import AuthService from '@/packages/auth/AuthService'
 
 // ROUTES AND ROUTER
 const router = useRouter()

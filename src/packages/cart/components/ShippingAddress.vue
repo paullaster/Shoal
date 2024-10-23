@@ -53,7 +53,7 @@
                     {{ address.street }},
                     {{ address.town }}
                     {{ address.city }}
-                    {{ address.zip }}, {{ getCountry(address.country)}}
+                    {{ address.zip }}, {{ setupStore.getCountry(address.country)}}
                   </p>
                   <div
                     v-if="address.default"
@@ -148,7 +148,7 @@
                   <div v-if="addressOnFocused">
                     <v-btn
                       :color="ColorHelper.colorsHelper('secondary')"
-                      style="position: absolute; top: -2.8rem; right: 0.8rem"
+                      style="position: absolute; top: -2.8rem; right: 0.4rem"
                       @click="useCurrentAddress"
                     >
                       <v-icon class="mr-2">mdi-map-marker-radius</v-icon>
@@ -249,7 +249,9 @@ const checkoutAddress = ref({
   appartment: '',
   street: '',
   streetCode: '',
-  town: ''
+  town: '',
+  latitude: '',
+  longitude: '',
 })
 const addressOnFocused = ref(false)
 const shipping_address_form = ref(null)
@@ -566,14 +568,6 @@ async function updatecheckoutAddress() {
             'We ran into an error when updating address!'
         )
       })
-  } catch (error) {
-    useToast().error(error.message)
-  }
-}
-function getCountry(countryObj) {
-  try {
-    countryObj = JSON.parse(countryObj);
-    return `${countryObj.flag} ${countryObj.name?.common}`;
   } catch (error) {
     useToast().error(error.message)
   }

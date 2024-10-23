@@ -12,6 +12,8 @@ export const useProfile = defineStore('profile', {
             editAddressform: false,
             addAnotherAddress: false,
             forceChangeUpgate: 1,
+            profileMenu: [],
+            tab: 0,
         }
     },
     getters: {},
@@ -60,16 +62,27 @@ export const useProfile = defineStore('profile', {
                 //...
             } catch (error) {
                 console.error(error);
-                this.toastr.error('An error occurred while updating your address!');
+                this.toast.error('An error occurred while updating your address!');
             }
         },
         async fetchProfile() {
             try {
-                // Fetch the user's profile from the backend API
-                //...
+                _request.axiosRequest({
+                    url: '/user/profile',
+                    method: 'GET',
+                })
+                 .then((response) => {
+                        this.$patch({
+                            profile: response.data,
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                        this.toast.error(error.response.data.message || error.message || 'An error occurred while fetching your profile!');
+                    })
             } catch (error) {
                 console.error(error);
-                this.toastr.error('An error occurred while fetching your profile!');
+                this.toast.error('An error occurred while fetching your profile!');
             }
         },
         async fetchAddress() {

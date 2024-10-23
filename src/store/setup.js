@@ -49,6 +49,14 @@ export const useSetupStore = defineStore('setup', {
             .catch((err) => {
                 this.toast.error(err.message);
             })
-        }
+        },
+        getCountry(countryObj) {
+            try {
+              countryObj = JSON.parse(countryObj);
+              return `${countryObj.flag} ${countryObj.name?.common}`;
+            } catch (error) {
+              this.toast.error(error.message)
+            }
+          }
     }
 })

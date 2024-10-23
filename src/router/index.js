@@ -90,24 +90,6 @@ const router = createRouter({
       component: () => import('@/packages/auth/components/ProfileComponent.vue'),
     },
     {
-      path: '/orders',
-      name: 'orders',
-      component: () => import('@/packages/orders/views/OrdersComponent.vue'),
-      meta: {
-        title: 'Orders',
-        requiresAuth: true,
-      }
-    },
-    {
-      path: '/orders/:orderId',
-      name: 'orderDetails',
-      component: () => import('@/packages/orders/components/OrderDetails.vue'),
-      meta: {
-        title: 'Order details',
-        requiresAuth: true,
-      }
-    },
-    {
       path: '/search',
       component: () => import('@/components/SearchComponent.vue'),
       name: 'search',
@@ -123,6 +105,42 @@ const router = createRouter({
       meta: {
         title: 'Not Found'
       }
+    },
+    {
+      path: '/account',
+      component: () => import('@/layouts/UserNDALayout.vue'),
+      name: "accounts",
+      meta: {
+        title: 'Accounts',
+        requiresAuth: true,
+      },
+      redirect: { name: 'userProfile'},
+      children: [
+        {
+          path: 'dashboard',
+          name: 'userProfile',
+          component: () => import('@/packages/profile/views/MyProfile.vue'),
+          meta: {
+            title: 'Dashboard'
+          }
+        },
+        {
+          path: 'orders',
+          name: 'orders',
+          component: () => import('@/packages/orders/views/OrdersComponent.vue'),
+          meta: {
+            title: 'Orders',
+          }
+        },
+        {
+          path: 'orders/:orderId',
+          name: 'orderDetails',
+          component: () => import('@/packages/orders/components/OrderDetails.vue'),
+          meta: {
+            title: 'Order details',
+          }
+        },
+      ]
     },
     {
       path: '/admin',

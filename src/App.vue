@@ -36,7 +36,7 @@ const { setMenu } = globalStore;
 const menus = [
     {
         name: 'Orders',
-        path: '/orders',
+        path: '/account/orders',
         icon: 'mdi-hoop-house',
         enabled: AuthService.isAuthenticated()
     },

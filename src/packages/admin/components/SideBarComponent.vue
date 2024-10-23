@@ -8,10 +8,10 @@
       <div>
         <v-avatar class="avatar mr-2" :color="ColorHelper.colorsHelper(user?.type === 'admin' ? 'accent' : 'customer')" size="60">
         <span class="white--text text-h5">{{
-       ` ${user?.name.split(" ")[0][0]}${user?.name.split(" ")[1][0]}`
+       ` ${user?.firstName[0]}${user?.lastName[0]}`
       }}</span>
       </v-avatar>
-      <span>{{ user?.type?.toUpperCase() }}</span>
+      <span>{{  user?.firstName[0] + user?.lastName }}</span>
       <span class="sidebar-active-spot"></span>
       </div>
       <v-list dense>
