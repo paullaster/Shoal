@@ -80,3 +80,9 @@ background-color: var(--vt-c-secondary-light)
     color: #3685F4 !important;
     border: 2px solid #ED1E79 !important;
 }
+.text-capitalize {
+    text-transform: capitalize;
+}
+.text-lowecase {
+    text-transform: lowercase;
+}

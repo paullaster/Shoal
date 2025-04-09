@@ -23,15 +23,28 @@
         flex-direction: column;
         justify-content: center;
         align-items: justify;
+        & > p {
+          color: var(--vt-c-text-dark);
+        }
         & > .product-details-name {
           font-size: large;
           font-weight: 500;
-          color: var(--vt-c-text-dark);
         }
         & > .product-details-price {
           font-size: medium;
           font-weight: 500;
-          color: #000000c0;
+        }
+        & > .product-details-availability {
+          font-size: medium;
+          font-weight: 200;
+        }
+      }
+      .cta-btn {
+        & > .cta-btn-group-container {
+          width: max-content;
+          padding-inline: .8rem;
+          border: .1rem var(--vt-c-primary) solid;
+          border-radius: 10rem;
         }
       }
 }

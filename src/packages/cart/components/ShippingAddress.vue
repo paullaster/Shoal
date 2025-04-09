@@ -53,7 +53,7 @@
                     {{ address.street }},
                     {{ address.town }}
                     {{ address.city }}
-                    {{ address.zip }}, {{ setupStore.getCountry(address.country)}}
+                    {{ address.zip }}, {{ setupStore.getCountry(address.country) }}
                   </p>
                   <div
                     v-if="address.default"
@@ -125,7 +125,9 @@
                     variant="outlined"
                     label="Country/Region"
                     :items="countries"
-                    :item-title="(item)=> item?.name ? `${item?.flag} ${item?.name?.common}` : `` "
+                    :item-title="
+                      (item) => (item?.name ? `${item?.flag} ${item?.name?.common}` : ``)
+                    "
                     return-object
                     v-model="checkoutAddress.country"
                     clearable
@@ -217,10 +219,10 @@
 </template>
 
 <script setup>
-import { GEODINGURL, GOOGLEAPIKEY } from '@/environments'
-import { useProfile, useSetupStore } from '@/store'
+import { ACTIVEMAPSERVICE } from '@/environments'
+import { useGlobalStore, useProfile, useSetupStore } from '@/store'
 import ColorHelper from '@/util/ColorHelper'
-import { GoogleServices } from '@/util/google.service'
+import mapService from '@/util/map.service'
 import stringToBase64AndReverse from '@/util/stringToBase64AndReverse'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, watch } from 'vue'
@@ -237,6 +239,7 @@ const route = useRoute()
 // APP STORE
 const setupStore = useSetupStore()
 const profileStore = useProfile()
+const globalStore = useGlobalStore()
 const { countriesLoading, countries } = storeToRefs(setupStore)
 const { address, addressSelected, addAnotherAddress, forceChangeUpgate } = storeToRefs(profileStore)
 
@@ -251,7 +254,7 @@ const checkoutAddress = ref({
   streetCode: '',
   town: '',
   latitude: '',
-  longitude: '',
+  longitude: ''
 })
 const addressOnFocused = ref(false)
 const shipping_address_form = ref(null)
@@ -266,7 +269,7 @@ onMounted(() => {
   profileStore.$patch({
     addAnotherAddress: false,
     editAddressform: false,
-    forceChangeUpgate: 1,
+    forceChangeUpgate: 1
   })
   globalEventBus.on('commitAddress', () => {
     saveCheckoutAddress()
@@ -380,9 +383,11 @@ function addressFieldFocused(e) {
 }
 function useCurrentAddress() {
   try {
+    globalStore.setLoading(true)
     if (!navigator.geolocation) {
       useToast().error('Geolocation is not supported by this browser.')
       addressOnFocused.value = false
+      globalStore.setLoading(false)
       return
     }
     const locationOptions = {
@@ -403,29 +408,47 @@ function useCurrentAddress() {
 async function onSuccessfulLocationPermission(pos) {
   try {
     const cords = pos.coords
-    const googleService = new GoogleServices(GEODINGURL, GOOGLEAPIKEY)
-    const resultAddress = await googleService.geocodingService(
-      `latlng=${cords.latitude},${cords.longitude}`
-    )
+    const resultAddress = await mapService.reverseGeocoding(cords.longitude, cords.latitude, {
+      country: checkoutAddress.value.country?.cca2?.toLowerCase(),
+      language: 'en'
+    })
+    console.log({
+      ACTIVEMAPSERVICE,
+      resultAddress
+    })
+    if (ACTIVEMAPSERVICE === 'MAPBOX') {
+      checkoutAddress.value.address = resultAddress.data.properties.full_address
+      checkoutAddress.value.city = resultAddress.data.properties.context.region.name
+      checkoutAddress.value.zip = resultAddress.data.properties.context.region.region_code
+      checkoutAddress.value.street = resultAddress.data.properties.context.place.name
+      checkoutAddress.value.streetCode = resultAddress.data.properties.context.postcode.name
+      checkoutAddress.value.town = resultAddress.data.properties.context.place.name
+    }
     checkoutAddress.value.latitude = cords.latitude
     checkoutAddress.value.longitude = cords.longitude
-    if (resultAddress.error_message) {
-      useToast().warning(
-        'We encountered an error using this service, Please enter your address manually!'
-      )
-      return
-    } else {
-      checkoutAddress.value.address = resultAddress?.results[0]?.formatted_address
-      checkoutAddress.value.city = resultAddress.results[0]?.address_components[5]?.long_name
-      checkoutAddress.value.zip = resultAddress.results[0]?.address_components[7]?.long_name
-      checkoutAddress.value.street = resultAddress.results[0]?.address_components[1]?.long_name
-      checkoutAddress.value.streetCode = resultAddress.results[0]?.address_components[0]?.long_name
+
+    if (ACTIVEMAPSERVICE === 'GOOGLE') {
+      if (resultAddress.error_message) {
+        useToast().warning(
+          'We encountered an error using this service, Please enter your address manually!'
+        )
+        return
+      } else {
+        checkoutAddress.value.address = resultAddress?.results[0]?.formatted_address
+        checkoutAddress.value.city = resultAddress.results[0]?.address_components[5]?.long_name
+        checkoutAddress.value.zip = resultAddress.results[0]?.address_components[7]?.long_name
+        checkoutAddress.value.street = resultAddress.results[0]?.address_components[1]?.long_name
+        checkoutAddress.value.streetCode = resultAddress.results[0]?.address_components[0]?.long_name
+      }
     }
+    globalStore.setLoading(false)
   } catch (error) {
+    globalStore.setLoading(false)
     useToast().error(error.message)
   }
 }
 function onErrorRequestingLocationPermission(error) {
+  globalStore.setLoading(false)
   useToast().error(`Error: ${error.code}:${error.message}`)
 }
 
@@ -439,7 +462,7 @@ async function saveCheckoutAddress() {
           flag: checkoutAddress.value.country.flag,
           cca2: checkoutAddress.value.country.cca2,
           cca3: checkoutAddress.value.country.cca3,
-          name: {common: checkoutAddress.value.country.name.common},
+          name: { common: checkoutAddress.value.country.name.common }
         })
       }
       const addressPayload = checkoutAddress.value
@@ -447,7 +470,7 @@ async function saveCheckoutAddress() {
         .saveProfileAddress(addressPayload)
         .then((result) => {
           profileStore.$patch({
-            address: result.data,
+            address: result.data
           })
           useToast().success('Shipping address saved successfully!')
           addAnotherAddress.value ? CloseAddressForm() : globalEventBus.emit('moveToNext', 1)
@@ -523,13 +546,13 @@ function CloseAddressForm() {
     profileStore.$patch({
       editAddressform: false,
       forceChangeUpgate: 3,
-      addAnotherAddress: false,
+      addAnotherAddress: false
     })
   } catch (error) {
     profileStore.$patch({
       editAddressform: false,
       forceChangeUpgate: 4,
-      addAnotherAddress: false,
+      addAnotherAddress: false
     })
     useToast().error(error.message)
   }
@@ -544,11 +567,11 @@ async function updatecheckoutAddress() {
     // Update checkout address to your backend API
     if (typeof checkoutAddress.value.country === 'object') {
       checkoutAddress.value.country = JSON.stringify({
-          flag: checkoutAddress.value.country.flag,
-          cca2: checkoutAddress.value.country.cca2,
-          cca3: checkoutAddress.value.country.cca3,
-          name: {common: checkoutAddress.value.country.name.common},
-        })
+        flag: checkoutAddress.value.country.flag,
+        cca2: checkoutAddress.value.country.cca2,
+        cca3: checkoutAddress.value.country.cca3,
+        name: { common: checkoutAddress.value.country.name.common }
+      })
     }
     const addressPayload = checkoutAddress.value
     profileStore

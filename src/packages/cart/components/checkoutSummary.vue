@@ -13,7 +13,11 @@
 import { useCartStore, useSetupStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 
+
+// VUE ROUTER
+const route = useRoute()
 
 // APP STORE
 const cartStore = useCartStore()
@@ -24,7 +28,7 @@ const { currency } = storeToRefs(setupStore);
 
 // HOOKS
 onMounted(async() => {
-    await cartStore.setCheckoutAmounToPay()
+    await cartStore.setCheckoutAmounToPay({...route.query})
 })
 
 </script>

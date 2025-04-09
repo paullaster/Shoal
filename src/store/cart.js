@@ -28,14 +28,14 @@ export const useCartStore = defineStore('cart', {
                 this.toast.error('An error occurred.');
             }
         },
-        async setCheckoutAmounToPay() {
+        async setCheckoutAmounToPay(params = {}) {
                 const amountToPay = {
                     value: 0,
                     subtotal: 0,
                     shipping: 0,
                 };
                 this
-                    .getCheckoutCart()
+                    .getCheckoutCart(params)
                     .then((response) => {
                         amountToPay.value = response.data.Items.reduce(
                             (sum, runningVal) => sum + parseFloat(runningVal.totalPrice),
@@ -190,10 +190,10 @@ export const useCartStore = defineStore('cart', {
                 this.getCart();
             }
         },
-        async removeItemFromCart(productID, removeCache = false) {
+        async removeItemFromCart(productID, removeCache = false, initiatedOncart = false) {
             try {
+                const cart = this.getCart(removeCache ?? false);
                 if (!AuthService.isAuthenticated() || removeCache) {
-                    const cart = this.getCart(removeCache ?? false);
                     if (!Object.keys(this.cart).length) {
                         return;
                     }
@@ -206,8 +206,9 @@ export const useCartStore = defineStore('cart', {
                     WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, this.cart);
                     return;
                 }
+                const id = initiatedOncart ? productID : cart.Items.find((item) => item.productPid === productID).itemId;
                 _request.axiosRequest({
-                    url: `${constants.cart}/${productID}`,
+                    url: `${constants.cart}/${id}`,
                     method: 'DELETE',
                 })
                     .then((res) => {
@@ -224,10 +225,11 @@ export const useCartStore = defineStore('cart', {
                 this.getCart();
             }
         },
-        async getCheckoutCart() {
+        async getCheckoutCart(params = {}) {
             return await _request.axiosRequest({
                 url: constants.cart,
                 method: 'GET',
+                params,
             });
         },
         async checkout(payload) {

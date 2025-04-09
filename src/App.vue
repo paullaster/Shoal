@@ -1,25 +1,26 @@
 <template>
   <div class="app">
     <template v-if="lgAndUp">
-    <div style="display: flex; justify-content: center; align-items: center; width: 100vw;">
-       <p style="text-align: center;">
-        We're working on the desktop view and it will be available soon. Kindly access the app using your mobile device.
-       <br />
-       Thank you for your continued support. ):
-       </p>
-    </div>
-  </template>
-  <template v-else>
-    <HeaderComponent v-if="showHeader"/>
-  <router-view v-slot="{Component}">
-    <transition>
-     <component :is="Component"/>
-    </transition>
-  </router-view>
-  <FooterComponents />
-  <DynamicDialog />
-  <LoaderComponent v-if="loading" />
-  </template>
+      <div style="display: flex; justify-content: center; align-items: center; width: 100vw;">
+        <p style="text-align: center;">
+          We're working on the desktop view and it will be available soon. Kindly access the app using your mobile
+          device.
+          <br />
+          Thank you for your continued support. :heart
+        </p>
+      </div>
+    </template>
+    <template v-else>
+      <HeaderComponent v-if="showHeader" />
+      <router-view v-slot="{ Component }">
+        <transition>
+          <component :is="Component" />
+        </transition>
+      </router-view>
+      <FooterComponents />
+      <DynamicDialog />
+      <LoaderComponent v-if="loading" />
+    </template>
   </div>
 </template>
 <script setup>
@@ -52,30 +53,30 @@ const { loading } = storeToRefs(globalStore);
 const { setMenu } = globalStore;
 
 const menus = [
-    {
-        name: 'Orders',
-        path: '/account/orders',
-        icon: 'mdi-hoop-house',
-        enabled: AuthService.isAuthenticated()
-    },
-    // {
-    //     name: 'Vouchers',
-    //     path: '/vouchers',
-    //     icon: 'mdi-ticket-percent-outline',
-    // enabled: true
-    // },
-    {
-        name: 'Saved Items',
-        path: '/saved-items',
-        icon: 'mdi-bookmark-outline',
-        enabled: AuthService.isAuthenticated()
-    },
-    {
-        name: 'More',
-        path: '/more',
-        icon: 'mdi-unfold-more-vertical',
-        enabled: true
-    }
+  {
+    name: 'Orders',
+    path: '/account/orders',
+    icon: 'mdi-hoop-house',
+    enabled: AuthService.isAuthenticated()
+  },
+  // {
+  //     name: 'Vouchers',
+  //     path: '/vouchers',
+  //     icon: 'mdi-ticket-percent-outline',
+  // enabled: true
+  // },
+  {
+    name: 'Saved Items',
+    path: '/saved-items',
+    icon: 'mdi-bookmark-outline',
+    enabled: AuthService.isAuthenticated()
+  },
+  {
+    name: 'More',
+    path: '/more',
+    icon: 'mdi-unfold-more-vertical',
+    enabled: true
+  }
 ];
 
 setMenu(menus);
@@ -88,11 +89,11 @@ const showHeader = ref(true);
 
 //@TODO:  Handle this route guards
 watch(
-  () =>route,
+  () => route,
   (route) => {
     const headerless = route.matched.some((record) => record.meta.headerless);
     showHeader.value = !headerless;
-}, {deep: true, immediate: true});
+  }, { deep: true, immediate: true });
 
 onMounted(() => {
   setupStore.getCategories();
@@ -102,5 +103,4 @@ onMounted(() => {
 
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
