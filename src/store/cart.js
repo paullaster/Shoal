@@ -29,36 +29,37 @@ export const useCartStore = defineStore('cart', {
             }
         },
         async setCheckoutAmounToPay(params = {}) {
-                const amountToPay = {
-                    value: 0,
-                    subtotal: 0,
-                    shipping: 0,
-                };
-                this
-                    .getCheckoutCart(params)
-                    .then((response) => {
-                        amountToPay.value = response.data.Items.reduce(
-                            (sum, runningVal) => sum + parseFloat(runningVal.totalPrice),
-                            0
-                        )
-                        amountToPay.subtotal += amountToPay.value;
-                        amountToPay.shipping += parseFloat(response.data.shippingRate);
-                        amountToPay.value += parseFloat(response.data.shippingRate);
-                        this.$patch({
-                            amountToPay: amountToPay.value,
-                            subTotalAmount: amountToPay.subtotal,
-                            shippingAmount: amountToPay.shipping,
-                        })
+            const amountToPay = {
+                value: 0,
+                subtotal: 0,
+                shipping: 0,
+            };
+            this
+                .getCheckoutCart(params)
+                .then((response) => {
+                    amountToPay.value = response.data.Items.reduce(
+                        (sum, runningVal) => sum + parseFloat(runningVal.totalPrice),
+                        0
+                    )
+                    amountToPay.subtotal += amountToPay.value;
+                    amountToPay.shipping += parseFloat(response.data.shippingRate);
+                    amountToPay.value += parseFloat(response.data.shippingRate);
+                    this.$patch({
+                        amountToPay: amountToPay.value,
+                        subTotalAmount: amountToPay.subtotal,
+                        shippingAmount: amountToPay.shipping,
                     })
-                    .catch((error) => {
-                        console.error('Error retrieving checkout cart:', error)
-                        this.toast.error('Error retrieving checkout cart')
-                    })
+                })
+                .catch((error) => {
+                    console.error('Error retrieving checkout cart:', error)
+                    this.toast.error('Error retrieving checkout cart')
+                })
         },
         async createCart(payload) {
             try {
                 this.setGlobalLoader(true);
-                const cartItem = { ...payload };
+                const cartItem = { ...payload, quantity: 1 };
+
                 cartItem.image = cartItem.Images[0].url;
                 if (!AuthService.isAuthenticated()) {
                     this.getCart();

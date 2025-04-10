@@ -24,6 +24,7 @@
 .product-detailedpage-close-btn-holder {
     position: absolute;
     top: 0;
+    right: 0;
     & > .vbtn-close-bg {
         background-color: transparent;
         border: .1rem solid #21212123;

@@ -12,24 +12,25 @@
         {{ product?.name }}
       </p>
       <p class="product-details-price" disabled>{{ currency }} {{ product?.price }}</p>
-      <p class="product-details-availability">{{ product.quantity }} available in stock</p>
+      <p class="product-details-availability">{{ product.quantity }} in stock</p>
     </div>
     <div class="cta-btn">
       <v-btn color="primary" variant="flat" rounded="pill" v-if="!Object.keys(productInCart).length"
-        @click.stop="addToCart">
+        @click.stop="addToCart(product)">
         <v-icon class="mr-3">mdi-cart-outline</v-icon>
         <span class="text-capitalize">add </span><span style="margin-left: .4rem;" class="text-lowecase"> to
           cart</span>
       </v-btn>
-      <div class="cta-btn-group-container" v-if="Object.keys(productInCart).length">
-        <v-btn variant="text">
-          <v-icon>mdi-minus</v-icon>
+      <div class="cta-btn-group-container" v-if="Object.keys(productInCart).length"
+        @click.stop="cartUpdate(product, $event)">
+        <v-btn variant="text" data-type-remove>
+          <v-icon data-type-remove>mdi-minus</v-icon>
         </v-btn>
         <span>
           {{ productInCart.quantity }}
         </span>
-        <v-btn variant="text">
-          <v-icon>mdi-plus</v-icon>
+        <v-btn variant="text" data-type-add>
+          <v-icon data-type-add>mdi-plus</v-icon>
         </v-btn>
       </div>
     </div>
@@ -52,7 +53,7 @@ const props = defineProps({
 })
 // ROUTES
 const router = useRouter()
-const { addToCart } = useProduct()
+const { addToCart, cartUpdate } = useProduct()
 
 // STORE
 const setupStore = useSetupStore()

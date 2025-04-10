@@ -5,37 +5,19 @@
         <img :src="product?.Images[0]?.url" alt="Product" />
       </div>
       <div class="product-detailedpage-close-btn-holder">
-       <v-btn
-       v-tooltip="'Close'"
-       icon
-       elevation="0"
-       class="vbtn-close-bg"
-       @click="closeProductDetailPage"
-       >
-        <v-icon 
-        class="mr-2"
-        :color="ColorHelper.colorsHelper('error')"
-        >
-          mdi-close
-        </v-icon>
-       </v-btn>
+        <v-btn v-tooltip="'Close'" variant="text" @click="closeProductDetailPage">
+          <v-icon :color="ColorHelper.colorsHelper('error')" size="30">
+            mdi-close
+          </v-icon>
+        </v-btn>
       </div>
       <div class="product-detailpage-interaction-btn-holder">
-        <v-btn @click="async () => await addToWishlist(product.pid)"
-          icon
-          class="bg-c-primary"
-          v-if="!numberOfProductInWishlist"
-          v-tooltip="'Add to Wishlist'"
-          elevation="0"
-          >
+        <v-btn @click="async () => await addToWishlist(product.pid)" icon class="bg-c-primary"
+          v-if="!numberOfProductInWishlist" v-tooltip="'Add to Wishlist'" elevation="0">
           <v-icon class="mr-2" :color="ColorHelper.colorsHelper('primary')">mdi-heart-outline</v-icon>
           <span v-if="lgAndUp">Add to Wishlist</span>
         </v-btn>
-        <v-btn @click="openShareDialog" class="bg-c-primary"
-        v-tooltip="'Share'"
-        icon
-        elevation="0"
-        >
+        <v-btn @click="openShareDialog" class="bg-c-primary" v-tooltip="'Share'" icon elevation="0">
           <v-icon class="mr-2" :color="ColorHelper.colorsHelper('primary')">mdi-share-variant</v-icon>
           <span v-if="lgAndUp">Share</span>
         </v-btn>
@@ -50,27 +32,27 @@
         <h3>Available in stock</h3>
         <p>{{ product.quantity }}</p>
       </div>
-      <div 
-      v-html="product.recipeTips"
-      class="instructionVideoEmbedder"
-      >
+      <div v-html="product.recipeTips" class="instructionVideoEmbedder">
       </div>
       <div>
         <h3>Description</h3>
         <p>{{ product.description }}</p>
       </div>
       <div class="product-detailpage-btn-holder">
-        <v-btn  class="bg-c-primary">
-          <v-icon >mdi-phone-outline</v-icon>
+        <v-btn class="bg-c-primary">
+          <v-icon>mdi-phone-outline</v-icon>
         </v-btn>
-        <v-btn @click="async () =>await cartStore.createCart({...product, quantity: 1})" class="bg-c-primary" v-if="!numberOfProductInCart">
+        <v-btn @click="async () => await cartStore.createCart({ ...product, quantity: 1 })" class="bg-c-primary"
+          v-if="!numberOfProductInCart">
           <v-icon class="mr-2">mdi-cart-plus</v-icon>
           <span>Add to Cart</span>
         </v-btn>
         <div v-if="numberOfProductInCart">
-          <v-btn class="bg-c-primary" @click.prevent="()=>cartStore.updateCart(product.pid, 'remove')"><v-icon class="mr-2">mdi-minus</v-icon></v-btn>
+          <v-btn class="bg-c-primary" @click.prevent="() => cartStore.updateCart(product.pid, 'remove')"><v-icon
+              class="mr-2">mdi-minus</v-icon></v-btn>
           <span>{{ numberOfProductInCart }}</span>
-          <v-btn class="bg-c-primary" @click.prevent="()=>cartStore.updateCart(product.pid, 'add')"><v-icon>mdi-plus</v-icon></v-btn>
+          <v-btn class="bg-c-primary"
+            @click.prevent="() => cartStore.updateCart(product.pid, 'add')"><v-icon>mdi-plus</v-icon></v-btn>
         </div>
       </div>
     </section>
@@ -88,7 +70,7 @@ import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 
 // VUETIFY
-const { lgAndUp} = useDisplay();
+const { lgAndUp } = useDisplay();
 
 // ROUTES
 const route = useRoute();
@@ -102,7 +84,7 @@ const cartStore = useCartStore();
 // STORE STATES AND GETTERS
 const { product } = storeToRefs(productStore)
 const { currency } = storeToRefs(setupStore)
-const {cart} = storeToRefs(cartStore);
+const { cart } = storeToRefs(cartStore);
 
 // STORE ACTIONS
 
@@ -117,15 +99,15 @@ const numberOfProductInWishlist = ref(0);
 
 // WATCHERS
 watch(
-  () => [product.value, cart.value], 
+  () => [product.value, cart.value],
   () => {
     itemInCart.value = cart.value.Items?.find(item => item.productPid === product.value.pid)
-}, {deep: true, immediate: true})
+  }, { deep: true, immediate: true })
 watch(
-  () => itemInCart.value, 
+  () => itemInCart.value,
   (newValue) => {
     numberOfProductInCart.value = newValue?.quantity;
-}, {deep: true, immediate: true})
+  }, { deep: true, immediate: true })
 
 
 
@@ -133,7 +115,6 @@ watch(
 function closeProductDetailPage() {
   router.back();
 }
-</script> 
+</script>
 
-<style scoped>
-</style>
+<style scoped></style>
