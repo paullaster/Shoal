@@ -63,7 +63,7 @@ const { cart } = storeToRefs(cartStore)
 
 // Computed
 const productInCart = computed(() => {
-  const item = cart.value.Items.find((it) => it.pid === props.product.pid)
+  const item = cart.value.Items.find((it) => it.productPid === props.product.pid)
   if (item) {
     return item
   }
