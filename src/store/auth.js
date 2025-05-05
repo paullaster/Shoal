@@ -165,6 +165,27 @@ export const useAuth = defineStore("auth", {
                 this.toast.error(error.message);
             }
         },
+        async resendOTP(payload) {
+            try {
+                this.setLoader(true);
+                _request.axiosRequest({
+                    url: "/auth/resend-otp",
+                    method: "POST",
+                    data: payload,
+                })
+                    .then(async (response) => {
+                        this.setLoader(false);
+                        this.toast.success(response.message);
+                    })
+                    .catch(async (error) => {
+                        this.setLoader(false);
+                        this.toast.error(error?.response?.data?.message || error.message || customError);
+                    });
+            } catch (error) {
+                this.setLoader(false);
+                this.toast.error(error.message || customError)
+            }
+        },
         async verifyOtp(payload) {
             try {
                 this.setLoader(true);

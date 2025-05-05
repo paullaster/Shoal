@@ -14,25 +14,19 @@
           <v-otp-input v-model="otp" type="text" variant="solo"></v-otp-input>
         </v-sheet>
 
-        <v-btn
-          class="my-4"
-          :color="ColorHelper.colorsHelper('primary')"
-          height="40"
-          text="Verify"
-          variant="flat"
-          :block="mdAndDown"
-          :disabled="otp.length!== 6"
-          @click.prevent="verifyOTP()"
-        ></v-btn>
+        <v-btn class="my-4" :color="ColorHelper.colorsHelper('primary')" height="40" text="Verify" variant="flat"
+          :block="mdAndDown" :disabled="otp.length !== 6" @click.prevent="verifyOTP()"></v-btn>
 
         <div class="text-caption">
-          Didn't receive the code? <span v-if="otpTimer"> resend after {{ Helper.countDownDisplay(otpTimer) }}  </span> <a href="#" @click.prevent="otp = ''" v-else>Resend</a>
+          Didn't receive the code? <span v-if="otpTimer"> resend after {{ Helper.countDownDisplay(otpTimer) }} </span>
+          <a href="#" @click.prevent="() => (otp = '', resendOtp({ datapoint: route.params.uniquCode }))"
+            v-else>Resend</a>
         </div>
       </v-card>
     </section>
   </main>
 </template>
-  <script setup>
+<script setup>
 import { useAuth } from '@/store';
 import ColorHelper from '@/util/ColorHelper'
 import Helper from '@/util/Helper';
@@ -40,6 +34,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { globalEventBus } from 'vue-toastification';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
+import useAuthentication from '@/composables/useAuthentication';
 
 
 // VUETIFY
@@ -49,9 +44,14 @@ const { mdAndDown } = useDisplay();
 const route = useRoute()
 const router = useRouter()
 
+// Composables
+const { resendOtp } = useAuthentication()
+
 
 // APP STATE
 const authStore = useAuth();
+
+
 
 // COMPONENT STATE
 const uniqueUserCode = ref(atob(route.params.uniquCode).split(':'))
@@ -60,40 +60,40 @@ const otpTimer = ref(0);
 
 // HOOKS
 onMounted(() => {
-    otp.value = '';
-    otpTimer.value = 0;
+  otp.value = '';
+  otpTimer.value = 0;
   globalEventBus.on('start-otp-resend-timer', () => {
     setResendOTPTimer();
   });
   globalEventBus.on("complete-profile", (data) => {
-    router.push({name: 'completeProfile', params: {uniquCode: data}, query: {...route.query}})
+    router.push({ name: 'completeProfile', params: { uniquCode: data }, query: { ...route.query } })
   })
 });
 
 // COMPONENT METHODS
 function setResendOTPTimer() {
-        const timer = 120;
-        otpTimer.value = timer;
-    const interval = setInterval(() => {
-        otpTimer.value--;
-      if (otpTimer.value < 0) {
-        clearInterval(interval);
-        stopOTPTimer(interval);
-      }
-    }, 1000);
-    
+  const timer = 120;
+  otpTimer.value = timer;
+  const interval = setInterval(() => {
+    otpTimer.value--;
+    if (otpTimer.value < 0) {
+      clearInterval(interval);
+      stopOTPTimer(interval);
+    }
+  }, 1000);
+
 }
-function stopOTPTimer (interval) {
-    clearInterval(interval);
-    otpTimer.value = 0;
+function stopOTPTimer(interval) {
+  clearInterval(interval);
+  otpTimer.value = 0;
 }
 function verifyOTP() {
-    // Verify OTP and handle success/failure
-    const payload = {
-        datapoint: route.params.uniquCode,
-        otp: otp.value,
-    };
-    // Call API to verify OTP
-    authStore.verifyOtp(payload)
+  // Verify OTP and handle success/failure
+  const payload = {
+    datapoint: route.params.uniquCode,
+    otp: otp.value,
+  };
+  // Call API to verify OTP
+  authStore.verifyOtp(payload)
 }
 </script>

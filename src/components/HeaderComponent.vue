@@ -3,49 +3,21 @@
     <nav class="header-nav">
       <ul>
         <li v-if="!lgAndUp">
-          <v-btn
-            variant="text"
-            @click="() => globalStore.toggleSidebarNavigation(true)"
-            v-if="!showAuthMenu"
-          >
+          <v-btn variant="text" @click="() => globalStore.toggleSidebarNavigation(true)" v-if="!showAuthMenu">
             <v-icon>mdi-menu</v-icon>
           </v-btn>
-          <v-btn
-            v-if="showAuthMenu"
-            variant="text"
-            @click="() => !lgAndUp && dashboardStore.setToggleNavbar(true)"
-          >
+          <v-btn v-if="showAuthMenu" variant="text" @click="() => !lgAndUp && dashboardStore.setToggleNavbar(true)">
             <v-icon size="30" :color="ColorHelper.colorsHelper('primary')">mdi-view-module</v-icon>
           </v-btn>
         </li>
         <li>
-          <a @click="() => router.push({ name: 'landing' })"
-            ><img :src="HeaderLogo" alt="Noel Fish Delivery"
-          /></a>
+          <a @click="() => router.push({ name: 'landing' })"><img :src="HeaderLogo" alt="Noel Fish Delivery" /></a>
         </li>
       </ul>
       <ul class="reare-nav">
         <li>
-          <a @click="() => router.push({ name: 'search' })" v-if="route.name !== 'landing'"
-            ><v-icon>mdi-magnify</v-icon></a
-          >
-        </li>
-        <li>
-          <a
-            v-if="!AuthService.isAuthenticated()"
-            @click="
-              () =>
-                router.push({
-                  name: 'auth',
-                  query: { redirectTo: stringToBase64AndReverse.toBase64String(route.fullPath) }
-                })
-            "
-            ><v-icon v-tooltip="'Login'">mdi-account-outline</v-icon
-            ><span v-if="lgAndUp">account</span></a
-          >
-          <a v-else @click="() => authStore.logout()"
-            ><v-icon v-tooltip="'Logout'">mdi-logout</v-icon><span v-if="lgAndUp">Logout</span></a
-          >
+          <a @click="() => router.push({ name: 'search' })"
+            v-if="route.name !== 'landing'"><v-icon>mdi-magnify</v-icon></a>
         </li>
         <li class="cart-menu">
           <button @click="() => router.push({ name: 'cart' })">
@@ -53,6 +25,17 @@
             <v-badge color="#ED1E79" :content="itemsInCart" inline v-if="itemsInCart"></v-badge>
             <span v-if="lgAndUp"> cart </span>
           </button>
+        </li>
+        <li>
+          <a v-if="!AuthService.isAuthenticated()" @click="
+            () =>
+              router.push({
+                name: 'auth',
+                query: { redirectTo: stringToBase64AndReverse.toBase64String(route.fullPath) }
+              })
+          "><v-icon v-tooltip="'Login'">mdi-account-outline</v-icon><span v-if="lgAndUp">account</span></a>
+          <a v-else @click="() => authStore.logout()"><v-icon v-tooltip="'Logout'">mdi-logout</v-icon><span
+              v-if="lgAndUp">Logout</span></a>
         </li>
       </ul>
     </nav>
@@ -99,6 +82,7 @@ const showAuthMenu = computed(() => {
 .cart-menu {
   position: relative;
 }
+
 .v-badge {
   display: inline-block;
   line-height: 0;
