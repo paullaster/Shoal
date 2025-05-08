@@ -58,8 +58,8 @@ export default defineConfig({
     project: "noelsdeliveries"
   })],
   css: {
-  preprocessorMaxWorkers: 2,
-},
+    preprocessorMaxWorkers: 2,
+  },
   build: {
     cssCodeSplit: true,
     cssTarget: 'es2015',
@@ -89,5 +89,6 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
+    allowedHosts: ['5b26628fc49a7fcea9a221d180465a22.serveo.net']
   }
 })

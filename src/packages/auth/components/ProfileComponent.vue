@@ -3,7 +3,7 @@
         <section class="complete-profile-card">
             <v-card elevation="0">
                 <v-card-title style="width: 100%;">
-                    {{ userData[3] === 'newAccount' ? 'Complete Profile' : 'Enter your password' }}
+                    {{ userData[4] === 'newAccount' ? 'Complete Profile' : 'Enter your password' }}
                 </v-card-title>
                 <v-card-text style="padding: 0 !important;">
                     <v-form ref="profileForm">
@@ -13,17 +13,17 @@
                                 <v-text-field variant="outlined" v-model="user.email"
                                     :readonly="userData[2] === 'email'" :rules="rules.email"></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" v-if="userData[3] === 'newAccount'">
+                            <v-col cols="12" sm="6" v-if="userData[4] === 'newAccount'">
                                 <v-label>First Name</v-label>
                                 <v-text-field variant="outlined" v-model="user.firstName"
                                     placeholder="for example: John" :rules="rules.firstName"></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" v-if="userData[3] === 'newAccount'">
+                            <v-col cols="12" sm="6" v-if="userData[4] === 'newAccount'">
                                 <v-label>Last Name</v-label>
                                 <v-text-field variant="outlined" v-model="user.lastName" placeholder="for example: Doe"
                                     :rules="rules.lastName"></v-text-field>
                             </v-col>
-                            <v-col cols="12" sm="6" v-if="userData[3] === 'newAccount'">
+                            <v-col cols="12" sm="6" v-if="userData[4] === 'newAccount'">
                                 <v-label>Phone number</v-label>
                                 <v-text-field variant="outlined" v-model="user.phoneNumber"
                                     placeholder="for example: +254 700258098" :readonly="userData[2] === 'phone'"
@@ -48,7 +48,7 @@
                             <v-col cols="12">
                                 <v-btn :color="ColorHelper.colorsHelper('primary')" @click="updateProfile"
                                     :loading="loading" :disabled="loading" :block="mdAndDown" size="x-large">
-                                    {{ userData[3] === 'newAccount' ? 'Update Profile' : 'Continue' }}
+                                    {{ userData[4] === 'newAccount' ? 'Update Profile' : 'Continue' }}
                                 </v-btn>
                             </v-col>
                         </v-row>
@@ -89,7 +89,7 @@ const { loading } = storeToRefs(authStore);
 
 // HOOK
 onMounted(() => {
-    if (userData.value[3] !== 'newAccount') {
+    if (userData.value[4] !== 'newAccount') {
         user.value.email = userData.value[0];
     }
     if (userData.value[2] === 'email') {
@@ -141,7 +141,8 @@ async function updateProfile() {
         }
 
         user.value.password = btoa(user.value.password);
-        if (userData.value[3] === 'newAccount') {
+        user.value.completed = true;
+        if (userData.value[4] === 'newAccount') {
             await authStore.updateProfile(user.value, userData.value);
             user.value = { ...user.value, name: '', [userData.value[2] === 'email' ? 'phoneNumber' : 'email']: '', password: '' };
         } else {

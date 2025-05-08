@@ -2,14 +2,14 @@
   <main class="auth-wrapper">
     <section class="btn-section">
       <article class="navigation-btn">
-        <v-btn variant="text"  @click="()=>router.back()">
+        <v-btn variant="text" @click="() => router.back()">
           <v-icon size="30">mdi-keyboard-backspace</v-icon>
         </v-btn>
       </article>
     </section>
     <section class="logo-section">
       <article class="logo">
-        <LogoComponent width="100px" @click="()=>router.push({name: 'landing'})" />
+        <LogoComponent width="100px" @click="() => router.push({ name: 'landing' })" />
       </article>
     </section>
     <section class="auth-intro">
@@ -25,20 +25,14 @@
         <v-form ref="customerLogin">
           <v-row>
             <v-col cols="12" sm="6">
-              <v-text-field
-                label="Email or Phone Number"
-                v-model="formData.username"
+              <v-text-field label="Email or Phone Number" v-model="formData.username"
                 hint="If using a phone number, you must provide country code followed by white space then your phone number"
-                variant="outlined"
-                :rules="rules.username"
-              />
+                variant="outlined" :rules="rules.username" />
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="12">
-              <v-btn @click="checkUser" class="bg-c-primary" block density="default" size="large"
-                >Continue</v-btn
-              >
+              <v-btn @click="checkUser" class="bg-c-primary" block density="default" size="large">Continue</v-btn>
             </v-col>
           </v-row>
         </v-form>
@@ -48,8 +42,7 @@
       <v-row class="my-6">
         <v-col cols="12">
           <p class="text-center">
-            <span>By continuing you agree to Noels&apos; Fish Delivery </span
-            ><a href="#">Terms and Conditions</a>
+            <span>By continuing you agree to Noels&apos; Fish Delivery </span><a href="#">Terms and Conditions</a>
           </p>
         </v-col>
       </v-row>
@@ -111,27 +104,27 @@ const formData = ref({
 // HOOKS
 onMounted(() => {
   globalEventBus.on("set-otp-screen", (payload) => {
-    const uniqueCode = `${payload.username}:${payload.type}:${payload.loginType}`;
-    router.push({name: 'verifyAccount', params: {uniquCode: btoa(uniqueCode)}, query: {...route.query}});
+    const uniqueCode = `${payload.username}:${payload.type}:${payload.loginType}:${payload.id}:${payload.purpose}`;
+    router.push({ name: 'verifyAccount', params: { uniquCode: btoa(uniqueCode) }, query: { ...route.query } });
   })
   globalEventBus.on("user-credentials", (payload) => {
     const uniqueCode = `${payload.email}:${payload.phoneNumber}:${payload.type}:${payload.id}`;
-    router.push({name: 'userCredentials', params: {uniquCode: btoa(uniqueCode)}, query: {...route.query}});
+    router.push({ name: 'userCredentials', params: { uniquCode: btoa(uniqueCode) }, query: { ...route.query } });
   })
 });
 
 
 // COMPUTED
-const rules = computed(()=>{
+const rules = computed(() => {
   return {
     username: [
-      v =>!!v || 'Username is required',
+      v => !!v || 'Username is required',
       v => /^\S+@\S+\.\S+$/.test(v) || /^\+\d{1,4}\s\d{1,15}$/.test(v) || 'Invalid phone number or email'
     ],
     password: [
-      v =>!!v || 'Password is required',
-      v => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(v) || 
-      `Password must be at least 8 characters long
+      v => !!v || 'Password is required',
+      v => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(v) ||
+        `Password must be at least 8 characters long
        and contain at least one uppercase letter, 
        one lowercase letter, one number, and one special character`
     ]

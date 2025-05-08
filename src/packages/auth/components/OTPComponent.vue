@@ -72,7 +72,7 @@ onMounted(() => {
 
 // COMPONENT METHODS
 function setResendOTPTimer() {
-  const timer = 120;
+  const timer = 180;
   otpTimer.value = timer;
   const interval = setInterval(() => {
     otpTimer.value--;

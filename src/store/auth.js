@@ -100,12 +100,15 @@ export const useAuth = defineStore("auth", {
                 })
                     .then(async (response) => {
                         payload['loginType'] = response.data.loginType;
+                        payload['id'] = response.data.id;
+                        payload['purpose'] = response.data.purpose
                         response?.data?.otp && globalEventBus.emit("set-otp-screen", payload);
                         response?.data?.exist && globalEventBus.emit("user-credentials", response.data.user);
                         response?.data?.otp && setTimeout(() => {
                             globalEventBus.emit('start-otp-resend-timer');
                         }, 1000);
                         this.setLoader(false);
+                        response.data.otp && this.toast.success(response.message);
                     })
                     .catch(async (error) => {
                         this.toast.error(error?.response?.data?.message || error.message || customError);
@@ -195,13 +198,12 @@ export const useAuth = defineStore("auth", {
                     data: payload,
                 })
                     .then(async (response) => {
-                        this.setLoader(false);
-                        this.toast.success(response.message);
-                        if (response.data.user.Otps[0].type === 'newAccount') {
-                            const datapoint = atob(payload.datapoint);
-                            payload.datapoint = btoa(`${datapoint}:${response.data.user.Otps[0].type}`)
+                        const purpose = atob(payload.datapoint).split(":")[4]
+                        if (purpose === 'newAccount') {
                             globalEventBus.emit("complete-profile", payload.datapoint)
                         };
+                        this.setLoader(false);
+                        this.toast.success(response.message);
                     })
                     .catch(async (error) => {
                         this.setLoader(false);
@@ -219,7 +221,7 @@ export const useAuth = defineStore("auth", {
                     loading: true,
                 });
                 _request.axiosRequest({
-                    url: `/auth/update-profile/${btoa(datapoint[0])}`,
+                    url: `/auth/update-profile/${btoa(datapoint[3])}`,
                     method: "PATCH",
                     data: payload,
                 })
@@ -229,7 +231,7 @@ export const useAuth = defineStore("auth", {
                             loading: false,
                         });
                         this.toast.success(response.message);
-                        const accountType = datapoint[3];
+                        const accountType = datapoint[4];
                         if (accountType === 'newAccount') {
                             const loginPayload = {
                                 username: datapoint[0],
