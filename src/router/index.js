@@ -56,7 +56,7 @@ const router = createRouter({
     },
     {
       path: '/auth/verify-account/:uniquCode',
-      name:'verifyAccount',
+      name: 'verifyAccount',
       component: () => import('@/packages/auth/components/OTPComponent.vue'),
       meta: {
         title: 'Verify Account',
@@ -66,7 +66,7 @@ const router = createRouter({
     },
     {
       path: '/auth/complete-profile/:uniquCode',
-      name:'completeProfile',
+      name: 'completeProfile',
       component: () => import('@/packages/auth/components/ProfileComponent.vue'),
       meta: {
         title: 'Complete Profile',
@@ -76,7 +76,7 @@ const router = createRouter({
     },
     {
       path: '/auth/credentials/:uniquCode',
-      name:'userCredentials',
+      name: 'userCredentials',
       component: () => import('@/packages/auth/components/ProfileComponent.vue'),
       meta: {
         title: 'User credentials',
@@ -114,7 +114,7 @@ const router = createRouter({
         title: 'Accounts',
         requiresAuth: true,
       },
-      redirect: { name: 'userProfile'},
+      redirect: { name: 'userProfile' },
       children: [
         {
           path: 'dashboard',
@@ -197,6 +197,11 @@ const router = createRouter({
                 title: 'Create Category'
               }
             },
+            {
+              path: 'discounts',
+              name: 'AdminDiscounts',
+              component: () => import('@/packages/admin/discounts/views/DiscountManagement.vue')
+            },
             // {
             //   path: 'orders',
             //   name: 'adminOrders',
@@ -245,16 +250,16 @@ router.beforeEach((to, from, next) => {
   if (requiresAuth && !AuthService.isAuthenticated()) {
     if (to.path.includes('admin')) {
       next({ name: 'adminAuth' });
-    }else {
-      next({ name: 'auth', query: { redirectTo: stringToBase64AndReverse.toBase64String(to.fullPath)} });
+    } else {
+      next({ name: 'auth', query: { redirectTo: stringToBase64AndReverse.toBase64String(to.fullPath) } });
     }
   } else {
     next();
   }
 })
-router.beforeResolve( async (to) => {
+router.beforeResolve(async (to) => {
   if (to.meta.requiresGuest) {
-      return !AuthService.isAuthenticated();
+    return !AuthService.isAuthenticated();
   }
   if (to.matched.some((record) => record.meta.isAdmin)) {
     return AuthService.isAuthenticated() && AuthService.getUser().type === 'admin';
@@ -266,13 +271,13 @@ router.beforeResolve( async (to) => {
   return true;
 })
 
-router.afterEach( (to) => {
-useGlobalStore().setLoading(false);
-const title = to.meta.title || 'Home';
-  document.title = 'Noels | '+ title;
+router.afterEach((to) => {
+  useGlobalStore().setLoading(false);
+  const title = to.meta.title || 'Home';
+  document.title = 'Noels | ' + title;
   scroll({
     top: 0,
-    behavior:'smooth'
+    behavior: 'smooth'
   })
 })
 

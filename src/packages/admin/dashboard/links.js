@@ -20,10 +20,28 @@ export default [
     {
         path: `/admin/${btoa(AuthService.getUser().userId)}/products`,
         order: 2,
-        hasSubs: false,
+        hasSubs: true,
         icon: "mdi-shopping",
         title: "Manage Products",
         id: 'AdminManageProducts',
+        subs: [
+            {
+                path: `/admin/${btoa(AuthService.getUser().userId)}/products`,
+                order: 2,
+                hasSubs: false,
+                icon: "mdi-package-variant",
+                title: "Products",
+                id: 'AdminManageProductsProducts',
+            },
+            {
+                path: `/admin/${btoa(AuthService.getUser().userId)}/discounts`,
+                order: 2,
+                hasSubs: false,
+                icon: "mdi-percent-outline",
+                title: "Discounts",
+                id: 'AdminManageProductsDiscounts',
+            }
+        ],
     },
     {
         path: `/admin/${btoa(AuthService.getUser().userId)}/orders`,
