@@ -184,7 +184,7 @@ const router = createRouter({
             {
               path: 'products/create',
               name: 'createProduct',
-              component: () => import('@/packages/admin/products/components/AddProductComponent.vue'),
+              component: () => import('@/packages/admin/products/components/AddProduct.vue'),
               meta: {
                 title: 'Create Product'
               }
@@ -192,7 +192,7 @@ const router = createRouter({
             {
               path: 'products/category',
               name: 'createCategory',
-              component: () => import('@/packages/admin/products/components/AddCategoryComponent.vue'),
+              component: () => import('@/packages/admin/products/components/AddCategory.vue'),
               meta: {
                 title: 'Create Category'
               }

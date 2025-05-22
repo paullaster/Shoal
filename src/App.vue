@@ -6,7 +6,7 @@
           We're working on the desktop view and it will be available soon. Kindly access the app using your mobile
           device.
           <br />
-          Thank you for your continued support. :heart
+          Thank you for your continued support. ::heart
         </p>
       </div>
     </template>
