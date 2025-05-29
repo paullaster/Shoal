@@ -1,7 +1,8 @@
 <template>
     <v-container fluid class="pa-4 product-grid">
-        <v-row v-if="products.length">
-            <v-col v-for="product in products" :key="product.pid" cols="12" sm="6" md="4" lg="3" xl="2">
+        <v-row v-if="products.length" style="padding-inline: 0 !important;">
+            <v-col v-for="product in products" :key="product.pid" cols="12" sm="6" md="4" lg="3" xl="2"
+                style="padding-inline: 0 !important;">
                 <v-card class="product-card rounded-lg" elevation="2">
                     <div class="product-image-container">
                         <v-img :src="product.imageUrl || 'https://via.placeholder.com/300x200.png?text=No+Image'"
@@ -20,7 +21,7 @@
                     </div>
 
                     <v-card-title class="text-subtitle-1 font-weight-bold product-title">{{ product.name
-                    }}</v-card-title>
+                        }}</v-card-title>
 
                     <v-card-subtitle class="text-caption text-medium-emphasis product-categories">
                         Categories: {{ getProductCategories(product.category).join(', ') }}

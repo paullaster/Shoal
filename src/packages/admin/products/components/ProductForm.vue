@@ -157,13 +157,13 @@
             </v-stepper-window>
 
             <!-- Stepper Actions -->
-            <div class="stepper-actions pa-4">
+            <div class="stepper-actions pa-4 d-flex">
                 <v-btn v-if="currentStep > 1" variant="tonal" class="mr-2" @click="currentStep--">
                     <v-icon start>mdi-chevron-left</v-icon>
-                    Previous
+                    Prev
                 </v-btn>
                 <v-spacer />
-                <v-btn v-if="currentStep < steps.length" color="primary" @click="currentStep++">
+                <v-btn v-if="currentStep < steps.length" class="primary-gradient-button" @click="currentStep++">
                     Next
                     <v-icon end>mdi-chevron-right</v-icon>
                 </v-btn>
@@ -176,7 +176,7 @@
 
         <!-- Category Dialog -->
         <v-dialog v-model="categoryDialog" max-width="600px">
-            <v-card class="rounded-xl pa-6">
+            <v-card class="rounded-xl py-6">
                 <v-card-title class="text-h5 font-weight-bold">
                     Add New Category
                 </v-card-title>
@@ -188,7 +188,7 @@
 
         <!-- Attribute Dialog -->
         <v-dialog v-model="attributeDialog" max-width="800px">
-            <v-card class="rounded-xl pa-6">
+            <v-card class="rounded-xl py-6">
                 <v-card-title class="text-h5 font-weight-bold">
                     Manage Attributes
                 </v-card-title>
@@ -449,7 +449,7 @@ onMounted(() => {
 }
 
 .step-content {
-    padding: 24px;
+    padding: 8px;
     background: rgba(123, 97, 255, 0.04);
     border-radius: 12px;
     margin: 16px 0;
@@ -491,10 +491,10 @@ onMounted(() => {
         background: rgba(255, 255, 255, 0.04);
     }
 
-    .stepper-actions {
+    /* .stepper-actions {
         background: #1a1a1a;
         border-top-color: rgba(255, 255, 255, 0.12);
-    }
+    } */
 }
 
 /* Accessibility */

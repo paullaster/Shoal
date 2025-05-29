@@ -1,7 +1,22 @@
 <template>
-  <v-container fluid class="pa-0 product-management">
+  <v-container fluid class="product-management" style="padding-inline: 0 !important;">
+    <!-- Floating Action Button for Quick Actions -->
+    <v-speed-dial location="bottom right" transition="slide-y-reverse-transition" class="quick-actions-fab">
+      <template v-slot:activator="{ props: activatorProps }">
+        <v-btn v-bind="activatorProps" fab size="large" class="primary-gradient-button" icon="mdi-plus">
+          <v-icon size="large">mdi-plus</v-icon>
+        </v-btn>
+      </template>
+
+      <v-tooltip v-for="action in quickActions" :key="action.id" :text="action.text" location="left">
+        <template v-slot:activator="{ props: tooltipProps }">
+          <v-btn fab size="small" v-bind="tooltipProps" :color="action.color" :icon="action.icon"
+            @click="action.handler"></v-btn>
+        </template>
+      </v-tooltip>
+    </v-speed-dial>
     <!-- Page Title Area -->
-    <div class="px-6 py-4 d-flex align-center">
+    <div class="py-4 d-flex align-center">
       <v-icon color="primary" size="36" class="mr-4">mdi-package-variant</v-icon>
       <div>
         <h1 class="text-h5 font-weight-bold text-primary mb-1">
@@ -14,10 +29,10 @@
     </div>
 
     <!-- Main Content Area -->
-    <v-container fluid class="pa-6 mt-0">
-      <v-row>
+    <v-container fluid class="py-6 mt-0">
+      <v-row style="padding-inline: 0 !important;">
         <!-- Category Sidebar -->
-        <v-col cols="12" md="3" lg="2">
+        <v-col cols="12" md="3" lg="2" style="padding-inline: 0 !important;">
           <v-card class="category-card rounded-lg" elevation="0">
             <v-card-title class="d-flex align-center justify-space-between py-3 px-4">
               <span class="text-subtitle-1 font-weight-medium">Categories</span>
@@ -60,13 +75,13 @@
         </v-col>
 
         <!-- Product Content -->
-        <v-col cols="12" md="9" lg="10">
+        <v-col cols="12" md="9" lg="10" style="padding-inline: 0 !important;">
           <v-card class="product-card rounded-lg" elevation="0">
             <!-- Product Card Header with Controls -->
-            <div class="px-4 py-3">
+            <div class=" py-3">
               <v-row align="center" dense>
                 <!-- Title and Count -->
-                <v-col cols="12" sm="6" md="4" lg="6" class="py-0">
+                <v-col cols="12" sm="6" md="4" lg="6" class="px-4 py-0">
                   <div class="text-subtitle-1 font-weight-medium">
                     {{ selectedCategory ? 'Products in ' + getCategoryName(selectedCategory) : 'All Products' }}
                   </div>
@@ -76,37 +91,41 @@
                 </v-col>
 
                 <!-- Controls (Search, Filter, View Toggle) -->
-                <v-col cols="12" sm="6" md="8" lg="6" class="py-0">
+                <v-col cols="12" sm="6" md="8" lg="6" class="py-6">
                   <div class="d-flex align-center justify-end gap-2">
-                    <!-- View Mode Toggle (Icon + Caption above 669px, Icon only below) -->
-                    <v-btn color="primary" variant="tonal" class="rounded-pill"
-                      :prepend-icon="$vuetify.display.smAndDown ? undefined : 'mdi-view-dashboard'"
-                      :icon="$vuetify.display.smAndDown ? 'mdi-view-dashboard' : undefined" size="large"
-                      @click="toggleViewMode">
-                      <span v-if="!$vuetify.display.smAndDown">
-                        {{ viewMode === 'grid' ? 'Grid View' : 'List View' }}
-                      </span>
-                    </v-btn>
+                    <div class="d-flex align-center justify-start">
+                      <!-- Search Input/Icon -->
+                      <v-text-field v-if="!$vuetify.display.xs" v-model="search" density="compact" variant="solo"
+                        bg-color="grey-lighten-4" class="rounded-pill premium-search-input flex-grow-1" hide-details
+                        placeholder="Search products..." prepend-inner-icon="mdi-magnify" clearable>
+                        <template v-slot:append-inner>
+                          <v-progress-circular v-if="loading" size="20" color="primary" indeterminate />
+                        </template>
+                      </v-text-field>
+                      <v-btn v-else icon="mdi-magnify" variant="tonal" class="rounded-pill" size="small"
+                        elevation="0"></v-btn>
+                    </div>
+                    <div class="">
 
-                    <!-- Filter Button (Icon only below 999px, maybe icon + caption above? - following wireframe: Icon only) -->
-                    <v-btn icon="mdi-filter-variant" color="primary" variant="tonal"
-                      class="rounded-pill filter-trigger-btn" size="large"
-                      :class="{ 'filter-active': hasActiveFilters }" @click="showFilters = true">
-                      <v-badge v-if="activeFilterCount > 0" :content="activeFilterCount" color="error"
-                        location="top end" offset-x="2" offset-y="2" />
-                    </v-btn>
-
-                    <!-- Search Input/Icon -->
-                    <v-text-field v-if="!$vuetify.display.xs" v-model="search" density="compact" variant="solo"
-                      bg-color="grey-lighten-4" class="rounded-pill premium-search-input flex-grow-1" hide-details
-                      placeholder="Search products..." prepend-inner-icon="mdi-magnify" clearable>
-                      <template v-slot:append-inner>
-                        <v-progress-circular v-if="loading" size="20" color="primary" indeterminate />
-                      </template>
-                    </v-text-field>
-                    <v-btn v-else icon="mdi-magnify" color="primary" variant="tonal" class="rounded-pill"
-                      size="large"></v-btn>
-
+                      <!-- Filter Button (Icon only below 999px, maybe icon + caption above? - following wireframe: Icon only) -->
+                      <v-btn size="small" icon="mdi-filter-variant" @click="showFilters = true" elevation="0">
+                      </v-btn>
+                      <!-- <v-btn class="" size="small" @click="showFilters = true" icon="mdi-apps" elevation="0"> -->
+                      <!-- :class="{ 'filter-active': hasActiveFilters }" -->
+                      <!-- <v-badge v-if="activeFilterCount > 0" :content="activeFilterCount" color="error"
+                          location="top end" offset-x="2" offset-y="2" /> -->
+                      <!-- <v-icon size="large">mdi-filter-variant</v-icon> -->
+                      <!-- </v-btn> -->
+                      <!-- View Mode Toggle (Icon + Caption above 669px, Icon only below) -->
+                      <v-btn size="small" :icon="viewMode === 'grid' ? 'mdi-apps' : 'mdi-format-list-bulleted'"
+                        @click="toggleViewMode" elevation="0">
+                      </v-btn>
+                      <!-- <span>
+                        <v-icon size="large" v-if="viewMode === 'grid'"
+                          color="primary-gradient-button">mdi-apps</v-icon>
+                        <v-icon size="large" v-else>mdi-format-list-bulleted</v-icon>
+                      </span> -->
+                    </div>
                   </div>
                 </v-col>
 
@@ -128,7 +147,7 @@
             <product-grid v-if="viewMode === 'grid' && filteredProducts.length > 0" :products="filteredProducts"
               :loading="loading" :search="search" :sort-by="sortBy" :sort-order="sortOrder" :page="page"
               :items-per-page="pageSize" :total-items="totalProducts" v-model:selected="selectedProducts"
-              @edit="editProduct" @delete="deleteProduct" />
+              @edit="editProduct" @delete="deleteProduct" @click="editProduct" />
             <product-list v-else-if="viewMode === 'list' && filteredProducts.length > 0" :products="filteredProducts"
               :loading="loading" :search="search" :sort-by="sortBy" :sort-order="sortOrder" :page="page"
               :items-per-page="pageSize" :total-items="totalProducts" v-model:selected="selectedProducts"
@@ -143,25 +162,8 @@
         </v-col>
       </v-row>
     </v-container>
-
-    <!-- Floating Action Button for Quick Actions -->
-    <v-speed-dial location="bottom end" transition="slide-y-reverse-transition" class="quick-actions-fab">
-      <template v-slot:activator="{ props: activatorProps }">
-        <v-btn v-bind="activatorProps" fab size="large" class="primary-gradient-button" icon="mdi-plus">
-          <v-icon size="large">mdi-plus</v-icon>
-        </v-btn>
-      </template>
-
-      <v-tooltip v-for="action in quickActions" :key="action.id" :text="action.text" location="left">
-        <template v-slot:activator="{ props: tooltipProps }">
-          <v-btn fab size="small" v-bind="tooltipProps" :color="action.color" :icon="action.icon"
-            @click="action.handler"></v-btn>
-        </template>
-      </v-tooltip>
-    </v-speed-dial>
-
     <!-- Dialogs -->
-    <v-dialog v-model="createDialog" max-width="800px" persistent class="rounded-xl">
+    <v-dialog v-model="createDialog" max-width="1200px" persistent class="rounded-xl">
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-center justify-space-between pa-4">
           <span class="text-h5 font-weight-bold">
@@ -170,7 +172,7 @@
           <v-btn icon="mdi-close" variant="text" @click="closeCreateDialog" />
         </v-card-title>
         <v-divider />
-        <v-card-text class="pa-4">
+        <v-card-text class="py-4" style="padding-inline: 0 !important;">
           <add-product-form ref="productForm" :initial-data="editingProduct" @save="saveProduct"
             @cancel="closeCreateDialog" />
         </v-card-text>
@@ -775,8 +777,8 @@ watch([page, pageSize, search, sortBy, filterStatus], () => {
 <style scoped>
 .product-management {
   background: #ffffff;
-  /* Consistently white background */
   min-height: 100vh;
+  position: relative;
 }
 
 /* Modern Header Styles */
@@ -925,10 +927,10 @@ watch([page, pageSize, search, sortBy, filterStatus], () => {
 
 /* Floating Action Button */
 .quick-actions-fab {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  z-index: 99;
+  position: fixed !important;
+  bottom: 32px !important;
+  right: 32px !important;
+  z-index: 100;
 }
 
 /* Dark Mode Support */
@@ -936,15 +938,6 @@ watch([page, pageSize, search, sortBy, filterStatus], () => {
   .product-management {
     background: #ffffff;
     /* Keep white background in dark mode */
-  }
-
-  .v-app-bar {
-    background: #ffffff !important;
-  }
-
-  .v-app-bar::after {
-    background: radial-gradient(circle, #7b61ff 0%, transparent 70%);
-    opacity: 0.15;
   }
 
   .category-card,

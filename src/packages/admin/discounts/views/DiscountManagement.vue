@@ -171,8 +171,8 @@
         </v-row>
 
         <!-- Create/Edit Discount Dialog -->
-        <v-dialog v-model="dialog" max-width="600px" persistent>
-            <v-card class="rounded-xl pa-6">
+        <v-dialog v-model="dialog" max-width="1200px" persistent>
+            <v-card class="rounded-xl pa-2">
                 <v-card-title class="text-h5 font-weight-bold">
                     {{ editMode ? 'Edit Discount' : 'Create Discount' }}
                 </v-card-title>

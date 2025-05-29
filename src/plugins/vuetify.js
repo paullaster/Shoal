@@ -19,7 +19,7 @@ export default createVuetify(
             info: '#2196F3',
             warning: '#FB8C00',
             danger: '#FF5252',
-            support: '#000000'
+            support: '#000000',
           }
         }
       }

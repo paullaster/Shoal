@@ -100,7 +100,7 @@ function save() {
 
 <style scoped>
 .discount-form {
-  padding: 8px;
+  padding: 2px;
 }
 
 .premium-input {
