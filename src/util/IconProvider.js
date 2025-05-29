@@ -3,9 +3,15 @@ import Helper from './Helper';
 
 export const icons = () => {
     const iconOptions = [];
+    let count = 0;
+    const limit = 100;
     for (const key in mdiIcons) {
         if (key.includes('mdi')) {
             iconOptions.push(Helper.camelCaseToKebabCase(key));
+            count++;
+            if (count >= limit) {
+                break;
+            }
         }
     }
     return iconOptions;

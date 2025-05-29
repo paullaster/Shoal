@@ -10,7 +10,7 @@
                     variant="outlined" density="comfortable" class="mb-4" rows="3" />
             </v-col>
             <v-col cols="12" md="6">
-                <v-autocomplete v-model="category.icon" :items="icons()" label="Icon" variant="outlined"
+                <v-autocomplete v-model="category.icon" :items="iconOptions" label="Icon" variant="outlined"
                     density="comfortable" class="mb-4" :rules="rules.icon">
                     <template v-slot:item="{ props, item }">
                         <v-list-item v-bind="props">
@@ -39,7 +39,7 @@
             <v-btn variant="tonal" @click="$emit('cancel')">
                 Cancel
             </v-btn>
-            <v-btn class="primary-gradient-button" type="submit" :loading="saving">
+            <v-btn class="primary-gradient-button" type="submit" :loading="saving" :disabled="saving">
                 <v-icon start>mdi-content-save</v-icon>
                 Save
             </v-btn>
@@ -48,8 +48,9 @@
 </template>
 
 <script setup>
+import useGlobal from '@/composables/useGlobal';
 import { ref, onMounted } from 'vue';
-import { icons } from '@/util/IconProvider';
+import { useToast } from 'vue-toastification';
 
 const props = defineProps({
     initialData: {
@@ -72,6 +73,9 @@ const category = ref({
     ...props.initialData
 });
 
+// Compsabled
+const { iconOptions } = useGlobal();
+
 const rules = {
     name: [
         v => !!v || 'Name is required',
@@ -92,7 +96,10 @@ const rules = {
 async function saveCategory() {
     try {
         const { valid } = await form.value.validate();
-        if (!valid) return;
+        if (!valid) {
+            useToast().warning('Make sure you have added all the required fields!.')
+            return;
+        };
 
         saving.value = true;
         emit('save', { ...category.value });

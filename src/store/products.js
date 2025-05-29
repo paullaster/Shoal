@@ -149,12 +149,5 @@ export const useProductStore = defineStore("product", {
         this.toast.error(`Error uploading ${entity}`)
       }
     },
-    async createCategory(category) {
-      return await _request.axiosRequest({
-        url: constants.categories,
-        method: "POST",
-        data: category,
-      })
-    },
   }
 })

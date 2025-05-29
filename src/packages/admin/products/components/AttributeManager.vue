@@ -1,14 +1,15 @@
 <template>
     <div class="attribute-manager">
         <!-- Header -->
-        <div class="d-flex align-center justify-space-between mb-6">
+        <div class="mb-6" style="display:flex; flex-direction: column;">
             <div>
                 <div class="text-h6 font-weight-bold">Product Attributes</div>
                 <div class="text-subtitle-2 text-medium-emphasis">
                     Manage attributes and their values for product variants
                 </div>
             </div>
-            <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" @click="openCreateDialog">
+            <v-btn class="primary-gradient-button ma-4" variant="elevated" prepend-icon="mdi-plus"
+                @click="openCreateDialog">
                 New Attribute
             </v-btn>
         </div>
@@ -109,7 +110,7 @@
                                     density="comfortable" class="mb-4" rows="2" />
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-select v-model="attributeForm.icon" :items="iconOptions" label="Icon"
+                                <v-autocomplete v-model="attributeForm.icon" :items="iconOptions" label="Icon"
                                     variant="outlined" density="comfortable" class="mb-4">
                                     <template v-slot:item="{ item }">
                                         <v-list-item>
@@ -119,7 +120,7 @@
                                             <v-list-item-title>{{ item.raw }}</v-list-item-title>
                                         </v-list-item>
                                     </template>
-                                </v-select>
+                                </v-autocomplete>
                             </v-col>
                             <v-col cols="12" md="6">
                                 <v-color-picker v-model="attributeForm.color" mode="hex" hide-inputs class="mb-4" />
@@ -200,6 +201,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useProductStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
+import useGlobal from '@/composables/useGlobal';
 
 // Emits
 const emit = defineEmits(['close', 'update']);
@@ -220,6 +222,9 @@ const editingAttribute = ref(null);
 const editingValue = ref(null);
 const itemToDelete = ref(null);
 
+// Compsables
+const { iconOptions } = useGlobal();
+
 // Dialogs
 const createDialog = ref(false);
 const valueDialog = ref(false);
@@ -238,19 +243,7 @@ const valueForm = ref({
     description: '',
 });
 
-// Icon options
-const iconOptions = [
-    'mdi-tag',
-    'mdi-tag-multiple',
-    'mdi-tag-outline',
-    'mdi-tag-text',
-    'mdi-tag-text-outline',
-    'mdi-tag-plus',
-    'mdi-tag-minus',
-    'mdi-tag-remove',
-    'mdi-tag-heart',
-    'mdi-tag-heart-outline',
-];
+
 
 // Validation rules
 const rules = {

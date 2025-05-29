@@ -74,7 +74,8 @@
                     <div class="step-content">
                         <v-row>
                             <v-col cols="12">
-                                <div class="d-flex align-center justify-space-between mb-4">
+                                <div class="mb-4"
+                                    style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
                                     <div class="text-subtitle-1 font-weight-medium">Product Variants</div>
                                     <v-btn color="primary" variant="tonal" prepend-icon="mdi-plus"
                                         @click="openAttributeDialog">
@@ -193,8 +194,7 @@
                     Manage Attributes
                 </v-card-title>
                 <v-card-text>
-                    <attribute-manager ref="attributeManager" @close="closeAttributeDialog"
-                        @update="updateAttributes" />
+                    <AttributeManager ref="attributeManager" @close="closeAttributeDialog" @update="updateAttributes" />
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -207,7 +207,7 @@ import { useSetupStore, useProductStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 import AddCategoryForm from './AddCategoryForm.vue';
-// import AttributeManager from './AttributeManager.vue';
+import AttributeManager from './AttributeManager.vue';
 
 const props = defineProps({
     initialData: {

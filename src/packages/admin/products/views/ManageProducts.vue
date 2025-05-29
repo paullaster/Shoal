@@ -353,6 +353,7 @@ const setupStore = useSetupStore();
 const { categories } = storeToRefs(setupStore);
 const { products } = storeToRefs(productStore);
 
+
 // State
 const search = ref('');
 const sortBy = ref('name');

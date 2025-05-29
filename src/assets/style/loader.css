@@ -44,3 +44,51 @@
   @keyframes l34 {
     50%,100% {transform: translate(var(--d,0)) rotate(.5turn)}
   }
+
+  
+  /* HTML: <div class="loader-wrapper"><div class="circular-loader"></div></div> */
+.loader-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Darker overlay for better contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999999;
+  opacity: 1;
+  pointer-events: none; /* Allows clicks through the overlay if no loader is present */
+  /* If you want the wrapper to fade in when the loader appears: */
+  /* animation: fade-in 0.5s forwards; */
+}
+
+/* Optional: Fade-in animation for the wrapper if needed */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.circular-loader {
+  width: 60px; /* Adjust size as needed */
+  height: 60px; /* Must match width for a perfect circle */
+  border: 8px solid rgba(255, 255, 255, 0.3); /* Light border color for the base */
+  border-top-color: #ed1e79; /* Your brand color for the animated part */
+  border-radius: 50%; /* Makes it circular */
+  animation: spin 1s linear infinite; /* Smooth, continuous spin */
+  z-index: 9999999; /* Ensures it's above the wrapper */
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

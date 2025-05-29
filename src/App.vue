@@ -80,8 +80,11 @@ const menus = [
 ];
 
 setMenu(menus);
-cartStore.getCart();
 authStore.setUser(AuthService.getUser());
+
+if (AuthService.getUser().type !== 'admin') {
+  cartStore.getCart();
+}
 
 
 const showHeader = ref(true);
