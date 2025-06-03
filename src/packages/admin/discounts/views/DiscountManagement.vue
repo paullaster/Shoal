@@ -16,7 +16,7 @@
             <v-col cols="12" md="6" class="d-flex justify-end align-center header-actions">
                 <v-text-field v-model="search" label="Search Discounts" prepend-inner-icon="mdi-magnify"
                     variant="solo-filled" density="comfortable" clearable hide-details class="premium-search-input mr-4"
-                    :style="isMobile ? 'width: 100%;' : 'max-width: 320px;'" />
+                    :style="isMobile ? 'width: 100%;' : 'max-width: 320px;'" elevation="0" />
                 <v-btn icon="mdi-filter-variant" color="white" variant="tonal" class="filter-trigger-btn"
                     @click="showFilters = true" :class="{ 'filter-active': hasActiveFilters }"
                     :style="isMobile ? 'position: fixed; bottom: 100px; right: 24px; z-index: 99;' : ''">

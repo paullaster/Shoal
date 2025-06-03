@@ -19,16 +19,18 @@
       density="comfortable" :rules="[v => v > 0 || 'Usage Limit must be greater than 0']" required
       class="premium-input mt-4" />
     <v-row>
-      <v-col cols="6">
+      <v-col cols="12">
         <v-text-field v-model="formData.startPublishing" label="Start Date" type="datetime-local" variant="outlined"
           density="comfortable" :rules="[v => !!v || 'Start Date is required']" required class="premium-input" />
       </v-col>
-      <v-col cols="6">
+    </v-row>
+    <v-row>
+      <v-col cols="12">
         <v-text-field v-model="formData.endPublishing" label="End Date" type="datetime-local" variant="outlined"
           density="comfortable" :rules="[v => !!v || 'End Date is required']" required class="premium-input" />
       </v-col>
     </v-row>
-    <v-select v-model="formData.status" :items="['Published', 'UnPublished']" label="Status" variant="outlined"
+    <v-autocomplete v-model="formData.status" :items="['Published', 'UnPublished']" label="Status" variant="outlined"
       density="comfortable" :rules="[v => !!v || 'Status is required']" required class="premium-input mt-4" />
     <v-row class="mt-6">
       <v-col cols="6">
@@ -58,7 +60,6 @@ const emit = defineEmits(['save', 'cancel']);
 
 const valid = ref(false);
 const formData = ref({
-  id: null,
   title: '',
   code: '',
   amount: 0,
@@ -76,7 +77,6 @@ watch(
       formData.value = { ...newVal };
     } else {
       formData.value = {
-        id: null,
         title: '',
         code: '',
         amount: 0,

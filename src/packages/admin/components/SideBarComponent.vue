@@ -6,7 +6,7 @@
         size="60">
         <span class="white--text text-h5">{{
           ` ${user?.firstName[0]}${user?.lastName[0]}`
-          }}</span>
+        }}</span>
       </v-avatar>
       <span>{{ user?.firstName[0] + user?.lastName }}</span>
       <span class="sidebar-active-spot"></span>
@@ -49,7 +49,7 @@
         </div>
       </template>
     </v-list>
-    <v-btn variant="text logout-btn-position" @click="async () => await authStore.logout()"
+    <v-btn variant="text" class="logout-btn-position" @click="async () => await authStore.logout()"
       :color="ColorHelper.colorsHelper('light')">
       <v-icon class="mr-2">mdi-logout</v-icon>
       <span>Logout</span>

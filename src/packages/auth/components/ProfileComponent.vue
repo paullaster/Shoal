@@ -11,7 +11,8 @@
                             <v-col cols="12" sm="6">
                                 <v-label>Email</v-label>
                                 <v-text-field variant="outlined" v-model="user.email"
-                                    :readonly="userData[2] === 'email'" :rules="rules.email"></v-text-field>
+                                    :readonly="userData[2] === 'email'" :rules="rules.email"
+                                    aria-autocomplete="both"></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" v-if="userData[4] === 'newAccount'">
                                 <v-label>First Name</v-label>
@@ -27,14 +28,14 @@
                                 <v-label>Phone number</v-label>
                                 <v-text-field variant="outlined" v-model="user.phoneNumber"
                                     placeholder="for example: +254 700258098" :readonly="userData[2] === 'phone'"
-                                    :rules="rules.phoneNumber"
-                                    @update:modelValue="formatPhoneNumberInput"></v-text-field>
+                                    :rules="rules.phoneNumber" @update:modelValue="formatPhoneNumberInput"
+                                    aria-autocomplete="both"></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6">
                                 <v-label>Password</v-label>
                                 <v-text-field variant="outlined" v-model="user.password"
                                     :type="showPassword ? 'text' : 'password'" placeholder="minimum 8 characters"
-                                    :rules="rules.password">
+                                    :rules="rules.password" aria-autocomplete="both" autocomplete="on">
                                     <template v-slot:append-inner>
                                         <v-icon @click="toggleShowPassword"
                                             :color="ColorHelper.colorsHelper('secondary')" style="
