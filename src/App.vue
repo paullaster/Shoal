@@ -82,7 +82,7 @@ const menus = [
 setMenu(menus);
 authStore.setUser(AuthService.getUser());
 
-if (AuthService.getUser().type !== 'admin') {
+if (AuthService.getUser()?.type !== 'admin') {
   cartStore.getCart();
 }
 

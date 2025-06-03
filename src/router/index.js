@@ -190,14 +190,6 @@ const router = createRouter({
               }
             },
             {
-              path: 'products/category',
-              name: 'createCategory',
-              component: () => import('@/packages/admin/products/components/AddCategory.vue'),
-              meta: {
-                title: 'Create Category'
-              }
-            },
-            {
               path: 'discounts',
               name: 'AdminDiscounts',
               component: () => import('@/packages/admin/discounts/views/DiscountManagement.vue')
