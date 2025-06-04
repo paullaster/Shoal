@@ -8,7 +8,7 @@ export default () => {
     const { globalGetter } = storeToRefs(globalStore);
 
     return {
-        loading: globalGetter('loading'),
+        loading: globalGetter.value('loading'),
         iconOptions,
     }
 }

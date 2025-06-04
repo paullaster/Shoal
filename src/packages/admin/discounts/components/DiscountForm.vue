@@ -4,7 +4,7 @@
       :rules="[v => !!v || 'Title is required']" required class="premium-input" />
     <v-text-field v-model="formData.code" label="Code" variant="outlined" density="comfortable"
       :rules="[v => !!v || 'Code is required']" required class="premium-input mt-4" />
-    <v-row>
+    <v-row class="my-1">
       <v-col cols="6">
         <v-text-field v-model.number="formData.amount" label="Amount" type="number" variant="outlined"
           density="comfortable" :rules="[v => v > 0 || 'Amount must be greater than 0']" required
@@ -18,7 +18,7 @@
     <v-text-field v-model.number="formData.usageLimit" label="Usage Limit" type="number" variant="outlined"
       density="comfortable" :rules="[v => v > 0 || 'Usage Limit must be greater than 0']" required
       class="premium-input mt-4" />
-    <v-row>
+    <v-row class="my-1">
       <v-col cols="12">
         <v-text-field v-model="formData.startPublishing" label="Start Date" type="datetime-local" variant="outlined"
           density="comfortable" :rules="[v => !!v || 'Start Date is required']" required class="premium-input" />
@@ -115,11 +115,11 @@ function save() {
   border-color: rgba(123, 97, 255, 0.2) !important;
 }
 
-.premium-input:focus-within {
+/* .premium-input:focus-within {
   background: #fff !important;
-  border-color: #7b61ff !important;
-  box-shadow: 0 2px 12px rgba(123, 97, 255, 0.15) !important;
-}
+  border-bottom-color: #7b61ff !important;
+  
+} */
 
 .cancel-btn {
   height: 44px !important;
@@ -169,7 +169,8 @@ function save() {
 
   .premium-input:focus-within {
     background: rgba(255, 255, 255, 0.15) !important;
-    border-color: #7b61ff !important;
+    /* border-bottom-color: #7b61ff !important; */
+    /* box-shadow: 0 2px 12px rgba(123, 97, 255, 0.15) !important; */
   }
 
   .cancel-btn:hover {

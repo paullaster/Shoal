@@ -14,9 +14,9 @@
                 </div>
             </v-col>
             <v-col cols="12" md="6" class="d-flex justify-end align-center header-actions">
-                <v-text-field v-model="search" label="Search Discounts" prepend-inner-icon="mdi-magnify"
-                    variant="solo-filled" density="comfortable" clearable hide-details class="premium-search-input mr-4"
-                    :style="isMobile ? 'width: 100%;' : 'max-width: 320px;'" elevation="0" />
+                <v-text-field v-model="search" placeholder="Search Discounts" prepend-inner-icon="mdi-magnify"
+                    variant="outlined" density="comfortable" clearable hide-details class="premium-search-input"
+                    :style="isMobile ? 'width: 100%;' : 'max-width: 320px;'" role="search" type="text" rounded="pill" />
                 <v-btn icon="mdi-filter-variant" color="white" variant="tonal" class="filter-trigger-btn"
                     @click="showFilters = true" :class="{ 'filter-active': hasActiveFilters }"
                     :style="isMobile ? 'position: fixed; bottom: 100px; right: 24px; z-index: 99;' : ''">
@@ -314,7 +314,10 @@ import useGlobal from '@/composables/useGlobal';
 
 // composables
 // Server-driven state
-const { createDiscount, discounts, fetchDiscounts, filterStatus, page, pageSize, search, sortBy, totalDiscounts } = useDiscount();
+const {
+    createDiscount, discounts, fetchDiscounts, filterStatus, page, pageSize, search, sortBy, totalDiscounts, setFilterStatus, setSortBy
+
+} = useDiscount();
 const { loading } = useGlobal();
 
 
@@ -345,20 +348,20 @@ const isMobile = ref(false);
 
 // Add computed properties for filter state
 const hasActiveFilters = computed(() => {
-    return filterStatus.value !== 'All' || sortBy.value !== 'title';
+    return filterStatus !== 'All' || sortBy.value !== 'title';
 });
 
 const activeFilterCount = computed(() => {
     let count = 0;
-    if (filterStatus.value !== 'All') count++;
+    if (filterStatus !== 'All') count++;
     if (sortBy.value !== 'title') count++;
     return count;
 });
 
 // Add methods for filter management
 function resetFilters() {
-    filterStatus.value = 'All';
-    sortBy.value = 'title';
+    setFilterStatus('All');
+    setSortBy('title');
 }
 
 function applyFilters() {
@@ -367,13 +370,13 @@ function applyFilters() {
 }
 
 // Update the mobile detection
-onMounted(() => {
-    const checkMobile = () => {
-        isMobile.value = window.innerWidth < 960;
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-});
+// onMounted(() => {
+//     const checkMobile = () => {
+//         isMobile.value = window.innerWidth < 960;
+//     };
+//     checkMobile();
+//     window.addEventListener('resize', checkMobile);
+// });
 
 
 // Watchers
@@ -390,9 +393,13 @@ const filteredDiscounts = computed(() => discounts.value);
 
 // Methods
 function openCreateDialog() {
+    console.log('Dialog clicked!!');
     editMode.value = false;
     selectedDiscount.value = null;
     dialog.value = true;
+    console.log(editMode.value,
+        selectedDiscount.value,
+        dialog.value,);
 }
 
 function editDiscount(item) {
@@ -483,7 +490,7 @@ function closeDialog() {
 
 .premium-search-input {
     background: rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
+    border-radius: 32px !important;
     transition: all 0.3s ease;
 }
 
@@ -497,15 +504,11 @@ function closeDialog() {
 }
 
 .premium-search-input :deep(.v-field__input) {
-    color: white !important;
-}
-
-.premium-search-input :deep(.v-field__label) {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(7, 7, 7, 0.7) !important;
 }
 
 .premium-search-input :deep(.v-icon) {
-    color: rgba(255, 255, 255, 0.7) !important;
+    color: rgba(8, 8, 8, 0.7) !important;
 }
 
 /* Updated Table Styles */

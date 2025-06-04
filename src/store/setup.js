@@ -62,7 +62,7 @@ export const useSetupStore = defineStore('setup', {
                         });
                     })
                     .catch((error) => {
-                        this.toast.error(error.response.data.message || error.message);
+                        this.toast.error(error?.response?.data?.message || error?.message);
                     }).finally(() => {
                         this.setLoader(false);
                     })
