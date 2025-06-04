@@ -86,3 +86,13 @@ background-color: var(--vt-c-secondary-light)
 .text-lowecase {
     text-transform: lowercase;
 }
+.primary-gradient-button {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    background: linear-gradient(135deg, #7b61ff 0%, #ff6f91 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px);
+    box-shadow:
+        0 4px 24px rgba(123, 97, 255, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+}

@@ -2,60 +2,64 @@
     <v-container fluid class="pa-0 discount-management">
         <!-- Header Section with Gradient Background -->
         <v-row class="header-section py-6 px-4" align="center" justify="space-between">
-            <v-col cols="12" md="6">
-                <h1 class="text-h4 font-weight-bold white--text animate__animated animate__fadeIn">
-                    Discount Management
-                </h1>
-                <div
-                    class="text-subtitle-1 white--text opacity-80 mt-2 animate__animated animate__fadeIn animate__delay-1s">
-                    Manage all your discounts efficiently and creatively.
+            <v-col cols="12" md="6" class="header-content">
+                <div class="d-flex align-center mb-2">
+                    <v-icon color="white" size="36" class="mr-3">mdi-tag-multiple</v-icon>
+                    <h1 class="text-h4 font-weight-bold white--text animate__animated animate__fadeIn mb-0">
+                        Discount Management
+                    </h1>
+                </div>
+                <div class="text-subtitle-1 white--text opacity-80 animate__animated animate__fadeIn animate__delay-1s">
+                    Create, manage, and track all your discounts in one place
                 </div>
             </v-col>
-            <v-col cols="12" md="6" class="d-flex justify-end align-center">
-                <v-btn color="pink" class="white--text elevation-3 rounded-lg px-6" size="large"
-                    @click="openCreateDialog">
-                    <v-icon start>mdi-plus</v-icon>
-                    Create Discount
+            <v-col cols="12" md="6" class="d-flex justify-end align-center header-actions">
+                <v-text-field v-model="search" placeholder="Search Discounts" prepend-inner-icon="mdi-magnify"
+                    variant="outlined" density="comfortable" clearable hide-details class="premium-search-input"
+                    :style="isMobile ? 'width: 100%;' : 'max-width: 320px;'" role="search" type="text" rounded="pill" />
+                <v-btn icon="mdi-filter-variant" color="white" variant="tonal" class="filter-trigger-btn"
+                    @click="showFilters = true" :class="{ 'filter-active': hasActiveFilters }"
+                    :style="isMobile ? 'position: fixed; bottom: 100px; right: 24px; z-index: 99;' : ''">
+                    <div class="filter-btn-backdrop"></div>
+                    <v-icon>mdi-filter-variant</v-icon>
+                    <v-badge v-if="activeFilterCount > 0" :content="activeFilterCount" color="error" location="top end"
+                        offset-x="2" offset-y="2" />
                 </v-btn>
             </v-col>
         </v-row>
 
-        <!-- Filters and Search -->
-        <v-row class="filter-section px-4 py-4 d-flex justify-center align-center"
-            style="margin-top: -48px; z-index: 2; position: relative;">
-            <v-col cols="12" md="10" lg="8">
-                <v-card class="premium-filter-card glassy-card px-6 py-4" elevation="10">
-                    <v-row class="d-flex align-center" dense>
-                        <v-col cols="12" md="4" class="mb-2 mb-md-0">
-                            <v-text-field v-model="search" label="Search Discounts" prepend-inner-icon="mdi-magnify"
-                                variant="solo-filled" density="comfortable" clearable hide-details
-                                class="premium-input" />
-                        </v-col>
-                        <v-col cols="12" md="4" class="mb-2 mb-md-0">
-                            <v-select v-model="sortBy" :items="sortOptions" label="Sort By" variant="solo-filled"
-                                density="comfortable" hide-details class="premium-input" />
-                        </v-col>
-                        <v-col cols="12" md="4">
-                            <v-select v-model="filterStatus" :items="statusOptions" label="Filter by Status"
-                                variant="solo-filled" density="comfortable" hide-details class="premium-input" />
-                        </v-col>
-                    </v-row>
-                </v-card>
-            </v-col>
-        </v-row>
+        <!-- Add the floating action button -->
+        <v-tooltip location="left" :open-delay="300" :close-delay="100" transition="fade-transition" activator="parent"
+            class="create-discount-tooltip">
+            <span class="tooltip-content">Create a new discount</span>
+        </v-tooltip>
+        <v-btn icon="mdi-plus" color="primary" size="x-large" elevation="8"
+            class="create-discount-fab animate__animated animate__fadeIn animate__delay-1s" @click="openCreateDialog"
+            aria-label="Create new discount">
+            <v-icon size="large">mdi-plus</v-icon>
+        </v-btn>
 
         <!-- Data Table with Modern Card Design -->
-        <v-row class="px-4">
-            <v-col cols="12">
-                <v-card class="premium-table-card pa-0" elevation="8">
-                    <div class="premium-table-header d-flex align-center px-6 py-4">
-                        <v-icon color="primary" size="36" class="mr-3">mdi-tag-multiple</v-icon>
-                        <div>
-                            <div class="text-h5 font-weight-bold premium-table-title">Discounts Overview</div>
-                            <div class="premium-table-subtitle">All discounts at a glance. Use search, sort, or filter
-                                for quick access.</div>
+        <v-row class="px-0 mt-4">
+            <v-col cols="12" class="pa-0">
+                <v-card class="premium-table-card" elevation="0">
+                    <div class="premium-table-header d-flex align-center justify-space-between px-4 py-3">
+                        <div class="d-flex align-center">
+                            <div>
+                                <div class="text-subtitle-1 font-weight-medium premium-table-title">Active Discounts
+                                </div>
+                                <div class="text-caption premium-table-subtitle">Showing {{ filteredDiscounts.length }}
+                                    of {{ totalDiscounts }} discounts</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-center">
+                            <v-chip color="primary" variant="tonal" class="mr-2" size="small">
+                                <v-icon start size="small">mdi-clock-outline</v-icon>
+                                Last updated: {{ new Date().toLocaleTimeString() }}
+                            </v-chip>
                         </div>
                     </div>
+
                     <v-data-table :headers="headers" :items="filteredDiscounts" :loading="loading" :search="search"
                         class="premium-table" item-key="id" density="comfortable" hover fixed-header height="auto"
                         :sort-by="[{ key: sortBy, order: 'asc' }]" :page="page" :items-per-page="pageSize"
@@ -65,23 +69,27 @@
                         </template>
                         <template #[`item.status`]="{ item }">
                             <v-chip :color="item.status === 'Published' ? 'success' : 'warning'" variant="elevated"
-                                size="small" class="premium-chip">
+                                size="small" class="premium-chip"
+                                :class="item.status === 'Published' ? 'status-published' : 'status-unpublished'">
+                                <v-icon start size="small">{{ item.status === 'Published' ? 'mdi-check-circle' :
+                                    'mdi-clock-outline' }}</v-icon>
                                 {{ item.status }}
                             </v-chip>
                         </template>
                         <template #[`item.amount`]="{ item }">
                             <span class="premium-amount"
                                 :class="item.type === 'Percentage' ? 'amount-percentage' : 'amount-fixed'">
-                                <v-icon v-if="item.type === 'Percentage'" color="primary" size="18"
+                                <v-icon v-if="item.type === 'Percentage'" color="primary" size="small"
                                     class="mr-1">mdi-percent</v-icon>
-                                <v-icon v-else color="deep-purple" size="18" class="mr-1">mdi-currency-usd</v-icon>
+                                <v-icon v-else color="deep-purple" size="small" class="mr-1">mdi-currency-usd</v-icon>
                                 <span>{{ item.type === 'Percentage' ? `${item.amount}%` : `$${item.amount}` }}</span>
                             </span>
                         </template>
                         <template #[`item.type`]="{ item }">
                             <v-chip :color="item.type === 'Percentage' ? 'primary' : 'deep-purple'"
-                                class="premium-type-chip" size="small" variant="elevated">
-                                <v-icon start size="16">{{ item.type === 'Percentage' ? 'mdi-percent' :
+                                class="premium-type-chip" size="small" variant="elevated"
+                                :class="item.type === 'Percentage' ? 'type-percentage' : 'type-fixed'">
+                                <v-icon start size="small">{{ item.type === 'Percentage' ? 'mdi-percent' :
                                     'mdi-currency-usd' }}</v-icon>
                                 {{ item.type }}
                             </v-chip>
@@ -90,53 +98,85 @@
                             <v-chip
                                 :color="item.usageLimit > 100 ? 'success' : item.usageLimit > 0 ? 'warning' : 'grey'"
                                 class="premium-usage-chip" size="small" variant="elevated">
-                                <v-icon start size="16">mdi-counter</v-icon>
+                                <v-icon start size="small">mdi-counter</v-icon>
                                 <span v-if="item.usageLimit > 0">{{ item.usageLimit }} left</span>
                                 <span v-else>Unlimited</span>
                             </v-chip>
                         </template>
                         <template #[`item.actions`]="{ item }">
                             <div class="premium-actions-row">
-                                <v-btn icon color="primary" class="mr-1" variant="text"
-                                    @click="viewDetails(item)"><v-icon>mdi-eye</v-icon></v-btn>
-                                <v-btn icon color="deep-purple" class="mr-1" variant="text"
-                                    @click="editDiscount(item)"><v-icon>mdi-pencil</v-icon></v-btn>
-                                <v-btn icon color="error" variant="text"
-                                    @click="deleteDiscount(item)"><v-icon>mdi-delete</v-icon></v-btn>
+                                <v-tooltip location="top" :open-delay="300">
+                                    <template v-slot:activator="{ props }">
+                                        <v-btn icon color="primary" class="mr-1" variant="text" v-bind="props"
+                                            @click="viewDetails(item)">
+                                            <v-icon>mdi-eye</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>View Details</span>
+                                </v-tooltip>
+                                <v-tooltip location="top" :open-delay="300">
+                                    <template v-slot:activator="{ props }">
+                                        <v-btn icon color="deep-purple" class="mr-1" variant="text" v-bind="props"
+                                            @click="editDiscount(item)">
+                                            <v-icon>mdi-pencil</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Edit Discount</span>
+                                </v-tooltip>
+                                <v-tooltip location="top" :open-delay="300">
+                                    <template v-slot:activator="{ props }">
+                                        <v-btn icon color="error" variant="text" v-bind="props"
+                                            @click="deleteDiscount(item)">
+                                            <v-icon>mdi-delete</v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>Delete Discount</span>
+                                </v-tooltip>
                             </div>
                         </template>
                         <template #no-data>
                             <v-row class="pa-8" align="center" justify="center">
                                 <v-col cols="12" class="text-center">
-                                    <v-icon size="48" color="grey">mdi-tag-off-outline</v-icon>
-                                    <div class="text-h6 mt-2">No Discounts Found</div>
-                                    <div class="text-body-2">
-                                        Click "Create Discount" to add your first discount.
+                                    <v-icon size="48" color="grey" class="mb-2">mdi-tag-off-outline</v-icon>
+                                    <div class="text-h6 mb-2">No Discounts Found</div>
+                                    <div class="text-body-2 text-medium-emphasis">
+                                        Click the + button to create your first discount
                                     </div>
                                 </v-col>
                             </v-row>
                         </template>
                     </v-data-table>
-                    <div class="d-flex justify-center mt-4 pb-4">
-                        <v-btn :disabled="page === 1" @click="page--" class="mr-2" color="primary"
-                            variant="tonal">Previous</v-btn>
-                        <span class="px-2 align-self-center font-weight-bold">Page {{ page }} of {{ Math.max(1,
-                            Math.ceil(totalDiscounts /
-                                pageSize)) }}</span>
-                        <v-btn :disabled="page >= Math.ceil(totalDiscounts / pageSize)" @click="page++" color="primary"
-                            variant="tonal">Next</v-btn>
+
+                    <div class="d-flex justify-space-between align-center px-4 py-3 premium-table-footer">
+                        <div class="text-caption text-medium-emphasis">
+                            Showing {{ (page - 1) * pageSize + 1 }} to {{ Math.min(page * pageSize, totalDiscounts) }}
+                            of {{ totalDiscounts
+                            }} entries
+                        </div>
+                        <div class="d-flex align-center">
+                            <v-btn :disabled="page === 1" @click="page--" class="mr-2" color="primary" variant="tonal"
+                                size="small">
+                                <v-icon start>mdi-chevron-left</v-icon>
+                                Previous
+                            </v-btn>
+                            <v-btn :disabled="page >= Math.ceil(totalDiscounts / pageSize)" @click="page++"
+                                color="primary" variant="tonal" size="small">
+                                Next
+                                <v-icon end>mdi-chevron-right</v-icon>
+                            </v-btn>
+                        </div>
                     </div>
                 </v-card>
             </v-col>
         </v-row>
 
         <!-- Create/Edit Discount Dialog -->
-        <v-dialog v-model="dialog" max-width="600px" persistent>
-            <v-card class="rounded-xl pa-6">
+        <v-dialog v-model="dialog" max-width="1200px" persistent>
+            <v-card class="rounded-xl pa-2">
                 <v-card-title class="text-h5 font-weight-bold">
                     {{ editMode ? 'Edit Discount' : 'Create Discount' }}
                 </v-card-title>
-                <v-card-text>
+                <v-card-text style="padding-inline: 1.2rem !important;">
                     <discount-form :discount="selectedDiscount" @save="saveDiscount" @cancel="closeDialog" />
                 </v-card-text>
             </v-card>
@@ -155,21 +195,131 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <!-- Filter Panel for Desktop -->
+        <v-navigation-drawer v-model="showFilters" location="right" temporary width="360" class="filter-panel"
+            :class="{ 'filter-panel-mobile': isMobile }">
+            <template v-slot:prepend>
+                <div class="filter-panel-header pa-4">
+                    <div class="d-flex align-center justify-space-between">
+                        <div class="text-h6 font-weight-bold">Filter & Sort</div>
+                        <v-btn icon="mdi-close" variant="text" @click="showFilters = false" class="close-btn" />
+                    </div>
+                    <div class="text-subtitle-2 text-medium-emphasis mt-1">
+                        Refine your discount list with advanced filters
+                    </div>
+                </div>
+            </template>
+
+            <v-divider />
+
+            <v-card-text class="pa-4">
+                <v-form @submit.prevent class="filter-form">
+                    <div class="filter-section mb-6">
+                        <div class="filter-section-header d-flex align-center mb-3">
+                            <v-icon color="primary" class="mr-2">mdi-sort</v-icon>
+                            <div class="text-subtitle-1 font-weight-medium">Sort Options</div>
+                        </div>
+                        <v-select v-model="sortBy" :items="sortOptions" variant="outlined" density="comfortable"
+                            hide-details class="premium-input mb-4" placeholder="Sort by..." />
+                    </div>
+
+                    <div class="filter-section mb-6">
+                        <div class="filter-section-header d-flex align-center mb-3">
+                            <v-icon color="primary" class="mr-2">mdi-filter-variant</v-icon>
+                            <div class="text-subtitle-1 font-weight-medium">Filter Options</div>
+                        </div>
+                        <v-select v-model="filterStatus" :items="statusOptions" variant="outlined" density="comfortable"
+                            hide-details class="premium-input" placeholder="Filter by status..." />
+                    </div>
+
+                    <v-divider class="my-6" />
+
+                    <div class="filter-actions">
+                        <v-btn block color="grey-darken-1" variant="tonal" class="mb-2" @click="resetFilters">
+                            <v-icon start>mdi-refresh</v-icon>
+                            Reset Filters
+                        </v-btn>
+                        <v-btn block color="primary" @click="applyFilters" :disabled="!hasActiveFilters"
+                            class="apply-filters-btn">
+                            <v-icon start>mdi-check</v-icon>
+                            Apply Filters
+                        </v-btn>
+                    </div>
+                </v-form>
+            </v-card-text>
+        </v-navigation-drawer>
+
+        <!-- Mobile Bottom Sheet for Filters -->
+        <v-bottom-sheet v-model="showFilters" :class="{ 'filter-bottom-sheet': isMobile }" v-if="isMobile">
+            <v-card class="filter-bottom-sheet-content">
+                <v-card-title class="d-flex align-center justify-space-between pa-4">
+                    <div>
+                        <span class="text-h6 font-weight-bold">Filter & Sort</span>
+                        <div class="text-subtitle-2 text-medium-emphasis mt-1">
+                            Refine your discount list
+                        </div>
+                    </div>
+                    <v-btn icon="mdi-close" variant="text" @click="showFilters = false" />
+                </v-card-title>
+                <v-divider />
+                <v-card-text class="pa-4">
+                    <v-form @submit.prevent class="filter-form">
+                        <div class="filter-section mb-6">
+                            <div class="filter-section-header d-flex align-center mb-3">
+                                <v-icon color="primary" class="mr-2">mdi-sort</v-icon>
+                                <div class="text-subtitle-1 font-weight-medium">Sort Options</div>
+                            </div>
+                            <v-autocomplete v-model="sortBy" :items="sortOptions" variant="outlined"
+                                density="comfortable" hide-details class="premium-input mb-4"
+                                placeholder="Sort by..." />
+                        </div>
+
+                        <div class="filter-section mb-6">
+                            <div class="filter-section-header d-flex align-center mb-3">
+                                <v-icon color="primary" class="mr-2">mdi-filter-variant</v-icon>
+                                <div class="text-subtitle-1 font-weight-medium">Filter Options</div>
+                            </div>
+                            <v-autocomplete v-model="filterStatus" :items="statusOptions" variant="outlined"
+                                density="comfortable" hide-details class="premium-input"
+                                placeholder="Filter by status..." />
+                        </div>
+
+                        <v-divider class="my-6" />
+
+                        <div class="filter-actions">
+                            <v-btn block color="grey-darken-1" variant="tonal" class="mb-2" @click="resetFilters">
+                                <v-icon start>mdi-refresh</v-icon>
+                                Reset Filters
+                            </v-btn>
+                            <v-btn block color="primary" @click="applyFilters" :disabled="!hasActiveFilters"
+                                class="apply-filters-btn">
+                                <v-icon start>mdi-check</v-icon>
+                                Apply Filters
+                            </v-btn>
+                        </div>
+                    </v-form>
+                </v-card-text>
+            </v-card>
+        </v-bottom-sheet>
     </v-container>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import DiscountForm from '../components/DiscountForm.vue';
 import DiscountDetails from '../components/DiscountDetails.vue';
+import { useDiscount } from '@/composables/useDiscount';
+import useGlobal from '@/composables/useGlobal';
 
+// composables
 // Server-driven state
-const discounts = ref([]);
-const totalDiscounts = ref(0);
-const page = ref(1);
-const pageSize = ref(20);
-const loading = ref(false);
-const error = ref(null);
+const {
+    createDiscount, discounts, fetchDiscounts, filterStatus, page, pageSize, search, sortBy, totalDiscounts, setFilterStatus, setSortBy
+
+} = useDiscount();
+const { loading } = useGlobal();
+
 
 const headers = ref([
     { title: 'S/N', key: 'sn', align: 'center', sortable: false },
@@ -184,9 +334,6 @@ const headers = ref([
     { title: 'Actions', key: 'actions', sortable: false },
 ]);
 
-const search = ref('');
-const sortBy = ref('title');
-const filterStatus = ref('All');
 const dialog = ref(false);
 const detailsDialog = ref(false);
 const editMode = ref(false);
@@ -195,107 +342,50 @@ const selectedDiscount = ref(null);
 const sortOptions = ['title', 'code', 'amount', 'startPublishing', 'endPublishing'];
 const statusOptions = ['All', 'Published', 'UnPublished'];
 
-// Responsive: detect mobile
+// Add these new refs
+const showFilters = ref(false);
 const isMobile = ref(false);
-if (typeof window !== 'undefined') {
-    const checkMobile = () => {
-        isMobile.value = window.innerWidth < 900;
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+
+// Add computed properties for filter state
+const hasActiveFilters = computed(() => {
+    return filterStatus !== 'All' || sortBy.value !== 'title';
+});
+
+const activeFilterCount = computed(() => {
+    let count = 0;
+    if (filterStatus !== 'All') count++;
+    if (sortBy.value !== 'title') count++;
+    return count;
+});
+
+// Add methods for filter management
+function resetFilters() {
+    setFilterStatus('All');
+    setSortBy('title');
 }
 
-const mobileList = ref(null);
-const infinitePage = ref(1);
-const infiniteLoading = ref(false);
-const infiniteDone = ref(false);
-
-// Fetch discounts from server (mocked)
-async function fetchDiscounts({ append = false } = {}) {
-    if (isMobile.value && append) infiniteLoading.value = true;
-    else loading.value = true;
-    error.value = null;
-    try {
-        // Simulate API
-        await new Promise(r => setTimeout(r, 500));
-        // Mocked data (replace with real fetch)
-        const all = [
-            { id: 1, title: 'Summer Sale', code: 'SUMMER2025', amount: 20.0, type: 'Percentage', usageLimit: 100, startPublishing: '2025-06-01T00:00:00Z', endPublishing: '2025-06-30T23:59:59Z', status: 'UnPublished', createdAt: '2025-05-01T10:00:00Z', updatedAt: '2025-05-10T12:00:00Z' },
-            { id: 2, title: 'Welcome Discount', code: 'WELCOME10', amount: 10.0, type: 'Fixed', usageLimit: 50, startPublishing: '2025-05-15T00:00:00Z', endPublishing: '2025-12-31T23:59:59Z', status: 'Published', createdAt: '2025-05-14T09:00:00Z', updatedAt: '2025-05-14T09:00:00Z' },
-            { id: 3, title: 'Black Friday', code: 'BLACKFRIDAY', amount: 50.0, type: 'Percentage', usageLimit: 500, startPublishing: '2025-11-28T00:00:00Z', endPublishing: '2025-11-29T23:59:59Z', status: 'UnPublished', createdAt: '2025-05-12T08:00:00Z', updatedAt: '2025-05-13T08:00:00Z' },
-            { id: 1, title: 'Summer Sale', code: 'SUMMER2025', amount: 20.0, type: 'Percentage', usageLimit: 100, startPublishing: '2025-06-01T00:00:00Z', endPublishing: '2025-06-30T23:59:59Z', status: 'Published', createdAt: '2025-05-01T10:00:00Z', updatedAt: '2025-05-10T12:00:00Z' },
-            { id: 2, title: 'Welcome Discount', code: 'WELCOME10', amount: 10.0, type: 'Fixed', usageLimit: 50, startPublishing: '2025-05-15T00:00:00Z', endPublishing: '2025-12-31T23:59:59Z', status: 'Published', createdAt: '2025-05-14T09:00:00Z', updatedAt: '2025-05-14T09:00:00Z' },
-            { id: 3, title: 'Black Friday', code: 'BLACKFRIDAY', amount: 50.0, type: 'Percentage', usageLimit: 500, startPublishing: '2025-11-28T00:00:00Z', endPublishing: '2025-11-29T23:59:59Z', status: 'UnPublished', createdAt: '2025-05-12T08:00:00Z', updatedAt: '2025-05-13T08:00:00Z' },
-        ];
-        // Filter, sort, and paginate (mock)
-        let filtered = all;
-        if (filterStatus.value !== 'All') filtered = filtered.filter(d => d.status === filterStatus.value);
-        if (search.value) {
-            const s = search.value.toLowerCase();
-            filtered = filtered.filter(d => d.title.toLowerCase().includes(s) || d.code.toLowerCase().includes(s));
-        }
-        filtered = filtered.sort((a, b) => String(a[sortBy.value]).localeCompare(String(b[sortBy.value])));
-        totalDiscounts.value = filtered.length;
-        if (isMobile.value) {
-            // Infinite scroll: append next page
-            const start = (infinitePage.value - 1) * pageSize.value;
-            const next = filtered.slice(start, start + pageSize.value);
-            if (append) {
-                if (next.length === 0) infiniteDone.value = true;
-                else discounts.value = discounts.value.concat(next);
-            } else {
-                discounts.value = next;
-                infiniteDone.value = false;
-            }
-        } else {
-            // Desktop: normal pagination
-            discounts.value = filtered.slice((page.value - 1) * pageSize.value, page.value * pageSize.value);
-        }
-    } catch (e) {
-        error.value = 'Failed to load discounts.';
-    } finally {
-        if (isMobile.value && append) infiniteLoading.value = false;
-        else loading.value = false;
-    }
+function applyFilters() {
+    showFilters.value = false;
+    fetchDiscounts();
 }
 
-// Infinite scroll handler for mobile
-async function handleMobileScroll() {
-    if (infiniteLoading.value || infiniteDone.value) return;
-    const el = mobileList.value?.$el || mobileList.value;
-    if (!el) return;
-    const scrollBottom = el.scrollTop + el.clientHeight;
-    if (scrollBottom >= el.scrollHeight - 50) {
-        infinitePage.value++;
-        await fetchDiscounts({ append: true });
-    }
-}
+// Update the mobile detection
+// onMounted(() => {
+//     const checkMobile = () => {
+//         isMobile.value = window.innerWidth < 960;
+//     };
+//     checkMobile();
+//     window.addEventListener('resize', checkMobile);
+// });
+
 
 // Watchers
-watch([page, pageSize, search, sortBy, filterStatus, isMobile], async ([, , , , , mobile]) => {
-    if (mobile) {
-        infinitePage.value = 1;
-        discounts.value = [];
-        await fetchDiscounts();
-        await nextTick();
-        setTimeout(() => {
-            const el = mobileList.value?.$el || mobileList.value;
-            if (el) el.addEventListener('scroll', handleMobileScroll);
-        }, 100);
-    } else {
-        await fetchDiscounts();
-    }
+watch([page, pageSize, search, sortBy, filterStatus], async () => {
+    await fetchDiscounts();
 });
 
 onMounted(async () => {
     await fetchDiscounts();
-    if (isMobile.value) {
-        await nextTick();
-        setTimeout(() => {
-            const el = mobileList.value?.$el || mobileList.value;
-            if (el) el.addEventListener('scroll', handleMobileScroll);
-        }, 100);
-    }
 });
 
 // Computed property for filtered discounts (now just the current page)
@@ -303,9 +393,13 @@ const filteredDiscounts = computed(() => discounts.value);
 
 // Methods
 function openCreateDialog() {
+    console.log('Dialog clicked!!');
     editMode.value = false;
     selectedDiscount.value = null;
     dialog.value = true;
+    console.log(editMode.value,
+        selectedDiscount.value,
+        dialog.value,);
 }
 
 function editDiscount(item) {
@@ -325,19 +419,14 @@ function deleteDiscount(item) {
     fetchDiscounts();
 }
 
-function saveDiscount(discountData) {
+async function saveDiscount(discountData) {
     if (editMode.value) {
         const index = discounts.value.findIndex((d) => d.id === discountData.id);
         if (index !== -1) {
             discounts.value[index] = { ...discountData };
         }
     } else {
-        discounts.value.push({
-            ...discountData,
-            id: discounts.value.length + 1,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-        });
+        await createDiscount(discountData);
     }
     closeDialog();
     fetchDiscounts();
@@ -353,15 +442,16 @@ function closeDialog() {
 .discount-management {
     background: linear-gradient(135deg, #f8fafc 0%, #e3e6ee 100%);
     min-height: 100vh;
-    padding-bottom: 32px;
+    padding-bottom: 2rem;
 }
 
 .header-section {
-    background: linear-gradient(120deg, #1a2236 0%, #2d3652 100%);
-    border-radius: 0 0 32px 32px;
-    box-shadow: 0 8px 32px rgba(26, 34, 54, 0.18);
+    background: #fff;
+    /* border-radius: 0 0 32px 32px; */
+    /* box-shadow: 0 8px 32px rgba(26, 34, 54, 0.18); */
     position: relative;
     overflow: hidden;
+    margin-bottom: 24px;
 }
 
 .header-section::after {
@@ -375,311 +465,728 @@ function closeDialog() {
     opacity: 0.18;
 }
 
-.filter-section {
-    margin: 0 0 24px 0;
+.header-content {
+    position: relative;
+    z-index: 1;
 }
 
-.premium-filter-card {
-    background: rgba(255, 255, 255, 0.85);
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(123, 97, 255, 0.10), 0 1.5px 8px rgba(26, 34, 54, 0.07);
-    border: 1px solid #e3e8ee;
-    backdrop-filter: blur(8px);
-    transition: box-shadow 0.3s, border 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
+.header-content .text-h4 {
+    font-size: 2.25rem !important;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
 }
 
-.premium-input {
-    border-radius: 12px !important;
-    background: rgba(245, 247, 255, 0.7) !important;
-    box-shadow: 0 1px 4px rgba(123, 97, 255, 0.04);
-    font-size: 1.08rem;
+.header-content .text-subtitle-1 {
+    font-size: 1.1rem !important;
+    line-height: 1.5;
+    max-width: 600px;
 }
 
-.premium-filter-card .v-field__outline {
-    border-radius: 12px !important;
+.header-actions {
+    position: relative;
+    z-index: 1;
 }
 
-@media (max-width: 900px) {
-    .premium-filter-card {
-        border-radius: 12px;
-        padding: 10px 4px !important;
-    }
-
-    .premium-input {
-        font-size: 0.98rem;
-    }
+.premium-search-input {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 32px !important;
+    transition: all 0.3s ease;
 }
 
-@media (max-width: 600px) {
-    .premium-filter-card {
-        border-radius: 8px;
-        padding: 8px 2px !important;
-    }
-
-    .premium-input {
-        font-size: 0.92rem;
-    }
+.premium-search-input:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
 }
 
+.premium-search-input:focus-within {
+    background: rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+.premium-search-input :deep(.v-field__input) {
+    color: rgba(7, 7, 7, 0.7) !important;
+}
+
+.premium-search-input :deep(.v-icon) {
+    color: rgba(8, 8, 8, 0.7) !important;
+}
+
+/* Updated Table Styles */
 .premium-table-card {
     background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(26, 34, 54, 0.10);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(26, 34, 54, 0.08);
     overflow: hidden;
-    border: 1px solid #e3e8ee;
+    border: 1px solid rgba(123, 97, 255, 0.08);
 }
 
 .premium-table-header {
-    background: linear-gradient(90deg, #1a2236 0%, #2d3652 100%);
-    color: #fff;
-    border-bottom: 1px solid #e3e8ee;
+    background: #f8fafc;
+    border-bottom: 1px solid rgba(123, 97, 255, 0.08);
 }
 
 .premium-table-title {
-    font-size: 1.5rem;
-    font-weight: 700;
+    color: #1a2236;
+    font-size: 0.95rem !important;
+    line-height: 1.4;
+    margin-bottom: 2px;
 }
 
 .premium-table-subtitle {
-    font-size: 1rem;
-    opacity: 0.8;
+    color: #4a5568;
+    font-size: 0.85rem !important;
+    line-height: 1.4;
 }
 
 .premium-table {
-    background: #fff;
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(26, 34, 54, 0.10);
-    overflow: hidden;
-    border: 1px solid #e3e8ee;
+    background: transparent !important;
 }
 
 .premium-table :deep(.v-data-table__wrapper) {
     overflow-x: auto;
 }
 
-.premium-table :deep(.v-data-table__tr:nth-child(even)) {
-    background: #f4f8fd !important;
-    /* soft blue */
-}
-
-.premium-table :deep(.v-data-table__tr:nth-child(odd)) {
-    background: #fff !important;
-}
-
 .premium-table :deep(.v-data-table__tr) {
-    transition: background-color 0.3s, box-shadow 0.3s, border-left 0.3s;
-    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    border-left: 3px solid transparent;
 }
 
 .premium-table :deep(.v-data-table__tr:hover) {
-    background: #f0eaff !important;
-    border-left: 4px solid #7b61ff;
-    box-shadow: 0 2px 12px rgba(123, 97, 255, 0.08);
-}
-
-.premium-table :deep(.v-data-table__th),
-.premium-table :deep(.v-data-table__td) {
-    font-size: 1.08rem;
-    font-family: 'Inter', 'Roboto', Arial, sans-serif;
-    color: #232946;
-    padding: 16px 12px !important;
-    background: transparent !important;
+    background: rgba(123, 97, 255, 0.04) !important;
+    border-left: 3px solid #7b61ff;
 }
 
 .premium-table :deep(.v-data-table__th) {
-    font-weight: 700;
     background: #f8fafc !important;
-    border-bottom: 1px solid #e3e8ee;
+    color: #1a2236 !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    padding: 12px 16px !important;
+    border-bottom: 1px solid rgba(123, 97, 255, 0.08) !important;
+    white-space: nowrap;
 }
 
 .premium-table :deep(.v-data-table__td) {
-    border-bottom: 1px solid #f0f1f6;
-    padding-top: 20px !important;
-    padding-bottom: 20px !important;
-}
-
-.premium-table :deep(.v-data-table__td:last-child),
-.premium-table :deep(.v-data-table__th:last-child) {
-    border-right: none;
-}
-
-.premium-chip {
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    border-radius: 8px;
-    font-size: 1rem;
-    box-shadow: 0 1px 4px rgba(26, 34, 54, 0.07);
+    padding: 12px 16px !important;
+    font-size: 0.9rem !important;
+    color: #2d3748 !important;
+    border-bottom: 1px solid rgba(123, 97, 255, 0.04) !important;
 }
 
 .premium-sn {
-    font-weight: 700;
+    font-weight: 600;
     color: #7b61ff;
-    font-size: 1.08rem;
-    letter-spacing: 0.02em;
+    font-size: 0.9rem;
 }
 
-.premium-actions-row {
-    display: flex;
-    flex-direction: row;
-    gap: 4px;
-    justify-content: flex-start;
-    align-items: center;
+.premium-chip {
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 0 8px;
+    height: 24px;
+}
+
+.status-published {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: #059669 !important;
+}
+
+.status-unpublished {
+    background: rgba(245, 158, 11, 0.1) !important;
+    color: #d97706 !important;
 }
 
 .premium-amount {
-    font-weight: 700;
-    color: #232946;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 6px;
 }
 
 .amount-percentage {
     color: #7b61ff;
     background: rgba(123, 97, 255, 0.08);
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
 }
 
 .amount-fixed {
-    color: #e91e63;
-    background: rgba(233, 30, 99, 0.08);
-    border-radius: 6px;
-    padding: 4px 10px;
-    font-weight: 700;
-    display: inline-flex;
-    align-items: center;
+    color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.08);
 }
 
 .premium-type-chip {
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    border-radius: 8px;
-    font-size: 0.98rem;
-    box-shadow: 0 1px 4px rgba(26, 34, 54, 0.07);
-    text-transform: capitalize;
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 0 8px;
+    height: 24px;
+}
+
+.type-percentage {
+    background: rgba(123, 97, 255, 0.1) !important;
+    color: #7b61ff !important;
+}
+
+.type-fixed {
+    background: rgba(139, 92, 246, 0.1) !important;
+    color: #8b5cf6 !important;
 }
 
 .premium-usage-chip {
-    font-weight: 700;
-    border-radius: 8px;
-    font-size: 0.98rem;
-    box-shadow: 0 1px 4px rgba(26, 34, 54, 0.07);
-    text-transform: capitalize;
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 0 8px;
+    height: 24px;
 }
 
-.v-btn {
-    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
-    box-shadow: 0 2px 8px rgba(26, 34, 54, 0.08);
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 1.02rem;
+.premium-actions-row {
+    display: flex;
+    gap: 4px;
+    justify-content: flex-start;
+    align-items: center;
 }
 
-.v-btn:hover {
-    transform: scale(1.08);
-    box-shadow: 0 4px 16px rgba(255, 111, 145, 0.18);
+.premium-actions-row .v-btn {
+    opacity: 0.7;
+    transition: all 0.2s ease;
 }
 
-.v-card.rounded-xl.pa-6 {
-    border-radius: 24px !important;
-    box-shadow: 0 8px 32px rgba(26, 34, 54, 0.13);
-    background: #fff;
-    border: 1px solid #e3e8ee;
+.premium-actions-row .v-btn:hover {
+    opacity: 1;
+    transform: translateY(-2px);
 }
 
-.v-dialog>.v-overlay__content {
-    border-radius: 24px;
-    overflow: visible;
-    box-shadow: 0 8px 32px rgba(26, 34, 54, 0.18);
-    transition: box-shadow 0.3s;
+.premium-table-footer {
+    background: #f8fafc;
+    border-top: 1px solid rgba(123, 97, 255, 0.08);
 }
 
-.opacity-80 {
-    opacity: 0.8;
-}
-
-.text-h4,
-.text-h5,
-.text-h6 {
-    letter-spacing: 0.01em;
-    font-family: 'Inter', 'Roboto', Arial, sans-serif;
-    color: #fff;
-}
-
-.v-data-table__th,
-.v-data-table__td {
-    font-size: 1.08rem;
-    font-family: 'Inter', 'Roboto', Arial, sans-serif;
-}
-
-.v-data-table__td {
-    padding-top: 18px !important;
-    padding-bottom: 18px !important;
-}
-
-.v-icon {
-    vertical-align: middle;
-}
-
-/* Dialog transitions */
-.v-dialog-transition-enter-active,
-.v-dialog-transition-leave-active {
-    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.v-dialog-transition-enter-from,
-.v-dialog-transition-leave-to {
-    opacity: 0;
-    transform: scale(0.95);
-}
-
-/* Responsive tweaks */
-@media (max-width: 900px) {
-    .header-section {
-        border-radius: 0 0 18px 18px;
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .premium-table-card {
+        background: #1a1a1a;
+        border-color: rgba(255, 255, 255, 0.08);
     }
 
-    .filter-section {
-        margin: 0 4px 16px 4px;
+    .premium-table-header,
+    .premium-table-footer {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: rgba(255, 255, 255, 0.08);
     }
 
+    .premium-table-title {
+        color: #fff;
+    }
+
+    .premium-table-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .premium-table :deep(.v-data-table__th) {
+        background: rgba(255, 255, 255, 0.03) !important;
+        color: #fff !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    .premium-table :deep(.v-data-table__td) {
+        color: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(255, 255, 255, 0.04) !important;
+    }
+
+    .premium-table :deep(.v-data-table__tr:hover) {
+        background: rgba(123, 97, 255, 0.08) !important;
+    }
+
+    .status-published {
+        background: rgba(16, 185, 129, 0.15) !important;
+    }
+
+    .status-unpublished {
+        background: rgba(245, 158, 11, 0.15) !important;
+    }
+
+    .amount-percentage {
+        background: rgba(123, 97, 255, 0.12);
+    }
+
+    .amount-fixed {
+        background: rgba(139, 92, 246, 0.12);
+    }
+
+    .type-percentage {
+        background: rgba(123, 97, 255, 0.15) !important;
+    }
+
+    .type-fixed {
+        background: rgba(139, 92, 246, 0.15) !important;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 960px) {
     .premium-table-card {
         border-radius: 12px;
     }
 
     .premium-table :deep(.v-data-table__th),
     .premium-table :deep(.v-data-table__td) {
-        font-size: 0.98rem;
-        padding: 10px 6px !important;
+        padding: 10px 12px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .premium-table-footer {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
     }
 }
 
 @media (max-width: 600px) {
-    .header-section {
-        padding: 24px 8px !important;
-    }
-
-    .filter-section {
-        padding: 12px 4px !important;
-    }
-
     .premium-table-card {
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(26, 34, 54, 0.08);
-    }
-
-    .premium-table :deep(.v-data-table__wrapper) {
-        overflow-x: auto;
     }
 
     .premium-table :deep(.v-data-table__th),
     .premium-table :deep(.v-data-table__td) {
-        font-size: 0.92rem;
-        padding: 8px 4px !important;
+        padding: 8px 10px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .premium-chip,
+    .premium-type-chip,
+    .premium-usage-chip {
+        font-size: 0.8rem !important;
+        height: 22px !important;
+    }
+
+    .premium-actions-row .v-btn {
+        width: 32px !important;
+        height: 32px !important;
+    }
+}
+
+/* Floating Action Button Styles */
+.create-discount-fab {
+    position: fixed !important;
+    bottom: 32px !important;
+    right: 32px !important;
+    z-index: 100;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    background: linear-gradient(135deg, #7b61ff 0%, #ff6f91 100%) !important;
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(8px);
+    box-shadow:
+        0 4px 24px rgba(123, 97, 255, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+.create-discount-fab:hover {
+    transform: translateY(-4px) scale(1.05) !important;
+    box-shadow:
+        0 8px 32px rgba(123, 97, 255, 0.35),
+        0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.create-discount-fab:active {
+    transform: translateY(0) scale(0.95) !important;
+}
+
+.create-discount-fab .v-icon {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.create-discount-fab:hover .v-icon {
+    transform: rotate(90deg);
+}
+
+/* Tooltip Styles */
+.create-discount-tooltip {
+    --v-overlay-opacity: 0.95;
+}
+
+.tooltip-content {
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    padding: 4px 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .create-discount-fab {
+        bottom: 24px !important;
+        right: 24px !important;
+        transform: scale(0.9) !important;
+    }
+
+    .create-discount-fab:hover {
+        transform: translateY(-4px) scale(0.95) !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .create-discount-fab {
+        background: linear-gradient(135deg, #8b6dff 0%, #ff7b9d 100%) !important;
+        box-shadow:
+            0 4px 24px rgba(123, 97, 255, 0.35),
+            0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+    }
+}
+
+/* Animation keyframes */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 4px 24px rgba(123, 97, 255, 0.25);
+    }
+
+    50% {
+        box-shadow: 0 4px 32px rgba(123, 97, 255, 0.35);
+    }
+
+    100% {
+        box-shadow: 0 4px 24px rgba(123, 97, 255, 0.25);
+    }
+}
+
+.create-discount-fab {
+    animation: pulse 2s infinite ease-in-out;
+}
+
+/* Accessibility focus styles */
+.create-discount-fab:focus-visible {
+    outline: 2px solid #7b61ff;
+    outline-offset: 4px;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+    .create-discount-fab {
+        border: 2px solid CanvasText !important;
+    }
+}
+
+/* Enhanced Filter Button Styles */
+.filter-trigger-btn {
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    background: rgba(123, 97, 255, 0.12) !important;
+    border: 1px solid rgba(123, 97, 255, 0.2) !important;
+    backdrop-filter: blur(8px);
+    box-shadow:
+        0 4px 16px rgba(26, 34, 54, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+}
+
+.filter-btn-backdrop {
+    position: absolute;
+    inset: -8px;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.4) 70%);
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0.8;
+    backdrop-filter: blur(4px);
+}
+
+.filter-trigger-btn:hover {
+    background: rgba(123, 97, 255, 0.15) !important;
+    transform: translateY(-2px);
+    box-shadow:
+        0 6px 20px rgba(26, 34, 54, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.filter-trigger-btn:hover .filter-btn-backdrop {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.filter-active {
+    background: linear-gradient(135deg, rgba(123, 97, 255, 0.2) 0%, rgba(255, 111, 145, 0.2) 100%) !important;
+    border: 1px solid rgba(123, 97, 255, 0.3) !important;
+    box-shadow:
+        0 4px 20px rgba(123, 97, 255, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+.filter-active .filter-btn-backdrop {
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.5) 70%);
+    opacity: 0.9;
+}
+
+/* Mobile specific enhancements */
+@media (max-width: 600px) {
+    .filter-trigger-btn {
+        position: fixed !important;
+        bottom: 100px !important;
+        right: 24px !important;
+        z-index: 99 !important;
+        width: 56px !important;
+        height: 56px !important;
+        background: rgba(123, 97, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow:
+            0 4px 20px rgba(26, 34, 54, 0.25),
+            0 0 0 1px rgba(255, 255, 255, 0.15) !important;
+    }
+
+    .filter-btn-backdrop {
+        background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 70%);
+        opacity: 0.9;
+    }
+
+    .filter-trigger-btn:hover {
+        transform: translateY(-3px) scale(1.05) !important;
+    }
+
+    .filter-trigger-btn:active {
+        transform: translateY(0) scale(0.95) !important;
+    }
+}
+
+/* Dark mode enhancements */
+@media (prefers-color-scheme: dark) {
+    .filter-trigger-btn {
+        background: rgba(123, 97, 255, 0.15) !important;
+        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        box-shadow:
+            0 4px 20px rgba(0, 0, 0, 0.3),
+            0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .filter-btn-backdrop {
+        background: radial-gradient(circle at center, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 70%);
+    }
+
+    .filter-active {
+        background: linear-gradient(135deg, rgba(123, 97, 255, 0.25) 0%, rgba(255, 111, 145, 0.25) 100%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+
+    .filter-active .filter-btn-backdrop {
+        background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 70%);
+    }
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+    .filter-trigger-btn {
+        border: 2px solid CanvasText !important;
+        background: Canvas !important;
+    }
+
+    .filter-btn-backdrop {
+        display: none;
+    }
+
+    .filter-active {
+        border: 3px solid CanvasText !important;
+    }
+}
+
+/* Animation for filter button */
+@keyframes filterPulse {
+    0% {
+        box-shadow:
+            0 4px 16px rgba(26, 34, 54, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+
+    50% {
+        box-shadow:
+            0 4px 24px rgba(123, 97, 255, 0.25),
+            0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    100% {
+        box-shadow:
+            0 4px 16px rgba(26, 34, 54, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.1);
+    }
+}
+
+.filter-trigger-btn {
+    animation: filterPulse 2s infinite ease-in-out;
+}
+
+.filter-active {
+    animation: none;
+}
+
+/* Search Input Styles */
+.premium-search-input {
+    border-radius: 12px !important;
+    background: rgba(245, 247, 255, 0.7) !important;
+    transition: all 0.3s ease;
+}
+
+.premium-search-input:hover {
+    background: rgba(245, 247, 255, 0.9) !important;
+}
+
+.premium-search-input:focus-within {
+    background: #fff !important;
+    box-shadow: 0 2px 12px rgba(123, 97, 255, 0.1) !important;
+}
+
+/* Updated Filter Panel Styles */
+.filter-panel {
+    background: #f8fafc !important;
+    border-left: 1px solid rgba(123, 97, 255, 0.12) !important;
+    box-shadow: -4px 0 24px rgba(26, 34, 54, 0.15) !important;
+}
+
+.filter-panel-header {
+    background: linear-gradient(135deg, rgba(123, 97, 255, 0.08) 0%, rgba(255, 111, 145, 0.08) 100%);
+    border-bottom: 1px solid rgba(123, 97, 255, 0.12);
+}
+
+.filter-section {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 24px !important;
+    border: 1px solid rgba(123, 97, 255, 0.08);
+    transition: all 0.3s ease;
+}
+
+.filter-section:hover {
+    background: #fff;
+    border-color: rgba(123, 97, 255, 0.15);
+    box-shadow: 0 4px 12px rgba(123, 97, 255, 0.08);
+}
+
+.filter-section-header {
+    color: #1a2236;
+    margin-bottom: 16px;
+}
+
+.filter-section-header .text-subtitle-1 {
+    font-weight: 600 !important;
+    color: #1a2236;
+}
+
+.filter-form .premium-input {
+    border-radius: 12px !important;
+    background: rgba(245, 247, 255, 0.9) !important;
+    border: 1px solid rgba(123, 97, 255, 0.12) !important;
+    transition: all 0.3s ease;
+}
+
+.filter-form .premium-input:hover {
+    background: #fff !important;
+    border-color: rgba(123, 97, 255, 0.2) !important;
+}
+
+.filter-form .premium-input:focus-within {
+    background: #fff !important;
+    border-color: #7b61ff !important;
+    box-shadow: 0 2px 12px rgba(123, 97, 255, 0.15) !important;
+}
+
+.apply-filters-btn {
+    background: linear-gradient(135deg, #7b61ff 0%, #ff6f91 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.01em;
+    height: 44px !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+.apply-filters-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(123, 97, 255, 0.25) !important;
+}
+
+.apply-filters-btn:disabled {
+    background: linear-gradient(135deg, rgba(123, 97, 255, 0.5) 0%, rgba(255, 111, 145, 0.5) 100%) !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .filter-panel {
+        background: #1a1a1a !important;
+    }
+
+    .filter-section {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .filter-section:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .filter-section-header .text-subtitle-1 {
+        color: #fff;
+    }
+
+    .filter-form .premium-input {
+        background: rgba(255, 255, 255, 0.08) !important;
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    .filter-form .premium-input:hover {
+        background: rgba(255, 255, 255, 0.12) !important;
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .premium-table-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 16px;
+        padding: 16px !important;
+    }
+
+    .premium-table-header>div:last-child {
+        width: 100%;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .premium-search-input {
+        width: 100% !important;
+        max-width: none !important;
+    }
+
+    .filter-bottom-sheet-content {
+        border-radius: 20px 20px 0 0 !important;
+    }
+
+    .filter-section {
+        padding: 12px;
+        margin-bottom: 16px !important;
+    }
+}
+
+/* Accessibility */
+.filter-trigger-btn:focus-visible {
+    outline: 2px solid #7b61ff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(123, 97, 255, 0.2) !important;
+}
+
+/* High contrast mode */
+@media (forced-colors: active) {
+
+    .filter-trigger-btn,
+    .filter-panel,
+    .filter-bottom-sheet-content,
+    .premium-search-input,
+    .filter-form .premium-input {
+        border: 2px solid CanvasText !important;
+    }
+
+    .filter-panel-header,
+    .filter-bottom-sheet-content .v-card-title {
+        border-bottom: 2px solid CanvasText !important;
     }
 }
 </style>

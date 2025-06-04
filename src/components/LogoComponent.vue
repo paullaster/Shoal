@@ -1,9 +1,9 @@
 <template>
-        <img :src="NoelsLogo"  :width="width" :height="height" alt="Noels Fish Delivery Logo" >
+    <img :src="NoelsLogo" :width="width" :height="height" alt="Noels Fish Delivery Logo">
 </template>
 
 <script setup>
-import NoelsLogo from "../assets/logo.svg"
+import NoelsLogo from "../assets/logo.png"
 
 defineProps({
     height: {
@@ -14,6 +14,4 @@ defineProps({
     },
 })
 </script>
-<style>
-
-</style>
+<style></style>

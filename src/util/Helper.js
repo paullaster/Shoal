@@ -19,7 +19,7 @@ class Helper {
         });
     }
     countDownDisplay(time) {
-        return `${Math.floor(time / 60)}:${time % 60 < 10? '0' : ''}${time % 60}`;
+        return `${Math.floor(time / 60)}:${time % 60 < 10 ? '0' : ''}${time % 60}`;
     }
     capitalizeFirstLetter(s) {
         s = s.split(" ");
@@ -27,6 +27,27 @@ class Helper {
             s[i] = s[i].charAt(0).toUpperCase() + s[i].slice(1);
         }
         return s.join(" ");
+    }
+    camelCaseToKebabCase(str) {
+        return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
+    }
+    safeTypeChecker(input) {
+        return Object.prototype.toString.call(input).slice(8, -1);
+    }
+    removeNullsFromObject(object) {
+        const newObject = {};
+        for (const [key, value] of Object.entries(object)) {
+            switch (this.safeTypeChecker(value)) {
+                case 'Null':
+                case 'Undefined':
+                    continue;
+                case 'String': {
+                    if (!value.length) continue;
+                }
+            }
+            newObject[key] = value;
+        }
+        return newObject;
     }
 }
 
