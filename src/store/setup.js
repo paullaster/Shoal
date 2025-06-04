@@ -80,6 +80,7 @@ export const useSetupStore = defineStore('setup', {
         },
         async createCategory(category) {
             try {
+                this.setLoader(true);
                 if (this.activeAbortController) {
                     this.activeAbortController.abort();
                 }
@@ -90,13 +91,6 @@ export const useSetupStore = defineStore('setup', {
                     method: "POST",
                     data: category,
                     signal,
-                }).then(() => {
-
-                }).catch((error) => {
-                    console.log('Error when creating category: ', error);
-                    this.toast.error(error.message);
-                }).finally(() => {
-                    this.setLoader(false);
                 });
 
             } catch (error) {

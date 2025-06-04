@@ -622,7 +622,6 @@ async function saveCategory(categoryData) {
       await setupStore.createCategory(categoryData);
       useToast().success('Category created successfully');
     }
-
     closeCategoryDialog();
     refreshCategories();
   } catch (error) {
