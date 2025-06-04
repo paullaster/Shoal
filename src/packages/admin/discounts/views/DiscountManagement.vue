@@ -176,7 +176,7 @@
                 <v-card-title class="text-h5 font-weight-bold">
                     {{ editMode ? 'Edit Discount' : 'Create Discount' }}
                 </v-card-title>
-                <v-card-text>
+                <v-card-text style="padding-inline: 1.2rem !important;">
                     <discount-form :discount="selectedDiscount" @save="saveDiscount" @cancel="closeDialog" />
                 </v-card-text>
             </v-card>
@@ -270,8 +270,9 @@
                                 <v-icon color="primary" class="mr-2">mdi-sort</v-icon>
                                 <div class="text-subtitle-1 font-weight-medium">Sort Options</div>
                             </div>
-                            <v-select v-model="sortBy" :items="sortOptions" variant="outlined" density="comfortable"
-                                hide-details class="premium-input mb-4" placeholder="Sort by..." />
+                            <v-autocomplete v-model="sortBy" :items="sortOptions" variant="outlined"
+                                density="comfortable" hide-details class="premium-input mb-4"
+                                placeholder="Sort by..." />
                         </div>
 
                         <div class="filter-section mb-6">
@@ -279,7 +280,7 @@
                                 <v-icon color="primary" class="mr-2">mdi-filter-variant</v-icon>
                                 <div class="text-subtitle-1 font-weight-medium">Filter Options</div>
                             </div>
-                            <v-select v-model="filterStatus" :items="statusOptions" variant="outlined"
+                            <v-autocomplete v-model="filterStatus" :items="statusOptions" variant="outlined"
                                 density="comfortable" hide-details class="premium-input"
                                 placeholder="Filter by status..." />
                         </div>
@@ -308,14 +309,14 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import DiscountForm from '../components/DiscountForm.vue';
 import DiscountDetails from '../components/DiscountDetails.vue';
+import { useDiscount } from '@/composables/useDiscount';
+import useGlobal from '@/composables/useGlobal';
 
+// composables
 // Server-driven state
-const discounts = ref([]);
-const totalDiscounts = ref(0);
-const page = ref(1);
-const pageSize = ref(20);
-const loading = ref(false);
-const error = ref(null);
+const { createDiscount, discounts, fetchDiscounts, filterStatus, page, pageSize, search, sortBy, totalDiscounts } = useDiscount();
+const { loading } = useGlobal();
+
 
 const headers = ref([
     { title: 'S/N', key: 'sn', align: 'center', sortable: false },
@@ -330,9 +331,6 @@ const headers = ref([
     { title: 'Actions', key: 'actions', sortable: false },
 ]);
 
-const search = ref('');
-const sortBy = ref('title');
-const filterStatus = ref('All');
 const dialog = ref(false);
 const detailsDialog = ref(false);
 const editMode = ref(false);
@@ -377,38 +375,6 @@ onMounted(() => {
     window.addEventListener('resize', checkMobile);
 });
 
-// Fetch discounts from server (mocked)
-async function fetchDiscounts() {
-    loading.value = true;
-    error.value = null;
-    try {
-        // Simulate API
-        await new Promise(r => setTimeout(r, 500));
-        // Mocked data (replace with real fetch)
-        const all = [
-            { id: 1, title: 'Summer Sale', code: 'SUMMER2025', amount: 20.0, type: 'Percentage', usageLimit: 100, startPublishing: '2025-06-01T00:00:00Z', endPublishing: '2025-06-30T23:59:59Z', status: 'UnPublished', createdAt: '2025-05-01T10:00:00Z', updatedAt: '2025-05-10T12:00:00Z' },
-            { id: 2, title: 'Welcome Discount', code: 'WELCOME10', amount: 10.0, type: 'Fixed', usageLimit: 50, startPublishing: '2025-05-15T00:00:00Z', endPublishing: '2025-12-31T23:59:59Z', status: 'Published', createdAt: '2025-05-14T09:00:00Z', updatedAt: '2025-05-14T09:00:00Z' },
-            { id: 3, title: 'Black Friday', code: 'BLACKFRIDAY', amount: 50.0, type: 'Percentage', usageLimit: 500, startPublishing: '2025-11-28T00:00:00Z', endPublishing: '2025-11-29T23:59:59Z', status: 'UnPublished', createdAt: '2025-05-12T08:00:00Z', updatedAt: '2025-05-13T08:00:00Z' },
-            { id: 1, title: 'Summer Sale', code: 'SUMMER2025', amount: 20.0, type: 'Percentage', usageLimit: 100, startPublishing: '2025-06-01T00:00:00Z', endPublishing: '2025-06-30T23:59:59Z', status: 'Published', createdAt: '2025-05-01T10:00:00Z', updatedAt: '2025-05-10T12:00:00Z' },
-            { id: 2, title: 'Welcome Discount', code: 'WELCOME10', amount: 10.0, type: 'Fixed', usageLimit: 50, startPublishing: '2025-05-15T00:00:00Z', endPublishing: '2025-12-31T23:59:59Z', status: 'Published', createdAt: '2025-05-14T09:00:00Z', updatedAt: '2025-05-14T09:00:00Z' },
-            { id: 3, title: 'Black Friday', code: 'BLACKFRIDAY', amount: 50.0, type: 'Percentage', usageLimit: 500, startPublishing: '2025-11-28T00:00:00Z', endPublishing: '2025-11-29T23:59:59Z', status: 'UnPublished', createdAt: '2025-05-12T08:00:00Z', updatedAt: '2025-05-13T08:00:00Z' },
-        ];
-        // Filter, sort, and paginate (mock)
-        let filtered = all;
-        if (filterStatus.value !== 'All') filtered = filtered.filter(d => d.status === filterStatus.value);
-        if (search.value) {
-            const s = search.value.toLowerCase();
-            filtered = filtered.filter(d => d.title.toLowerCase().includes(s) || d.code.toLowerCase().includes(s));
-        }
-        filtered = filtered.sort((a, b) => String(a[sortBy.value]).localeCompare(String(b[sortBy.value])));
-        totalDiscounts.value = filtered.length;
-        discounts.value = filtered.slice((page.value - 1) * pageSize.value, page.value * pageSize.value);
-    } catch (e) {
-        error.value = 'Failed to load discounts.';
-    } finally {
-        loading.value = false;
-    }
-}
 
 // Watchers
 watch([page, pageSize, search, sortBy, filterStatus], async () => {
@@ -446,19 +412,14 @@ function deleteDiscount(item) {
     fetchDiscounts();
 }
 
-function saveDiscount(discountData) {
+async function saveDiscount(discountData) {
     if (editMode.value) {
         const index = discounts.value.findIndex((d) => d.id === discountData.id);
         if (index !== -1) {
             discounts.value[index] = { ...discountData };
         }
     } else {
-        discounts.value.push({
-            ...discountData,
-            id: discounts.value.length + 1,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-        });
+        await createDiscount(discountData);
     }
     closeDialog();
     fetchDiscounts();

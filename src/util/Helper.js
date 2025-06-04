@@ -31,6 +31,24 @@ class Helper {
     camelCaseToKebabCase(str) {
         return str.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
     }
+    safeTypeChecker(input) {
+        return Object.prototype.toString.call(input).slice(8, -1);
+    }
+    removeNullsFromObject(object) {
+        const newObject = {};
+        for (const [key, value] of Object.entries(object)) {
+            switch (this.safeTypeChecker(value)) {
+                case 'Null':
+                case 'Undefined':
+                    continue;
+                case 'String': {
+                    if (!value.length) continue;
+                }
+            }
+            newObject[key] = value;
+        }
+        return newObject;
+    }
 }
 
 export default new Helper();
