@@ -104,7 +104,7 @@ async function saveCategory() {
         saving.value = true;
         emit('save', { ...category.value });
     } catch (error) {
-        console.error('Error saving category:', error);
+        useToast().warning('Erro trying to save cateogry.')
     } finally {
         saving.value = false;
     }
