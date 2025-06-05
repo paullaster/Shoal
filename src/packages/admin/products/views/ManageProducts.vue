@@ -606,12 +606,6 @@ async function saveProduct(productData) {
 
 async function saveCategory(categoryData) {
   try {
-    const { valid } = await categoryForm.value.validate();
-    if (!valid) {
-      useToast().error('Please fill in all required fields');
-      return;
-    }
-
     if (editingCategory.value) {
       await setupStore.updateCategory({
         ...editingCategory.value,
@@ -625,7 +619,6 @@ async function saveCategory(categoryData) {
     closeCategoryDialog();
     refreshCategories();
   } catch (error) {
-    console.error('Error saving category:', error);
     useToast().error('Failed to save category');
   }
 }
