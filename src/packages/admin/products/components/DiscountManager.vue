@@ -1,7 +1,8 @@
 <template>
     <div class="discount-manager">
         <!-- Header -->
-        <div class="d-flex align-center justify-space-between mb-6">
+        <div
+            style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 12px;">
             <div>
                 <div class="text-h6 font-weight-bold">Product Discounts</div>
                 <div class="text-subtitle-2 text-medium-emphasis">

@@ -96,3 +96,8 @@ background-color: var(--vt-c-secondary-light)
         0 0 0 1px rgba(255, 255, 255, 0.1) !important;
     color: #fff !important;
 }
+
+.bg-secondary {
+    background: linear-gradient(135deg, #7b61ff1e 0%, #ff6f9115 100%) !important;
+    color: #fff !important;
+}
