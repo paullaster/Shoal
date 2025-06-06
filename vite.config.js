@@ -1,16 +1,18 @@
 import { sentryVitePlugin } from "@sentry/vite-plugin";
-import { fileURLToPath, URL } from 'node:url'
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import VueDevTools from 'vite-plugin-vue-devtools'
-import vuetify from 'vite-plugin-vuetify'
-import { VitePWA } from 'vite-plugin-pwa'
+import { fileURLToPath, URL } from 'node:url';
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import VueDevTools from 'vite-plugin-vue-devtools';
+import vuetify from 'vite-plugin-vuetify';
+import { VitePWA } from 'vite-plugin-pwa';
+import tailwindcss from '@tailwindcss/vite';
 
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    tailwindcss(),
     VueDevTools(),
     vuetify({
       autoImport: { labs: true }

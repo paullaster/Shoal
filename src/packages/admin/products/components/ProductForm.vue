@@ -1,6 +1,6 @@
 <template>
     <v-form ref="form" @submit.prevent="saveProduct">
-        <v-stepper v-model="currentStep" class="product-form-stepper">
+        <v-stepper v-model="currentStep" class="product-form-stepper" style="padding-inline: 0 !important;">
             <!-- Stepper Header -->
             <v-stepper-header>
                 <v-stepper-item v-for="step in steps" :key="step.value" :value="step.value" :title="step.title"
@@ -19,25 +19,24 @@
                         <v-row>
                             <v-col cols="12">
                                 <v-text-field v-model="product.name" label="Product Name" :rules="rules.name"
-                                    variant="outlined" density="comfortable" class="mb-4" />
+                                    variant="outlined" density="comfortable" class="mb-4 rounded-xlg" />
                             </v-col>
                             <v-col cols="12">
                                 <v-textarea v-model="product.description" label="Product Description"
                                     :rules="rules.description" variant="outlined" density="comfortable" class="mb-4"
                                     rows="4" />
                             </v-col>
+                            <v-col cols="12">
+                                <v-textarea v-model="product.recipeTips" label="Recipe Tips" variant="outlined"
+                                    density="comfortable" class="mb-4" rows="4" />
+                            </v-col>
                             <v-col cols="12" md="6">
-                                <v-text-field v-model.number="product.price" label="Price" type="number"
+                                <v-text-field v-model.number="product.price" label="Base Price" type="number"
                                     :rules="rules.price" variant="outlined" density="comfortable" class="mb-4"
                                     prefix="$" />
                             </v-col>
-                            <v-col cols="12" md="6">
-                                <v-text-field v-model.number="product.stock" label="Initial Stock" type="number"
-                                    :rules="rules.stock" variant="outlined" density="comfortable" class="mb-4" />
-                            </v-col>
                             <v-col cols="12">
-                                <v-text-field v-model="product.sku" label="SKU" :rules="rules.sku" variant="outlined"
-                                    density="comfortable" class="mb-4" />
+                                <v-switch v-model="product.hasVariants" label="Active" color="primary" hide-details />
                             </v-col>
                         </v-row>
                     </div>
@@ -72,31 +71,38 @@
                 <!-- Variants Step -->
                 <v-stepper-window-item :value="3">
                     <div class="step-content">
-                        <v-row>
+                        <!-- <v-row>
                             <v-col cols="12">
                                 <div class="mb-4"
-                                    style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                    style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                                     <div class="text-subtitle-1 font-weight-medium">Product Variants</div>
                                     <v-btn color="primary" variant="tonal" prepend-icon="mdi-plus"
                                         @click="openAttributeDialog">
                                         Manage Attributes
                                     </v-btn>
-                                </div>
-                                <v-expansion-panels>
-                                    <v-expansion-panel v-for="(variant, index) in product.variants" :key="index"
-                                        class="mb-2">
+                                </div> -->
+
+                        <!-- Variants List -->
+                        <!-- <v-expansion-panels>
+                                    <v-expansion-panel v-for="(variant, index) in product.variants"
+                                        :key="variant.variantId" class="mb-2">
                                         <v-expansion-panel-title>
-                                            Variant {{ index + 1 }}
+                                            <div class="d-flex align-center">
+                                                <span class="mr-2">Variant {{ index + 1 }}</span>
+                                                <v-chip size="small" color="primary" variant="tonal" class="ml-2">
+                                                    SKU: {{ variant.sku }}
+                                                </v-chip>
+                                            </div>
                                         </v-expansion-panel-title>
                                         <v-expansion-panel-text>
                                             <v-row>
                                                 <v-col cols="12" md="6">
-                                                    <v-text-field v-model.number="variant.price" label="Price"
+                                                    <v-text-field v-model.number="variant.price" label="Variant Price"
                                                         type="number" variant="outlined" density="comfortable"
                                                         class="mb-4" prefix="$" />
                                                 </v-col>
                                                 <v-col cols="12" md="6">
-                                                    <v-text-field v-model.number="variant.stock" label="Stock"
+                                                    <v-text-field v-model.number="variant.quantity" label="Stock"
                                                         type="number" variant="outlined" density="comfortable"
                                                         class="mb-4" />
                                                 </v-col>
@@ -115,18 +121,70 @@
                                             </v-row>
                                         </v-expansion-panel-text>
                                     </v-expansion-panel>
-                                </v-expansion-panels>
-                                <v-btn v-if="hasAttributes" color="primary" variant="tonal" prepend-icon="mdi-plus"
+                                </v-expansion-panels> -->
+
+                        <!-- Generate Variants Button -->
+                        <!-- <v-btn v-if="hasAttributes" color="primary" variant="tonal" prepend-icon="mdi-plus"
                                     class="mt-4" @click="generateVariants">
                                     Generate Variants
                                 </v-btn>
+                            </v-col>
+                        </v-row> -->
+                        <v-container fluid class="pa-0">
+                            <MobileVariantManager v-if="$vuetify.display.mobile" />
+                            <ProductVariantManager v-else />
+                        </v-container>
+                    </div>
+                </v-stepper-window-item>
+
+                <!-- Discounts Step -->
+                <v-stepper-window-item :value="4">
+                    <div class="step-content">
+                        <v-row>
+                            <v-col cols="12">
+                                <div class="d-flex justify-space-between align-center mb-4">
+                                    <div class="text-subtitle-1 font-weight-medium">Product Discounts</div>
+                                    <v-btn color="primary" variant="tonal" prepend-icon="mdi-plus"
+                                        @click="openDiscountDialog">
+                                        Add Discount
+                                    </v-btn>
+                                </div>
+
+                                <!-- Discounts List -->
+                                <v-expansion-panels>
+                                    <v-expansion-panel v-for="(discount, index) in product.discounts" :key="discount.id"
+                                        class="mb-2">
+                                        <v-expansion-panel-title>
+                                            <div class="d-flex align-center">
+                                                <span class="mr-2">Discount {{ index + 1 }}</span>
+                                                <v-chip size="small" color="success" variant="tonal" class="ml-2">
+                                                    {{ discount.percentage }}% off
+                                                </v-chip>
+                                            </div>
+                                        </v-expansion-panel-title>
+                                        <v-expansion-panel-text>
+                                            <v-row>
+                                                <v-col cols="12" md="6">
+                                                    <v-text-field v-model.number="discount.percentage"
+                                                        label="Discount Percentage" type="number" variant="outlined"
+                                                        density="comfortable" class="mb-4" suffix="%" />
+                                                </v-col>
+                                                <v-col cols="12" md="6">
+                                                    <v-text-field v-model="discount.validUntil" label="Valid Until"
+                                                        type="date" variant="outlined" density="comfortable"
+                                                        class="mb-4" />
+                                                </v-col>
+                                            </v-row>
+                                        </v-expansion-panel-text>
+                                    </v-expansion-panel>
+                                </v-expansion-panels>
                             </v-col>
                         </v-row>
                     </div>
                 </v-stepper-window-item>
 
                 <!-- Media Step -->
-                <v-stepper-window-item :value="4">
+                <v-stepper-window-item :value="5">
                     <div class="step-content">
                         <v-row>
                             <v-col cols="12">
@@ -175,7 +233,7 @@
             </div>
         </v-stepper>
 
-        <!-- Category Dialog -->
+        <!-- Dialogs -->
         <v-dialog v-model="categoryDialog" max-width="600px">
             <v-card class="rounded-xl py-6">
                 <v-card-title class="text-h5 font-weight-bold">
@@ -187,7 +245,6 @@
             </v-card>
         </v-dialog>
 
-        <!-- Attribute Dialog -->
         <v-dialog v-model="attributeDialog" max-width="800px">
             <v-card class="rounded-xl py-6">
                 <v-card-title class="text-h5 font-weight-bold">
@@ -198,16 +255,48 @@
                 </v-card-text>
             </v-card>
         </v-dialog>
+
+        <v-dialog v-model="discountDialog" max-width="600px">
+            <v-card class="rounded-xl py-6">
+                <v-card-title class="text-h5 font-weight-bold">
+                    Add Discount
+                </v-card-title>
+                <v-card-text>
+                    <v-form ref="discountForm" @submit.prevent="saveDiscount">
+                        <v-row>
+                            <v-col cols="12" md="6">
+                                <v-text-field v-model.number="newDiscount.percentage" label="Discount Percentage"
+                                    type="number"
+                                    :rules="[v => !!v || 'Percentage is required', v => v > 0 && v <= 100 || 'Percentage must be between 0 and 100']"
+                                    variant="outlined" density="comfortable" class="mb-4" suffix="%" />
+                            </v-col>
+                            <v-col cols="12" md="6">
+                                <v-text-field v-model="newDiscount.validUntil" label="Valid Until" type="date"
+                                    :rules="[v => !!v || 'Valid until date is required']" variant="outlined"
+                                    density="comfortable" class="mb-4" />
+                            </v-col>
+                        </v-row>
+                        <div class="d-flex justify-end">
+                            <v-btn variant="tonal" class="mr-2" @click="closeDiscountDialog">Cancel</v-btn>
+                            <v-btn color="primary" @click="saveDiscount">Save Discount</v-btn>
+                        </div>
+                    </v-form>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
     </v-form>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useSetupStore, useProductStore } from '@/store';
+import { useSetupStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
 import AddCategoryForm from './AddCategoryForm.vue';
 import AttributeManager from './AttributeManager.vue';
+import MobileVariantManager from './MobileVariantManager.vue';
+import ProductVariantManager from './ProductVariantManager.vue';
+import { useDisplay } from 'vuetify';
 
 const props = defineProps({
     initialData: {
@@ -216,19 +305,21 @@ const props = defineProps({
     }
 });
 
-const emit = defineEmits(['save', 'cancel']);
+const emit = defineEmits(['submit', 'cancel']);
 
 const setupStore = useSetupStore();
-const productStore = useProductStore();
 const { categories } = storeToRefs(setupStore);
+const { mobile } = useDisplay();
 
 const form = ref(null);
 const categoryForm = ref(null);
 const attributeManager = ref(null);
+const discountForm = ref(null);
 const saving = ref(false);
 const currentStep = ref(1);
 const categoryDialog = ref(false);
 const attributeDialog = ref(false);
+const discountDialog = ref(false);
 
 const steps = [
     {
@@ -250,23 +341,38 @@ const steps = [
         value: 3
     },
     {
+        title: 'Discounts',
+        subtitle: 'Product discounts',
+        icon: 'mdi-tag',
+        value: 4
+    },
+    {
         title: 'Media',
         subtitle: 'Product images',
         icon: 'mdi-image',
-        value: 4
+        value: 5
     }
 ];
 
+// Initialize product with proper structure
 const product = ref({
     name: '',
     description: '',
+    recipeTips: '',
     price: 0,
-    stock: 0,
-    sku: '',
+    hasVariants: true,
     categories: [],
-    variants: [],
-    images: [],
+    variants: [{
+        sku: 'SKU99',
+        variantId: 'ER3'
+    }],
+    discounts: [],
     ...props.initialData
+});
+
+const newDiscount = ref({
+    percentage: 0,
+    validUntil: null
 });
 
 const imagePreviews = ref([]);
@@ -281,17 +387,7 @@ const rules = {
         v => v.length <= 2000 || 'Description must be less than 2000 characters'
     ],
     price: [
-        v => !!v || 'Price is required',
-        v => v >= 0 || 'Price must be positive'
-    ],
-    stock: [
-        v => !!v || 'Stock is required',
-        v => v >= 0 || 'Stock must be positive',
-        v => Number.isInteger(v) || 'Stock must be a whole number'
-    ],
-    sku: [
-        v => !!v || 'SKU is required',
-        v => /^[A-Z0-9-]+$/.test(v) || 'SKU must contain only uppercase letters, numbers, and hyphens'
+        v => !v || v >= 0 || 'Price must be positive'
     ],
     categories: [
         v => v.length > 0 || 'At least one category is required'
@@ -305,9 +401,9 @@ const hasAttributes = computed(() => {
     return product.value.variants.some(v => Object.keys(v.attributes || {}).length > 0);
 });
 
+// Image handling
 function handleImageUpload(files) {
     if (!files) return;
-
     const newFiles = Array.from(files);
     newFiles.forEach(file => {
         const reader = new FileReader();
@@ -331,6 +427,7 @@ function removeImage(index) {
     product.value.images.splice(index, 1);
 }
 
+// Category handling
 function openCategoryDialog() {
     categoryDialog.value = true;
 }
@@ -351,6 +448,7 @@ async function saveCategory(categoryData) {
     }
 }
 
+// Attribute handling
 function openAttributeDialog() {
     attributeDialog.value = true;
 }
@@ -360,7 +458,6 @@ function closeAttributeDialog() {
 }
 
 function updateAttributes(attributes) {
-    // Update product attributes
     product.value.attributes = attributes;
 }
 
@@ -371,9 +468,44 @@ function removeVariantAttribute(variantIndex, attribute) {
     }
 }
 
+// Discount handling
+function openDiscountDialog() {
+    newDiscount.value = {
+        percentage: 0,
+        validUntil: null
+    };
+    discountDialog.value = true;
+}
+
+function closeDiscountDialog() {
+    discountDialog.value = false;
+}
+
+async function saveDiscount() {
+    try {
+        const { valid } = await discountForm.value.validate();
+        if (!valid) {
+            useToast().error('Please fill in all required fields');
+            return;
+        }
+
+        const discountId = `disc_${Date.now()}`;
+        product.value.discounts.push({
+            id: discountId,
+            percentage: newDiscount.value.percentage,
+            validUntil: newDiscount.value.validUntil
+        });
+
+        useToast().success('Discount added successfully');
+        closeDiscountDialog();
+    } catch (error) {
+        console.error('Error saving discount:', error);
+        useToast().error('Failed to save discount');
+    }
+}
+
+// Variant generation
 function generateVariants() {
-    // Implementation for generating variants based on attributes
-    // This would create all possible combinations of attributes
     const attributes = product.value.attributes || {};
     const attributeNames = Object.keys(attributes);
     const attributeValues = Object.values(attributes);
@@ -388,8 +520,9 @@ function generateVariants() {
         });
 
         return {
+            variantId: `var_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             price: product.value.price,
-            stock: 0,
+            quantity: 0,
             sku: '',
             attributes
         };
@@ -404,6 +537,7 @@ function cartesianProduct(arrays) {
     );
 }
 
+// Save product
 async function saveProduct() {
     try {
         const { valid } = await form.value.validate();
@@ -412,23 +546,36 @@ async function saveProduct() {
             return;
         }
 
-        saving.value = true;
         const productData = { ...product.value };
+        const formData = {
+            name: productData.name,
+            description: productData.description,
+            recipeTips: productData.recipeTips || undefined,
+            price: productData.price || undefined,
+            categories: productData.categories,
+            variants: productData.variants.map(variant => ({
+                price: variant.price,
+                quantity: variant.quantity,
+                sku: variant.sku,
+                attributes: variant.attributes
+            })),
+            discounts: productData.discounts.map(discount => ({
+                percentage: discount.percentage,
+                validUntil: discount.validUntil
+            }))
+        };
 
-        if (props.initialData.pid) {
-            await productStore.updateProduct(productData);
-            useToast().success('Product updated successfully');
-        } else {
-            await productStore.createProduct(productData);
-            useToast().success('Product created successfully');
-        }
-
-        emit('save', productData);
+        // Emit the form data and images separately
+        emit('submit', {
+            productData: formData,
+            images: imagePreviews.value.map(img => ({
+                file: img.file,
+                preview: img.preview
+            }))
+        });
     } catch (error) {
-        console.error('Error saving product:', error);
-        useToast().error('Failed to save product');
-    } finally {
-        saving.value = false;
+        console.error('Error validating form:', error);
+        useToast().error('Please check the form for errors');
     }
 }
 
@@ -490,11 +637,6 @@ onMounted(() => {
     .step-content {
         background: rgba(255, 255, 255, 0.04);
     }
-
-    /* .stepper-actions {
-        background: #1a1a1a;
-        border-top-color: rgba(255, 255, 255, 0.12);
-    } */
 }
 
 /* Accessibility */
@@ -515,6 +657,20 @@ onMounted(() => {
 
     .step-content {
         border: 1px solid CanvasText;
+    }
+}
+
+.upload-status-card {
+    background: rgba(123, 97, 255, 0.04);
+    border: 1px solid rgba(123, 97, 255, 0.08);
+    border-radius: 12px;
+}
+
+/* Dark mode support for upload status */
+@media (prefers-color-scheme: dark) {
+    .upload-status-card {
+        background: rgba(255, 255, 255, 0.04);
+        border-color: rgba(255, 255, 255, 0.08);
     }
 }
 </style>

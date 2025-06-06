@@ -1,7 +1,10 @@
-import { useCartStore } from "@/store"
+import { useCartStore, useProductStore } from "@/store"
+import { storeToRefs } from "pinia";
 
 export default () => {
-    const cartStore = useCartStore()
+    const cartStore = useCartStore();
+    const productStore = useProductStore();
+    const { getAttributes, getAttributeCount } = storeToRefs(productStore);
     const addToCart = async (item) => {
         await cartStore.createCart(item)
     }
@@ -19,5 +22,9 @@ export default () => {
     return {
         addToCart,
         cartUpdate,
+        getAttributeCount,
+        getAttributes,
+        createAttribute: async (payload) => await productStore.createAttribute(payload),
+        fetchAttributes: async (query) => await productStore.fetchAttributes(query),
     }
 }

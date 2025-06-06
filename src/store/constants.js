@@ -9,5 +9,6 @@ export default {
     setup: (setupUrl) => {
         return `setups/${setupUrl}`;
     },
-    discount: 'discounts'
+    discount: 'discounts',
+    attribute: 'attribute',
 }

@@ -156,7 +156,7 @@
     </v-container>
 
     <!-- Dialogs -->
-    <v-dialog v-model="createDialog" max-width="1200px" persistent class="rounded-xl">
+    <v-dialog v-model="createDialog" max-width="1200px" persistent class="rounded-xl" scrollable>
       <v-card class="rounded-xl">
         <v-card-title class="d-flex align-center justify-space-between pa-4">
           <span class="text-h5 font-weight-bold">
@@ -165,14 +165,14 @@
           <v-btn icon="mdi-close" variant="text" @click="closeCreateDialog" />
         </v-card-title>
         <v-divider />
-        <v-card-text class="py-4" style="padding-inline: 0 !important;">
-          <add-product-form ref="productForm" :initial-data="editingProduct" @save="saveProduct"
+        <v-card-text style="padding: 0 !important;">
+          <add-product-form ref="productForm" :initial-data="editingProduct" @submit="handleProductSubmit"
             @cancel="closeCreateDialog" />
         </v-card-text>
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="categoryDialog" max-width="600px" persistent>
+    <v-dialog v-model="categoryDialog" max-width="600px" persistent scrollable>
       <v-card class="rounded-xl pa-6">
         <v-card-title class="text-h5 font-weight-bold">
           Create New Category
@@ -325,6 +325,20 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Upload Status -->
+    <v-snackbar v-model="showUploadStatus" :color="uploadStatus.color" location="bottom" timeout="-1">
+      <div class="d-flex align-center">
+        <v-icon class="mr-2">{{ uploadStatus.icon }}</v-icon>
+        <span>{{ uploadStatus.message }}</span>
+      </div>
+      <template v-slot:actions>
+        <v-progress-circular v-if="uploadStatus.isUploading" indeterminate :size="24" :width="2" class="mr-2" />
+        <v-btn v-if="uploadStatus.isUploading" variant="text" @click="cancelUpload">
+          Cancel
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -339,6 +353,12 @@ import ProductList from '../components/ProductList.vue';
 import AddCategoryForm from '../components/AddCategoryForm.vue';
 import AttributeManager from '../components/AttributeManager.vue';
 import DiscountManager from '../components/DiscountManager.vue';
+import { useDisplay } from 'vuetify';
+
+
+
+// Composables
+const { isMobile } = useDisplay();
 
 // Stores
 const productStore = useProductStore();
@@ -358,7 +378,6 @@ const loading = ref(false);
 const selectedCategory = ref(null);
 const selectedProducts = ref([]);
 const showFilters = ref(false);
-const isMobile = ref(false);
 
 // Dialogs
 const createDialog = ref(false);
@@ -387,6 +406,16 @@ const stockForm = ref({
 });
 const updatingStock = ref(false);
 
+// Add upload status state
+const showUploadStatus = ref(false);
+const uploadStatus = ref({
+  isUploading: false,
+  message: '',
+  color: 'primary',
+  icon: 'mdi-cloud-upload',
+  progress: 0
+});
+
 // Table headers
 const sortOptions = [
   { title: 'Name', value: 'name' },
@@ -396,38 +425,6 @@ const sortOptions = [
 ];
 
 const statusOptions = ['All', 'In Stock', 'Low Stock', 'Out of Stock'];
-
-// Quick actions
-const quickActions = [
-  {
-    id: 'new-product',
-    text: 'New Product',
-    icon: 'mdi-package-variant-plus',
-    color: 'primary',
-    handler: openCreateDialog
-  },
-  {
-    id: 'new-category',
-    text: 'New Category',
-    icon: 'mdi-folder-plus',
-    color: 'secondary',
-    handler: openCategoryDialog
-  },
-  {
-    id: 'manage-attributes',
-    text: 'Manage Attributes',
-    icon: 'mdi-tag-multiple',
-    color: 'info',
-    handler: openAttributeDialog
-  },
-  {
-    id: 'apply-discounts',
-    text: 'Apply Discounts',
-    icon: 'mdi-tag',
-    color: 'success',
-    handler: openDiscountDialog
-  }
-];
 
 // Bulk actions with updated styling
 const bulkActions = [
@@ -518,10 +515,6 @@ function selectCategory(categoryId) {
   page.value = 1;
 }
 
-function refreshCategories() {
-  setupStore.getCategories();
-}
-
 function resetFilters() {
   filterStatus.value = 'All';
   sortBy.value = 'name';
@@ -557,10 +550,6 @@ function closeCategoryDialog() {
   // Optionally reset form here
 }
 
-function openAttributeDialog() {
-  attributeDialog.value = true;
-}
-
 function closeAttributeDialog() {
   attributeDialog.value = false;
 }
@@ -577,50 +566,83 @@ function closeDiscountDialog() {
   discountDialog.value = false;
 }
 
-async function saveProduct(productData) {
+async function handleProductSubmit({ productData, images }) {
   try {
-    const { valid } = await productForm.value.validate();
-    if (!valid) {
-      useToast().error('Please fill in all required fields');
-      return;
+    // First, create/update the product
+    const createdProduct = editingProduct.value?.pid
+      ? await productStore.updateProduct(productData)
+      : await productStore.createProduct(productData);
+
+    useToast().success(`Product ${editingProduct.value ? 'updated' : 'created'} successfully`);
+
+    // If there are images, upload them
+    if (images && images.length > 0) {
+      await uploadProductImages(createdProduct.pid, images);
     }
 
-    if (editingProduct.value) {
-      await productStore.updateProduct({
-        ...editingProduct.value,
-        ...productData,
-      });
-      useToast().success('Product updated successfully');
-    } else {
-      await productStore.createProduct(productData);
-      useToast().success('Product created successfully');
-    }
-
+    // Close dialog and refresh products
     closeCreateDialog();
-    refreshProducts();
+    await refreshProducts();
   } catch (error) {
-    console.error('Error saving product:', error);
+    console.error('Error handling product submission:', error);
     useToast().error('Failed to save product');
   }
 }
 
-async function saveCategory(categoryData) {
-  try {
-    if (editingCategory.value) {
-      await setupStore.updateCategory({
-        ...editingCategory.value,
-        ...categoryData,
-      });
-      useToast().success('Category updated successfully');
-    } else {
-      await setupStore.createCategory(categoryData);
-      useToast().success('Category created successfully');
+async function uploadProductImages(productId, images) {
+  const formData = new FormData();
+  formData.append('productId', productId);
+
+  images.forEach(image => {
+    if (image.file) {
+      formData.append('images', image.file);
     }
-    closeCategoryDialog();
-    refreshCategories();
+  });
+
+  try {
+    uploadStatus.value = {
+      isUploading: true,
+      message: 'Uploading images...',
+      color: 'primary',
+      icon: 'mdi-cloud-upload',
+      progress: 0
+    };
+    showUploadStatus.value = true;
+
+    await productStore.uploadProductImages(formData, (progress) => {
+      uploadStatus.value.progress = progress;
+      uploadStatus.value.message = `Uploading images... ${progress}%`;
+    });
+
+    uploadStatus.value = {
+      isUploading: false,
+      message: 'Images uploaded successfully',
+      color: 'success',
+      icon: 'mdi-check-circle',
+      progress: 100
+    };
+
+    // Auto-hide success message after 3 seconds
+    setTimeout(() => {
+      showUploadStatus.value = false;
+    }, 3000);
   } catch (error) {
-    useToast().error('Failed to save category');
+    console.error('Error uploading images:', error);
+    uploadStatus.value = {
+      isUploading: false,
+      message: 'Failed to upload images',
+      color: 'error',
+      icon: 'mdi-alert-circle',
+      progress: 0
+    };
+    throw error;
   }
+}
+
+function cancelUpload() {
+  // Implement cancel upload logic if needed
+  showUploadStatus.value = false;
+  uploadStatus.value.isUploading = false;
 }
 
 async function editProduct(product) {
@@ -734,12 +756,6 @@ function refreshProducts() {
 
 // Lifecycle
 onMounted(() => {
-  const checkMobile = () => {
-    isMobile.value = window.innerWidth < 960;
-  };
-  checkMobile();
-  window.addEventListener('resize', checkMobile);
-
   productStore.getProducts();
   setupStore.getCategories();
   console.log('onMounted: Fetching products and categories...');
@@ -1067,16 +1083,63 @@ watch([page, pageSize, search, sortBy, filterStatus], () => {
   .v-dialog .v-card {
     background: #ffffff !important;
     border: none;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+    overflow: hidden;
   }
 
   .v-dialog .v-card-title {
     color: #1a1a1a;
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    padding: 20px 24px;
   }
 
   .v-dialog .v-card-text {
     color: rgba(0, 0, 0, 0.8);
+    padding: 24px;
+  }
+
+  .v-dialog .v-card-actions {
+    padding: 16px 24px;
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .v-dialog .v-btn {
+    text-transform: none;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    height: 40px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .v-dialog .v-btn.v-btn--variant-tonal {
+    background: rgba(0, 0, 0, 0.06) !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
+  }
+
+  .v-dialog .v-btn.v-btn--variant-tonal:hover {
+    background: rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .v-dialog .v-btn.v-btn--color-primary {
+    background: linear-gradient(135deg, #7b61ff 0%, #ff6f91 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(123, 97, 255, 0.2) !important;
+  }
+
+  .v-dialog .v-btn.v-btn--color-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(123, 97, 255, 0.3) !important;
+  }
+
+  .v-dialog .v-btn.v-btn--color-primary:active {
+    transform: translateY(0);
+  }
+
+  .v-dialog .v-btn.v-btn--disabled {
+    opacity: 0.6;
+    transform: none !important;
+    box-shadow: none !important;
   }
 
   /* Filter panel */
@@ -1236,5 +1299,18 @@ watch([page, pageSize, search, sortBy, filterStatus], () => {
   .category-list-item.v-list-item--active {
     border: 2px solid CanvasText !important;
   }
+}
+
+/* Add styles for upload status */
+.v-snackbar {
+  z-index: 1000;
+}
+
+.v-snackbar :deep(.v-snackbar__content) {
+  padding: 12px 16px;
+}
+
+.v-snackbar :deep(.v-snackbar__wrapper) {
+  min-width: 300px;
 }
 </style>

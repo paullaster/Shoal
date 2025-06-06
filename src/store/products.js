@@ -7,6 +7,9 @@ import { globalEventBus } from "vue-toastification";
 export const useProductStore = defineStore("product", {
   state: () => {
     return {
+      activeAbortController: null,
+      attributes: [],
+      attributesCount: 0,
       products: [],
       product: {},
       productActions: [
@@ -27,7 +30,9 @@ export const useProductStore = defineStore("product", {
     }
   },
   getters: {
-    productGetter: (state) => (key) => state[key]
+    productGetter: (state) => (key) => state[key],
+    getAttributeCount: (state) => state['attributesCount'],
+    getAttributes: (state) => state['attributes'],
   },
   actions: {
     setLoading(payload) {
@@ -121,6 +126,49 @@ export const useProductStore = defineStore("product", {
         method: "POST",
         data: product,
       })
+    },
+    async createAttribute(payload) {
+      try {
+        this.setLoading(true)
+        if (this.activeAbortController) {
+          this.activeAbortController.abort();
+        }
+        this.activeAbortController = new AbortController();
+        const signal = this.activeAbortController.signal;
+        await _request.axiosRequest({
+          url: constants.attribute,
+          method: 'POST',
+          data: payload,
+          signal,
+        });
+        await this.fetchAttributes();
+      } catch (error) {
+        console.error(error);
+        this.toast.error(error?.message)
+      } finally {
+        this.setLoading(false);
+      }
+    },
+    async fetchAttributes(query) {
+      try {
+        let attributes;
+        attributes = await _request.axiosRequest({
+          url: constants.attribute,
+          method: 'GET',
+          params: {
+            ...query,
+          }
+        });
+        this.$patch({
+          attributesCount: attributes.data.count,
+          attributes: attributes.data.rows,
+        })
+      } catch (error) {
+        console.error(error);
+        this.toast.error(error?.message)
+      } finally {
+        this.setLoading(false);
+      }
     },
     uploadProductImages(payload, entity = '') {
       try {
