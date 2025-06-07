@@ -36,7 +36,7 @@
                                     prefix="$" />
                             </v-col>
                             <v-col cols="12">
-                                <v-switch v-model="product.hasVariants" label="Active" color="primary" hide-details />
+                                <v-switch v-model="product.hasVariants" label="Has Variants?" color="primary" hide-details />
                             </v-col>
                         </v-row>
                     </div>
@@ -142,42 +142,25 @@
                     <div class="step-content">
                         <v-row>
                             <v-col cols="12">
-                                <div class="d-flex justify-space-between align-center mb-4">
-                                    <div class="text-subtitle-1 font-weight-medium">Product Discounts</div>
-                                    <v-btn color="primary" variant="tonal" prepend-icon="mdi-plus"
-                                        @click="openDiscountDialog">
-                                        Add Discount
-                                    </v-btn>
-                                </div>
-
-                                <!-- Discounts List -->
-                                <v-expansion-panels>
-                                    <v-expansion-panel v-for="(discount, index) in product.discounts" :key="discount.id"
-                                        class="mb-2">
-                                        <v-expansion-panel-title>
-                                            <div class="d-flex align-center">
-                                                <span class="mr-2">Discount {{ index + 1 }}</span>
-                                                <v-chip size="small" color="success" variant="tonal" class="ml-2">
-                                                    {{ discount.percentage }}% off
-                                                </v-chip>
-                                            </div>
-                                        </v-expansion-panel-title>
-                                        <v-expansion-panel-text>
-                                            <v-row>
-                                                <v-col cols="12" md="6">
-                                                    <v-text-field v-model.number="discount.percentage"
-                                                        label="Discount Percentage" type="number" variant="outlined"
-                                                        density="comfortable" class="mb-4" suffix="%" />
-                                                </v-col>
-                                                <v-col cols="12" md="6">
-                                                    <v-text-field v-model="discount.validUntil" label="Valid Until"
-                                                        type="date" variant="outlined" density="comfortable"
-                                                        class="mb-4" />
-                                                </v-col>
-                                            </v-row>
-                                        </v-expansion-panel-text>
-                                    </v-expansion-panel>
-                                </v-expansion-panels>
+                                <v-autocomplete v-model="product.categories" :items="categories" item-title="name"
+                                    item-value="cid" label="Discounts" :rules="rules.categories" variant="outlined"
+                                    density="comfortable" class="mb-4" multiple chips closable-chips>
+                                    <template v-slot:chip="{ props, item }">
+                                        <v-chip v-bind="props" :color="item.raw.color || 'primary'" variant="tonal">
+                                            <v-icon start :icon="item.raw.icon || 'mdi-folder'" />
+                                            {{ item.raw.name }}
+                                        </v-chip>
+                                    </template>
+                                </v-autocomplete>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-btn color="secondary" variant="tonal"
+                                    @click="openCategoryDialog" class="rouded-lg" >
+                                    <template #prepend>
+                                        <BadgePercent />
+                                    </template>
+                                    <span class="capitalize">add new discount</span> 
+                                </v-btn>
                             </v-col>
                         </v-row>
                     </div>
@@ -217,12 +200,12 @@
 
             <!-- Stepper Actions -->
             <div class="stepper-actions pa-4 d-flex">
-                <v-btn v-if="currentStep > 1" variant="tonal" class="mr-2" @click="currentStep--">
+                <v-btn v-if="currentStep > 1" variant="tonal" class="mr-2 rounded-lg" @click="currentStep--">
                     <v-icon start>mdi-chevron-left</v-icon>
                     Prev
                 </v-btn>
                 <v-spacer />
-                <v-btn v-if="currentStep < steps.length" class="primary-gradient-button" @click="currentStep++">
+                <v-btn v-if="currentStep < steps.length" class="primary-gradient-button rounded-lg" @click="currentStep++">
                     Next
                     <v-icon end>mdi-chevron-right</v-icon>
                 </v-btn>
@@ -297,6 +280,7 @@ import AttributeManager from './AttributeManager.vue';
 import MobileVariantManager from './MobileVariantManager.vue';
 import ProductVariantManager from './ProductVariantManager.vue';
 import { useDisplay } from 'vuetify';
+import { BadgePercent } from 'lucide-vue-next';
 
 const props = defineProps({
     initialData: {
@@ -360,7 +344,7 @@ const product = ref({
     description: '',
     recipeTips: '',
     price: 0,
-    hasVariants: true,
+    hasVariants: false,
     categories: [],
     variants: [{
         sku: 'SKU99',

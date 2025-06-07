@@ -22,11 +22,16 @@
                 <VariantsTable v-if="tab === 'variant'" />
             </v-tabs-window-item>
         </v-tabs-window>
+        <div className="fixed bottom-6 right-6 z-(--floating-btn-z-index)">
+            <v-btn className="h-14 w-14 rounded-full shadow-lg bg-secondary" @click="handleFloatingBtnClick">
+                <Plus className="h-6 w-6" />
+            </v-btn>
+        </div>
     </v-card>
 </template>
 
 <script setup>
-import { Settings, Wand2 } from 'lucide-vue-next';
+import { Settings, Wand2, Plus } from 'lucide-vue-next';
 import { onMounted, provide, ref } from 'vue';
 import VariantsTable from './VariantsTable.vue';
 import { globalEventBus } from 'vue-toastification';
@@ -60,6 +65,15 @@ function closeVariantFormDialog() {
 function editVariant() {
     isVariantEdit.value = true;
     variantFormSheet.value = true;
+}
+
+function handleFloatingBtnClick() {
+    switch (tab.value) {
+        case 'variant': {
+            isVariantEdit.value = false;
+            variantFormSheet.value = true;
+        }
+    }
 }
 
 // Lifecycle
