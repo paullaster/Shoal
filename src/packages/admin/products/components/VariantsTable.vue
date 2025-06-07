@@ -19,7 +19,8 @@
             <div v-if="!variants.length"
                 style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <p style="margin-bottom: 8px;"> No variants yet</p>
-                <v-btn elevation="1" class="rounded-lg bg-secondary"><span style="text-transform: capitalize;">Add
+                <v-btn elevation="1" class="rounded-lg bg-secondary" @click="handleAddNewVariant"><span
+                        style="text-transform: capitalize;">Add
                         you first
                         Variant</span></v-btn>
             </div>
@@ -38,6 +39,7 @@
 import { Filter, Search } from 'lucide-vue-next';
 import { ref } from 'vue';
 import VariantCard from './VariantCard.vue';
+import { globalEventBus } from 'vue-toastification';
 
 const varaint = ref({
     name: "Test",
@@ -56,39 +58,44 @@ const varaint = ref({
     ]
 })
 const variants = ref([
-    {
-        name: "Test",
-        sku: "SKU-TEST",
-        price: 120,
-        quantity: 1,
-        attributes: [
-            {
-                name: "Weigth",
-                value: "750g",
-            },
-            {
-                name: "Color",
-                value: "Red",
-            },
-        ]
-    },
-    {
-        name: "Test",
-        sku: "SKU-TEST",
-        price: 120,
-        quantity: 1,
-        attributes: [
-            {
-                name: "Weigth",
-                value: "750g",
-            },
-            {
-                name: "Color",
-                value: "Red",
-            },
-        ]
-    }
+    // {
+    //     name: "Test",
+    //     sku: "SKU-TEST",
+    //     price: 120,
+    //     quantity: 1,
+    //     attributes: [
+    //         {
+    //             name: "Weigth",
+    //             value: "750g",
+    //         },
+    //         {
+    //             name: "Color",
+    //             value: "Red",
+    //         },
+    //     ]
+    // },
+    // {
+    //     name: "Test",
+    //     sku: "SKU-TEST",
+    //     price: 120,
+    //     quantity: 1,
+    //     attributes: [
+    //         {
+    //             name: "Weigth",
+    //             value: "750g",
+    //         },
+    //         {
+    //             name: "Color",
+    //             value: "Red",
+    //         },
+    //     ]
+    // }
 ]);
+
+
+function handleAddNewVariant() {
+    globalEventBus.emit('triggerNewForm');
+}
 
 </script>
 

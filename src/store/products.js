@@ -129,7 +129,7 @@ export const useProductStore = defineStore("product", {
     },
     async createAttribute(payload) {
       try {
-        this.setLoading(true)
+        this.setLoading(true);
         if (this.activeAbortController) {
           this.activeAbortController.abort();
         }
@@ -141,7 +141,7 @@ export const useProductStore = defineStore("product", {
           data: payload,
           signal,
         });
-        await this.fetchAttributes();
+        await this.fetchAttributes({ eager: true });
       } catch (error) {
         console.error(error);
         this.toast.error(error?.message)
@@ -151,6 +151,7 @@ export const useProductStore = defineStore("product", {
     },
     async fetchAttributes(query) {
       try {
+        this.setLoading(true);
         let attributes;
         attributes = await _request.axiosRequest({
           url: constants.attribute,

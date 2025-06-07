@@ -36,7 +36,8 @@
                                     prefix="$" />
                             </v-col>
                             <v-col cols="12">
-                                <v-switch v-model="product.hasVariants" label="Has Variants?" color="primary" hide-details />
+                                <v-switch v-model="product.hasVariants" label="Has Variants?" color="primary"
+                                    hide-details />
                             </v-col>
                         </v-row>
                     </div>
@@ -154,12 +155,11 @@
                                 </v-autocomplete>
                             </v-col>
                             <v-col cols="12">
-                                <v-btn color="secondary" variant="tonal"
-                                    @click="openCategoryDialog" class="rouded-lg" >
+                                <v-btn color="secondary" variant="tonal" @click="openCategoryDialog" class="rouded-lg">
                                     <template #prepend>
                                         <BadgePercent />
                                     </template>
-                                    <span class="capitalize">add new discount</span> 
+                                    <span class="capitalize">add new discount</span>
                                 </v-btn>
                             </v-col>
                         </v-row>
@@ -199,13 +199,14 @@
             </v-stepper-window>
 
             <!-- Stepper Actions -->
-            <div class="stepper-actions pa-4 d-flex">
+            <div class="stepper-actions flex mt-8 pa-4">
                 <v-btn v-if="currentStep > 1" variant="tonal" class="mr-2 rounded-lg" @click="currentStep--">
                     <v-icon start>mdi-chevron-left</v-icon>
                     Prev
                 </v-btn>
                 <v-spacer />
-                <v-btn v-if="currentStep < steps.length" class="primary-gradient-button rounded-lg" @click="currentStep++">
+                <v-btn v-if="currentStep < steps.length" class="primary-gradient-button rounded-lg"
+                    @click="currentStep++">
                     Next
                     <v-icon end>mdi-chevron-right</v-icon>
                 </v-btn>

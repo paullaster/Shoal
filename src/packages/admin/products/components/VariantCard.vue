@@ -54,23 +54,14 @@
             </v-col>
         </v-row>
     </div>
-    <v-bottom-sheet v-model="variantFormSheet" scrollable>
-        <v-card width="85%" class="mx-auto rounded-xl" style="padding-inline: 0 !important;">
-            <v-card-text style="padding-inline: 0;">
-                <VariantForm />
-            </v-card-text>
-        </v-card>
-    </v-bottom-sheet>
 </template>
 
 <script setup>
 import { MoreVertical, Edit, Trash } from 'lucide-vue-next';
-import VariantForm from './VariantForm.vue';
-import { inject, ref } from 'vue';
+import { ref } from 'vue';
 import { globalEventBus } from 'vue-toastification';
 
 // Injections
-const variantFormSheet = inject('variantFormSheet');
 // Macros
 defineProps({
     variant: {
