@@ -93,7 +93,7 @@
                 <v-btn :icon="viewMode === 'grid' ? 'mdi-apps' : 'mdi-format-list-bulleted'" variant="tonal"
                   @click="toggleViewMode" class="view-toggle-btn" />
                 <v-btn icon="mdi-plus" color="primary" class="create-product-btn" @click="openCreateDialog">
-                  <v-icon>mdi-plus</v-icon>
+                  <v-icon color="white">mdi-plus</v-icon>
                 </v-btn>
               </div>
             </div>

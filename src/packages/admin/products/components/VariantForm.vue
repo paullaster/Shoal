@@ -48,7 +48,7 @@
             <hr class="my-6 border-gray-200" />
 
             <!-- Attributes -->
-            <div class="mb-4">
+            <div class="mb-4" v-if="form?.attributes?.length">
                 <h3 class="text-sm font-semibold mb-2">Attributes</h3>
                 <div class="space-y-4">
                     <div v-for="(attribute, index) in form.attributes" :key="index" class="w-full">
@@ -91,52 +91,13 @@ const isVariantEdit = inject('isVariantEdit')
 
 
 const form = reactive({
-    variantName: 'Variant 500g / Red',
-    sku: 'SKU-500g-Red',
+    variantName: '',
+    sku: '',
     price: 0,
     stock: 0,
-    weight: '500g',
-    color: 'Red',
-    attributes: [
-        {
-            name: 'Weight',
-            value: [
-                {
-                    value: '750g',
-                },
-                {
-                    value: '1000g',
-                },
-            ],
-        },
-        {
-            name: 'Color',
-            value: [
-                {
-                    value: 'Red',
-                },
-                {
-                    value: 'White',
-                },
-            ],
-        },
-        {
-            name: 'Size',
-            value: [
-                {
-                    value: 'Small',
-                },
-                {
-                    value: 'Medium',
-                },
-            ],
-        }
-    ],
+    attributes: [],
 })
-const selectedAttributes = ref({
-    Weight: "750g",
-    Size: "Small"
-})
+const selectedAttributes = ref({})
 
 function updateVariant() {
     console.log('Updating Variant:', form)
