@@ -36,7 +36,7 @@
                     <span v-for="(val, index) in attributeForm.values" :key="val + index"
                         class="inline-flex items-center px-3 py-1 bg-gray-100 text-sm rounded-full">
                         {{ val.value }}
-                        <button @click="removeValue(index)" type="button"
+                        <button @click="removeValue(val, index)" type="button"
                             class="ml-2 text-gray-500 hover:text-red-500 focus:outline-none"
                             :aria-label="`Remove value ${val}`">
                             <X class="w-4 h-4" />
@@ -54,7 +54,7 @@
 </template>
 
 <script setup>
-import { inject, reactive, watch, watchEffect } from 'vue'
+import { inject, reactive, watchEffect } from 'vue'
 import { X, Plus } from 'lucide-vue-next'
 import { globalEventBus, useToast } from 'vue-toastification'
 import useProduct from '@/composables/useProduct'
@@ -112,20 +112,11 @@ function onClose() {
 }
 
 // Effects
-watch(
-    () => [isAttributeEdit, editableAttribute],
-    ([isAttributeEdit, editableAttribute]) => {
-        console.log('from the watch instead', isAttributeEdit, editableAttribute)
-    },
-    {
-        deep: true,
-    }
-)
+
 watchEffect(() => {
-    console.log('editable attribute: ', editableAttribute)
     if (isAttributeEdit && editableAttribute) {
-        attributeForm.attributeName = editableAttribute.name;
-        attributeForm.values = editableAttribute.values;
+        attributeForm.attributeName = editableAttribute.value.name;
+        attributeForm.values = editableAttribute.value.values;
     }
 });
 
