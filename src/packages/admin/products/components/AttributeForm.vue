@@ -1,7 +1,9 @@
 <template>
     <div class="rounded-2xl w-full max-w-md pa-6">
         <div class="flex justify-between items-center mb-4">
-            <h2 id="add-attribute-title" class="text-lg font-semibold">Add Attribute</h2>
+            <h2 id="add-attribute-title" class="text-lg font-semibold">{{ isAttributeEdit ? 'Edit ' : 'Add ' }}
+                Attribute
+            </h2>
             <button @click="onClose" aria-label="Close" class="text-gray-500 hover:text-black focus:outline-none">
                 <X class="w-5 h-5" />
             </button>
@@ -30,7 +32,7 @@
                 </div>
             </div>
 
-            <div class="mb-4">
+            <div class="mb-4" v-if="attributeForm.values">
                 <p id="values-description" class="text-sm text-gray-500">Values ({{ attributeForm.values.length }})</p>
                 <div class="flex flex-wrap gap-2 mt-2">
                     <span v-for="(val, index) in attributeForm.values" :key="val + index"
@@ -47,14 +49,14 @@
 
             <button type="submit"
                 class="w-full bg-black text-white py-2 rounded-md font-semibold hover:bg-gray-800 focus:outline-none">
-                Save Attribute
+                {{ isAttributeEdit ? 'Update Attribute' : 'Save Attribute' }}
             </button>
         </form>
     </div>
 </template>
 
 <script setup>
-import { inject, reactive, watchEffect } from 'vue'
+import { inject, ref, watchEffect } from 'vue'
 import { X, Plus } from 'lucide-vue-next'
 import { globalEventBus, useToast } from 'vue-toastification'
 import useProduct from '@/composables/useProduct'
@@ -63,42 +65,63 @@ import useProduct from '@/composables/useProduct'
 const isAttributeEdit = inject('isAttributeEdit');
 const editableAttribute = inject('editableAttribute');
 
+
 // Composables
 const { createAttribute } = useProduct();
 
-const attributeForm = reactive({
-    attributeName: '',
-    valueInput: '',
-    values: [],
-})
+// refs
+const attributeForm = ref(
+    {
+        attributeName: '',
+        valueInput: '',
+        values: [],
+    }
+);
 
 function addValue() {
-    const raw = attributeForm.valueInput.trim()
+    const raw = attributeForm.value.valueInput.trim()
     if (!raw) return
 
     raw.split(',').map(v => v.trim()).forEach(val => {
-        if (val && !attributeForm.values.includes(val)) {
-            attributeForm.values.push({ value: val })
+        if (val && !attributeForm.value.values.includes(val)) {
+            attributeForm.value.values.push({ value: val })
         }
     })
-    attributeForm.valueInput = ''
+    attributeForm.value.valueInput = ''
 }
 
 function removeValue(index) {
-    attributeForm.values.splice(index, 1)
+    attributeForm.value.values.splice(index, 1)
 }
 
 async function saveAttribute() {
     try {
-        const payload = {
-            name: attributeForm.attributeName,
-            values: attributeForm.values,
+        if (isAttributeEdit) {
+            const payload = {
+                attributeId: editableAttribute.value.attributeId,
+                values: attributeForm.value.values.filter((val) => !val.valueId),
+
+            };
+            if (attributeForm.value.attributeName !== editableAttribute.value.name) {
+                payload['name'] = attributeForm.value.attributeName;
+            }
+            if (!payload.values.length || !payload.name) {
+                return;
+            }
+            await updateAttribute(payload);
+        } else {
+            const payload = {
+                name: attributeForm.value.attributeName,
+                values: attributeForm.value.values,
+            }
+            for (const prop in payload) {
+                if (!payload[prop]) {
+                    return useToast().error(`Please add attribute ${prop}`);
+                }
+            }
+            await createAttribute(payload);
         }
-        await createAttribute(payload);
         // Implement optimized bulk handling logic here if needed
-        attributeForm.attributeName = "";
-        attributeForm.valueInput = "";
-        attributeForm.values = [];
         useToast().success('Attribute created successfully.');
         onClose();
 
@@ -108,15 +131,26 @@ async function saveAttribute() {
 }
 
 function onClose() {
+    attributeForm.value = {
+        attributeName: "",
+        valueInput: "",
+        values: [],
+    }
     globalEventBus.emit('closeVariantForm');
 }
 
 // Effects
 
 watchEffect(() => {
-    if (isAttributeEdit && editableAttribute) {
-        attributeForm.attributeName = editableAttribute.value.name;
-        attributeForm.values = editableAttribute.value.values;
+    if (isAttributeEdit && editableAttribute && Object.keys(editableAttribute).length) {
+        attributeForm.value.attributeName = editableAttribute.value.name ?? "";
+        attributeForm.value.values = editableAttribute.value.values ?? [];
+    } else {
+        attributeForm.value = {
+            attributeName: "",
+            valueInput: "",
+            values: [],
+        };
     }
 });
 

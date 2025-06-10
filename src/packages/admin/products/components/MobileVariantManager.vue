@@ -112,6 +112,7 @@ function handleFloatingBtnClick() {
         case 'attribute': {
             isAttributeEdit.value = false;
             attributeFormSheet.value = true;
+            editableAttribute.value = {};
         }
     }
 }

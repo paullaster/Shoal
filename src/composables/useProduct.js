@@ -25,6 +25,7 @@ export default () => {
         getAttributeCount,
         getAttributes,
         createAttribute: async (payload) => await productStore.createAttribute(payload),
+        updateAttribute: async (payload) => await productStore.updateAttribute(payload),
         fetchAttributes: async (query) => await productStore.fetchAttributes(query),
     }
 }
