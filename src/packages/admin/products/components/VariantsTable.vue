@@ -10,7 +10,7 @@
                 </v-text-field>
             </div>
             <div>
-                <v-btn elevation="1" class="rounded-lg" min-width="12">
+                <v-btn elevation="1" class="rounded-lg" min-width="12" @click="() => toggleVariantFilter(true)">
                     <Filter :size="20" />
                 </v-btn>
             </div>
@@ -95,6 +95,9 @@ const variants = ref([
 
 function handleAddNewVariant() {
     globalEventBus.emit('triggerNewForm');
+}
+function toggleVariantFilter(status) {
+    globalEventBus.emit('toggleVariantFilterModal', status);
 }
 
 </script>

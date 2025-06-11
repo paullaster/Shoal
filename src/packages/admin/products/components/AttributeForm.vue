@@ -38,7 +38,7 @@
                     <span v-for="(val, index) in attributeForm.values" :key="val + index"
                         class="inline-flex items-center px-3 py-1 bg-gray-100 text-sm rounded-full">
                         {{ val.value }}
-                        <button @click="removeValue(val, index)" type="button"
+                        <button @click="removeValue(index)" type="button"
                             class="ml-2 text-gray-500 hover:text-red-500 focus:outline-none"
                             :aria-label="`Remove value ${val}`">
                             <X class="w-4 h-4" />
@@ -67,7 +67,7 @@ const editableAttribute = inject('editableAttribute');
 
 
 // Composables
-const { createAttribute } = useProduct();
+const { createAttribute, updateAttribute, deleteAttributeValue } = useProduct();
 
 // refs
 const attributeForm = ref(
@@ -77,6 +77,7 @@ const attributeForm = ref(
         values: [],
     }
 );
+const archivedAttributeValues = ref([]);
 
 function addValue() {
     const raw = attributeForm.value.valueInput.trim()
@@ -91,7 +92,7 @@ function addValue() {
 }
 
 function removeValue(index) {
-    attributeForm.value.values.splice(index, 1)
+    archivedAttributeValues.value.push(...attributeForm.value.values.splice(index, 1));
 }
 
 async function saveAttribute() {
@@ -105,10 +106,12 @@ async function saveAttribute() {
             if (attributeForm.value.attributeName !== editableAttribute.value.name) {
                 payload['name'] = attributeForm.value.attributeName;
             }
-            if (!payload.values.length || !payload.name) {
+            if (!payload.values.length && !payload.name) {
                 return;
             }
             await updateAttribute(payload);
+            // Implement optimized bulk handling logic here if needed
+            useToast().success('Attribute updated successfully.');
         } else {
             const payload = {
                 name: attributeForm.value.attributeName,
@@ -120,9 +123,9 @@ async function saveAttribute() {
                 }
             }
             await createAttribute(payload);
+            // Implement optimized bulk handling logic here if needed
+            useToast().success('Attribute created successfully.');
         }
-        // Implement optimized bulk handling logic here if needed
-        useToast().success('Attribute created successfully.');
         onClose();
 
     } catch (error) {
@@ -130,13 +133,25 @@ async function saveAttribute() {
     }
 }
 
-function onClose() {
-    attributeForm.value = {
-        attributeName: "",
-        valueInput: "",
-        values: [],
+async function onClose() {
+    try {
+        attributeForm.value = {
+            attributeName: "",
+            valueInput: "",
+            values: [],
+        }
+        globalEventBus.emit('closeVariantForm');
+        if (editableAttribute?.value?.attributeId && archivedAttributeValues.value?.length) {
+            await deleteAttributeValue({
+                attributeId: editableAttribute.value.attributeId,
+                archivedValues: archivedAttributeValues.value.filter((arch) => arch.valueId).map((val) => ({ id: val.valueId })),
+            });
+            this.toast.success('Attribute value(s) deleted!');
+            archivedAttributeValues.value = [];
+        }
+    } catch (error) {
+        useToast().error(error.message);
     }
-    globalEventBus.emit('closeVariantForm');
 }
 
 // Effects

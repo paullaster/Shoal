@@ -27,5 +27,7 @@ export default () => {
         createAttribute: async (payload) => await productStore.createAttribute(payload),
         updateAttribute: async (payload) => await productStore.updateAttribute(payload),
         fetchAttributes: async (query) => await productStore.fetchAttributes(query),
+        deleteAttributeValue: async (payload) => await productStore.deleteAttributeValue(payload),
+        deleteAttribute: async (payload) => await productStore.deleteAttribute(payload),
     }
 }

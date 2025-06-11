@@ -177,7 +177,8 @@
                     {{ editMode ? 'Edit Discount' : 'Create Discount' }}
                 </v-card-title>
                 <v-card-text style="padding-inline: 1.2rem !important;">
-                    <discount-form :discount="selectedDiscount" @save="saveDiscount" @cancel="closeDialog" />
+                    <discount-form :discount="selectedDiscount" @save="saveDiscount" @cancel="closeDialog"
+                        :editMode="editMode" />
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -311,13 +312,11 @@ import DiscountForm from '../components/DiscountForm.vue';
 import DiscountDetails from '../components/DiscountDetails.vue';
 import { useDiscount } from '@/composables/useDiscount';
 import useGlobal from '@/composables/useGlobal';
+import { globalEventBus } from 'vue-toastification';
 
 // composables
 // Server-driven state
-const {
-    createDiscount, discounts, fetchDiscounts, filterStatus, page, pageSize, search, sortBy, totalDiscounts, setFilterStatus, setSortBy
-
-} = useDiscount();
+const { discounts, fetchDiscounts, filterStatus, page, pageSize, search, sortBy, totalDiscounts, setFilterStatus, setSortBy } = useDiscount();
 const { loading } = useGlobal();
 
 
@@ -386,6 +385,7 @@ watch([page, pageSize, search, sortBy, filterStatus], async () => {
 
 onMounted(async () => {
     await fetchDiscounts();
+    globalEventBus.on('closeDiscountForm', () => closeDialog());
 });
 
 // Computed property for filtered discounts (now just the current page)
@@ -425,8 +425,6 @@ async function saveDiscount(discountData) {
         if (index !== -1) {
             discounts.value[index] = { ...discountData };
         }
-    } else {
-        await createDiscount(discountData);
     }
     closeDialog();
     fetchDiscounts();
@@ -664,37 +662,37 @@ function closeDialog() {
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .premium-table-card {
-        background: #1a1a1a;
+        background: #f5f3f3;
         border-color: rgba(255, 255, 255, 0.08);
     }
 
     .premium-table-header,
     .premium-table-footer {
-        background: rgba(255, 255, 255, 0.03);
-        border-color: rgba(255, 255, 255, 0.08);
+        background: #f5f3f3;
+        border-color: #f5f3f3;
     }
 
     .premium-table-title {
-        color: #fff;
+        color: #141414;
     }
 
     .premium-table-subtitle {
-        color: rgba(255, 255, 255, 0.7);
+        color: #141414;
     }
 
     .premium-table :deep(.v-data-table__th) {
         background: rgba(255, 255, 255, 0.03) !important;
-        color: #fff !important;
+        color: #141414 !important;
         border-color: rgba(255, 255, 255, 0.08) !important;
     }
 
     .premium-table :deep(.v-data-table__td) {
-        color: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(255, 255, 255, 0.04) !important;
+        color: #141414 !important;
+        border-color: r#f5f3f3;
     }
 
     .premium-table :deep(.v-data-table__tr:hover) {
-        background: rgba(123, 97, 255, 0.08) !important;
+        background: #f5f3f3 !important;
     }
 
     .status-published {

@@ -44,20 +44,21 @@ export const discount = defineStore('discount', {
             });
         },
         async createDiscount(discount) {
-            try {
-                this.setLoader(true);
-                const discountsWithoutNulls = Helper.removeNullsFromObject(discount);
-                await _request.axiosRequest({
-                    url: constants.discount,
-                    method: 'POST',
-                    data: discountsWithoutNulls,
-                });
-                this.toast.success(`Discount created successfully.`);
-            } catch (error) {
-                this.toast.error(error.message);
-            } finally {
-                this.setLoader(false);
+            this.setLoader(true);
+            if (this.activeAbortController) {
+                this.activeAbortController.abort();
             }
+            this.activeAbortController = new AbortController();
+            const signal = this.activeAbortController.signal;
+            const discountsWithoutNulls = Helper.removeNullsFromObject(discount);
+            await _request.axiosRequest({
+                url: constants.discount,
+                method: 'POST',
+                data: discountsWithoutNulls,
+                signal,
+            });
+            await this.fetchDiscounts();
+            this.setLoader(false);
         },
         fetchDiscounts: _.debounce(
             async function () {

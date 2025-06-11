@@ -143,21 +143,21 @@
                     <div class="step-content">
                         <v-row>
                             <v-col cols="12">
-                                <v-autocomplete v-model="product.categories" :items="categories" item-title="name"
-                                    item-value="cid" label="Discounts" :rules="rules.categories" variant="outlined"
-                                    density="comfortable" class="mb-4" multiple chips closable-chips>
+                                <v-autocomplete v-model="product.discounts" :items="discounts" item-title="title"
+                                    item-value="discountId" label="Discounts" :rules="rules.discounts"
+                                    variant="outlined" density="comfortable" class="mb-4" multiple chips closable-chips>
                                     <template v-slot:chip="{ props, item }">
                                         <v-chip v-bind="props" :color="item.raw.color || 'primary'" variant="tonal">
-                                            <v-icon start :icon="item.raw.icon || 'mdi-folder'" />
-                                            {{ item.raw.name }}
+                                            <v-icon start :icon="'mdi-percent'" />
+                                            {{ item.raw.title }}
                                         </v-chip>
                                     </template>
                                 </v-autocomplete>
                             </v-col>
                             <v-col cols="12">
-                                <v-btn color="secondary" variant="tonal" @click="openCategoryDialog" class="rouded-lg">
+                                <v-btn color="secondary" variant="tonal" @click="openDiscountDialog" class="rouded-lg">
                                     <template #prepend>
-                                        <BadgePercent />
+                                        <BadgePercent :size="16" />
                                     </template>
                                     <span class="capitalize">add new discount</span>
                                 </v-btn>
@@ -246,25 +246,7 @@
                     Add Discount
                 </v-card-title>
                 <v-card-text>
-                    <v-form ref="discountForm" @submit.prevent="saveDiscount">
-                        <v-row>
-                            <v-col cols="12" md="6">
-                                <v-text-field v-model.number="newDiscount.percentage" label="Discount Percentage"
-                                    type="number"
-                                    :rules="[v => !!v || 'Percentage is required', v => v > 0 && v <= 100 || 'Percentage must be between 0 and 100']"
-                                    variant="outlined" density="comfortable" class="mb-4" suffix="%" />
-                            </v-col>
-                            <v-col cols="12" md="6">
-                                <v-text-field v-model="newDiscount.validUntil" label="Valid Until" type="date"
-                                    :rules="[v => !!v || 'Valid until date is required']" variant="outlined"
-                                    density="comfortable" class="mb-4" />
-                            </v-col>
-                        </v-row>
-                        <div class="d-flex justify-end">
-                            <v-btn variant="tonal" class="mr-2" @click="closeDiscountDialog">Cancel</v-btn>
-                            <v-btn color="primary" @click="saveDiscount">Save Discount</v-btn>
-                        </div>
-                    </v-form>
+                    <DiscountForm />
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -275,13 +257,15 @@
 import { ref, computed, onMounted } from 'vue';
 import { useSetupStore } from '@/store';
 import { storeToRefs } from 'pinia';
-import { useToast } from 'vue-toastification';
+import { globalEventBus, useToast } from 'vue-toastification';
 import AddCategoryForm from './AddCategoryForm.vue';
+import DiscountForm from '../../discounts/components/DiscountForm.vue';
 import AttributeManager from './AttributeManager.vue';
 import MobileVariantManager from './MobileVariantManager.vue';
 import ProductVariantManager from './ProductVariantManager.vue';
 import { useDisplay } from 'vuetify';
 import { BadgePercent } from 'lucide-vue-next';
+import { useDiscount } from '@/composables/useDiscount';
 
 const props = defineProps({
     initialData: {
@@ -292,9 +276,13 @@ const props = defineProps({
 
 const emit = defineEmits(['submit', 'cancel']);
 
+// Composables
+const { discounts } = useDiscount();
+
 const setupStore = useSetupStore();
 const { categories } = storeToRefs(setupStore);
 const { mobile } = useDisplay();
+
 
 const form = ref(null);
 const categoryForm = ref(null);
@@ -347,10 +335,7 @@ const product = ref({
     price: 0,
     hasVariants: false,
     categories: [],
-    variants: [{
-        sku: 'SKU99',
-        variantId: 'ER3'
-    }],
+    variants: [],
     discounts: [],
     ...props.initialData
 });
@@ -455,10 +440,6 @@ function removeVariantAttribute(variantIndex, attribute) {
 
 // Discount handling
 function openDiscountDialog() {
-    newDiscount.value = {
-        percentage: 0,
-        validUntil: null
-    };
     discountDialog.value = true;
 }
 
@@ -571,6 +552,16 @@ onMounted(() => {
             file: null
         }));
     }
+    globalEventBus.on('setVariants', (value) => {
+        product.value = [
+            ...product.value,
+            ...value
+        ]
+    });
+    globalEventBus.on('closeDiscountForm', () => {
+        console.log('close discount event emitted:');
+        discountDialog.value = false;
+    });
 });
 </script>
 

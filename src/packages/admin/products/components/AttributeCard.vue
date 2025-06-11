@@ -23,7 +23,8 @@
 </template>
 
 <script setup>
-import { globalEventBus } from 'vue-toastification';
+import useProduct from '@/composables/useProduct';
+import { globalEventBus, useToast } from 'vue-toastification';
 
 // Injections
 
@@ -33,8 +34,19 @@ const { attribute } = defineProps({
     attribute: Object
 });
 
-function onRemove(attribute) {
-    globalEventBus.emit('removeAttribute', attribute);
+// Composables
+const { deleteAttribute } = useProduct();
+
+async function onRemove(attribute) {
+    try {
+        if (!attribute.attributeId) return useToast().error('Invalid request!');
+        await deleteAttribute({
+            attributeId: attribute.attributeId,
+        });
+        useToast().success('Attribute deleted successfully!');
+    } catch (error) {
+        useToast().error(error.message);
+    }
 }
 
 function editAttributes(attribute) {

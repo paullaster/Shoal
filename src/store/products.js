@@ -152,14 +152,15 @@ export const useProductStore = defineStore("product", {
     },
     async updateAttribute(payload) {
       try {
+        console.log('payload in store:', payload)
         this.setLoading(true);
         if (this.activeAbortController) {
           this.activeAbortController.abort();
         }
         this.activeAbortController = new AbortController();
         const signal = this.activeAbortController.signal;
-        if (payload.attributeId) return this.toast.error('Missing attribute ID');
-        const { attributeId, ...update } = payload.attributeId;
+        if (!payload.attributeId) throw new Error('Missing attribute ID');
+        const { attributeId, ...update } = payload;
 
         await _request.axiosRequest({
           url: `${constants.attribute}/${attributeId}`,
@@ -167,11 +168,10 @@ export const useProductStore = defineStore("product", {
           data: update,
           signal,
         });
-        this.toast.success('Attribute updated successfully!');
         await this.fetchAttributes({ eager: true });
       } catch (error) {
         console.error(error);
-        this.toast.error(error?.message)
+        throw error;
       } finally {
         this.setLoading(false);
       }
@@ -184,20 +184,16 @@ export const useProductStore = defineStore("product", {
         }
         this.activeAbortController = new AbortController();
         const signal = this.activeAbortController.signal;
-        if (payload.attributeId) return this.toast.error('Missing attribute ID');
-        const { attributeId, ...update } = payload.attributeId;
-
+        if (!payload.attributeId) throw new Error('Missing attribute ID');
         await _request.axiosRequest({
-          url: `${constants.attribute}/${attributeId}`,
-          method: 'PUT',
-          data: update,
+          url: `${constants.attribute}/${payload.attributeId}`,
+          method: 'DELETE',
           signal,
         });
-        this.toast.success('Attribute updated successfully!');
         await this.fetchAttributes({ eager: true });
       } catch (error) {
         console.error(error);
-        this.toast.error(error?.message)
+        throw error;
       } finally {
         this.setLoading(false);
       }
@@ -210,20 +206,19 @@ export const useProductStore = defineStore("product", {
         }
         this.activeAbortController = new AbortController();
         const signal = this.activeAbortController.signal;
-        if (payload.attributeId) return this.toast.error('Missing attribute ID');
-        const { attributeId, ...archived } = payload.attributeId;
+        if (!payload.attributeId) throw new Error('Missing attribute ID');
+        const { attributeId, ...archivedValues } = payload;
 
         await _request.axiosRequest({
           url: `${constants.attribute}/${attributeId}/value`,
           method: 'DELETE',
-          data: archived,
+          data: archivedValues,
           signal,
         });
-        this.toast.success('Attribute value(s) deleted!');
         await this.fetchAttributes({ eager: true });
       } catch (error) {
         console.error(error);
-        this.toast.error(error?.message)
+        throw error;
       } finally {
         this.setLoading(false);
       }

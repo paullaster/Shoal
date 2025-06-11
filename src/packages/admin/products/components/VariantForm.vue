@@ -82,7 +82,7 @@
 </template>
 
 <script setup>
-import { Currency, XCircle } from 'lucide-vue-next'
+import { XCircle } from 'lucide-vue-next'
 import { inject, reactive, ref } from 'vue'
 import { globalEventBus } from 'vue-toastification'
 
