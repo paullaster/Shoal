@@ -23,6 +23,7 @@ export const discount = defineStore('discount', {
         sortByGetter: (state) => state['sortBy'],
         filterStatusGetter: (state) => state['filterStatus'],
         totalDiscountsGetter: (state) => state['totalDiscounts'],
+
     },
     actions: {
         setLoader(payload) {
