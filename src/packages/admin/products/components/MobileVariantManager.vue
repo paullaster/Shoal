@@ -54,7 +54,7 @@
 
 <script setup>
 import { Settings, Wand2, Plus } from 'lucide-vue-next';
-import { onMounted, provide, ref, watchEffect } from 'vue';
+import { onMounted, provide, ref, watchEffect, reactive } from 'vue';
 import VariantsTable from './VariantsTable.vue';
 import { globalEventBus, useToast } from 'vue-toastification';
 import VariantForm from './VariantForm.vue';
@@ -66,13 +66,13 @@ import VariantFilterModal from './VariantFilterModal.vue';
 // Macros
 defineEmits(['editVariantForm']);
 
-const { getAttributeCount } = useProduct();
+const { getAttributeCount, fetchAttributes, getProduct } = useProduct();
 
 // tabs
 const tab = ref('variant');
 const tabs = ref([
     {
-        title: `Variants(${0})`,
+        title: `Variants(${getProduct.value.variants.length || 0})`,
         key: "variant",
     },
     {
@@ -86,6 +86,7 @@ const isAttributeEdit = ref(false);
 const attributeFormSheet = ref(false);
 const editableAttribute = ref({});
 const variantFilterModalState = ref(false);
+
 
 // Providers
 provide('variantFormSheet', variantFormSheet);
@@ -210,6 +211,11 @@ watchEffect(() => {
         }
         return tab;
     });
+});
+
+//Life cycle
+onMounted(() => {
+    (async () => await fetchAttributes({ eager: true }))();
 });
 </script>
 

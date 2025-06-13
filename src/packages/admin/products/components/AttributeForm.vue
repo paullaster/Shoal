@@ -97,7 +97,7 @@ function removeValue(index) {
 
 async function saveAttribute() {
     try {
-        if (isAttributeEdit) {
+        if (isAttributeEdit.value) {
             const payload = {
                 attributeId: editableAttribute.value.attributeId,
                 values: attributeForm.value.values.filter((val) => !val.valueId),

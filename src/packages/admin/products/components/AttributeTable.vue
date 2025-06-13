@@ -23,13 +23,12 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
 import { globalEventBus } from 'vue-toastification';
 import AttributeCard from './AttributeCard.vue';
 import useProduct from '@/composables/useProduct';
 
 // Composable
-const { fetchAttributes, getAttributes } = useProduct();
+const { getAttributes } = useProduct();
 
 
 
@@ -41,9 +40,9 @@ function handleAddNewAttribute() {
 }
 
 // lifecycle
-onMounted(() => {
-    (async () => await fetchAttributes({ eager: true }))();
-});
+// onMounted(() => {
+//     (async () => await fetchAttributes({ eager: true }))();
+// });
 
 </script>
 

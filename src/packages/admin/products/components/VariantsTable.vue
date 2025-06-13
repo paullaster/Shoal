@@ -16,7 +16,7 @@
             </div>
         </v-card-text>
         <v-card-text style="padding-inline: 0 !important;">
-            <div v-if="!variants.length"
+            <div v-if="!getProduct?.variants?.length"
                 style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
                 <p style="margin-bottom: 8px;"> No variants yet</p>
                 <v-btn elevation="1" class="rounded-lg bg-secondary" @click="handleAddNewVariant"><span
@@ -26,7 +26,7 @@
             </div>
             <div v-else>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                    <div v-for="(v, i) in variants" :key="varaint.variantId || i">
+                    <div v-for="(v, i) in getProduct?.variants" :key="varaint.variantId || i">
                         <VariantCard :variant="v" />
                     </div>
                 </div>
@@ -40,6 +40,13 @@ import { Filter, Search } from 'lucide-vue-next';
 import { ref } from 'vue';
 import VariantCard from './VariantCard.vue';
 import { globalEventBus } from 'vue-toastification';
+import useProduct from '@/composables/useProduct';
+
+
+
+
+// composables
+const { getProduct } = useProduct();
 
 const varaint = ref({
     name: "Test",
@@ -57,40 +64,40 @@ const varaint = ref({
         },
     ]
 })
-const variants = ref([
-    // {
-    //     name: "Test",
-    //     sku: "SKU-TEST",
-    //     price: 120,
-    //     quantity: 1,
-    //     attributes: [
-    //         {
-    //             name: "Weigth",
-    //             value: "750g",
-    //         },
-    //         {
-    //             name: "Color",
-    //             value: "Red",
-    //         },
-    //     ]
-    // },
-    // {
-    //     name: "Test",
-    //     sku: "SKU-TEST",
-    //     price: 120,
-    //     quantity: 1,
-    //     attributes: [
-    //         {
-    //             name: "Weigth",
-    //             value: "750g",
-    //         },
-    //         {
-    //             name: "Color",
-    //             value: "Red",
-    //         },
-    //     ]
-    // }
-]);
+// const variants = ref([
+//     // {
+//     //     name: "Test",
+//     //     sku: "SKU-TEST",
+//     //     price: 120,
+//     //     quantity: 1,
+//     //     attributes: [
+//     //         {
+//     //             name: "Weigth",
+//     //             value: "750g",
+//     //         },
+//     //         {
+//     //             name: "Color",
+//     //             value: "Red",
+//     //         },
+//     //     ]
+//     // },
+//     // {
+//     //     name: "Test",
+//     //     sku: "SKU-TEST",
+//     //     price: 120,
+//     //     quantity: 1,
+//     //     attributes: [
+//     //         {
+//     //             name: "Weigth",
+//     //             value: "750g",
+//     //         },
+//     //         {
+//     //             name: "Color",
+//     //             value: "Red",
+//     //         },
+//     //     ]
+//     // }
+// ]);
 
 
 function handleAddNewVariant() {

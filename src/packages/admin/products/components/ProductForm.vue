@@ -266,6 +266,7 @@ import ProductVariantManager from './ProductVariantManager.vue';
 import { useDisplay } from 'vuetify';
 import { BadgePercent } from 'lucide-vue-next';
 import { useDiscount } from '@/composables/useDiscount';
+import useProduct from '@/composables/useProduct';
 
 const props = defineProps({
     initialData: {
@@ -293,6 +294,16 @@ const currentStep = ref(1);
 const categoryDialog = ref(false);
 const attributeDialog = ref(false);
 const discountDialog = ref(false);
+const product = ref({
+    name: '',
+    description: '',
+    recipeTips: '',
+    price: 0,
+    hasVariants: false,
+    categories: [],
+    variants: [],
+    discounts: [],
+})
 
 const steps = [
     {
@@ -326,19 +337,6 @@ const steps = [
         value: 5
     }
 ];
-
-// Initialize product with proper structure
-const product = ref({
-    name: '',
-    description: '',
-    recipeTips: '',
-    price: 0,
-    hasVariants: false,
-    categories: [],
-    variants: [],
-    discounts: [],
-    ...props.initialData
-});
 
 const newDiscount = ref({
     percentage: 0,
@@ -502,6 +500,9 @@ function cartesianProduct(arrays) {
         [[]]
     );
 }
+function addVariant(variant) {
+    product.value.variants.push({ ...variant });
+}
 
 // Save product
 async function saveProduct() {
@@ -561,6 +562,11 @@ onMounted(() => {
     globalEventBus.on('closeDiscountForm', () => {
         console.log('close discount event emitted:');
         discountDialog.value = false;
+    });
+
+    globalEventBus.on('UpdatingVariant', (variant) => {
+        console.log('EMITTED EVENT:UpdatingVariant')
+        addVariant(variant)
     });
 });
 </script>

@@ -11,7 +11,16 @@ export const useProductStore = defineStore("product", {
       attributes: [],
       attributesCount: 0,
       products: [],
-      product: {},
+      product: {
+        name: '',
+        description: '',
+        recipeTips: '',
+        price: 0,
+        hasVariants: false,
+        categories: [],
+        variants: [],
+        discounts: [],
+      },
       productActions: [
         {
           text: 'Create a new product',
@@ -33,6 +42,7 @@ export const useProductStore = defineStore("product", {
     productGetter: (state) => (key) => state[key],
     getAttributeCount: (state) => state['attributesCount'],
     getAttributes: (state) => state['attributes'],
+    getProduct: (state) => state['product'],
   },
   actions: {
     setLoading(payload) {
@@ -60,6 +70,11 @@ export const useProductStore = defineStore("product", {
         console.error(error);
         this.toast.error("An error occurred while setting product actions view.");
       }
+    },
+    setProduct(product) {
+      this.$patch({
+        product: product,
+      });
     },
     getProducts() {
       // Replace API call with dummy data
@@ -105,17 +120,17 @@ export const useProductStore = defineStore("product", {
 
           })
             .then(res => {
-              this.$patch({
-                product: res.data
-              })
+              // this.$patch({
+              //   product: res.data
+              // })
             })
             .catch(err => {
               this.toast.error(err.message);
             });
         }
-        this.$patch({
-          product: product,
-        })
+        // this.$patch({
+        //   product: product
+        // });
       } catch (error) {
         this.toast.error(error.message);
       }
