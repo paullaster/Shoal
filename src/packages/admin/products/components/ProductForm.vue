@@ -18,26 +18,27 @@
                     <div class="step-content">
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field v-model="product.name" label="Product Name" :rules="rules.name"
-                                    variant="outlined" density="comfortable" class="mb-4 rounded-xlg" />
+                                <v-text-field label="Product Name" :rules="rules.name" variant="outlined"
+                                    density="comfortable" class="mb-4 rounded-xlg"
+                                    @change="(value) => onProductChange('name', value.target.value)" />
                             </v-col>
                             <v-col cols="12">
-                                <v-textarea v-model="product.description" label="Product Description"
-                                    :rules="rules.description" variant="outlined" density="comfortable" class="mb-4"
-                                    rows="4" />
+                                <v-textarea label="Product Description" :rules="rules.description" variant="outlined"
+                                    density="comfortable" class="mb-4" rows="4"
+                                    @change="(value) => onProductChange('description', value.target.value)" />
                             </v-col>
                             <v-col cols="12">
-                                <v-textarea v-model="product.recipeTips" label="Recipe Tips" variant="outlined"
-                                    density="comfortable" class="mb-4" rows="4" />
+                                <v-textarea label="Recipe Tips" variant="outlined" density="comfortable" class="mb-4"
+                                    rows="4" @change="(value) => onProductChange('recipeTips', value.target.value)" />
                             </v-col>
                             <v-col cols="12" md="6">
-                                <v-text-field v-model.number="product.price" label="Base Price" type="number"
-                                    :rules="rules.price" variant="outlined" density="comfortable" class="mb-4"
-                                    prefix="$" />
+                                <v-text-field label="Base Price" type="number" :rules="rules.price" variant="outlined"
+                                    density="comfortable" class="mb-4" prefix="$"
+                                    @change="(value) => onProductChange('price', value.target.value, 'number')" />
                             </v-col>
                             <v-col cols="12">
-                                <v-switch v-model="product.hasVariants" label="Has Variants?" color="primary"
-                                    hide-details />
+                                <v-switch label="Has Variants?" color="primary" hide-details
+                                    @change="(value) => onProductChange('hasVariants', value.target.value, 'boolean')" />
                             </v-col>
                         </v-row>
                     </div>
@@ -279,6 +280,7 @@ const emit = defineEmits(['submit', 'cancel']);
 
 // Composables
 const { discounts } = useDiscount();
+const { onProductChange } = useProduct();
 
 const setupStore = useSetupStore();
 const { categories } = storeToRefs(setupStore);

@@ -39,7 +39,6 @@ export const useProductStore = defineStore("product", {
     }
   },
   getters: {
-    productGetter: (state) => (key) => state[key],
     getAttributeCount: (state) => state['attributesCount'],
     getAttributes: (state) => state['attributes'],
     getProduct: (state) => state['product'],
@@ -76,6 +75,24 @@ export const useProductStore = defineStore("product", {
         product: product,
       });
     },
+    onProductFormchange(field, value, type = 'string') {
+      switch (type) {
+        case 'number': {
+          value = Number(value);
+          break;
+        };
+        case 'boolean': {
+          value = Boolean(value);
+          break;
+        }
+      }
+      this.$patch({
+        product: {
+          ...this.product,
+          [field]: value,
+        }
+      })
+    },
     getProducts(query) {
       _request.axiosRequest({
         url: constants.products,
@@ -91,7 +108,7 @@ export const useProductStore = defineStore("product", {
           this.toast.error(err.message);
         });
     },
-    getProduct(productId) {
+    fetchProduct(productId) {
       try {
         const product = this.products.find(p => p.pid === productId);
         if (!product) {

@@ -34,5 +34,6 @@ export default () => {
         deleteAttributeValue: async (payload) => await productStore.deleteAttributeValue(payload),
         deleteAttribute: async (payload) => await productStore.deleteAttribute(payload),
         setProduct: (product) => productStore.setProduct(product),
+        onProductChange: (field, value, type = 'string') => productStore.onProductFormchange(field, value, type),
     }
 }
