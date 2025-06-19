@@ -49,7 +49,8 @@
         <v-row>
             <v-col cols="6" v-for="(attribute, i) in variant.attributes" :key="attribute.id || i">
                 <v-chip variant="outlined" color="black" class="vchip text-xs font-medium px-2 py-1 rounded-md">
-                    {{ attribute.name }}: {{ attribute.value }}
+                    {{ Helper.findObjectFromArray(getAttributes, 'attributeId', attribute.attributeId)?.name }}: {{
+                    attribute.value }}
                 </v-chip>
             </v-col>
         </v-row>
@@ -57,9 +58,11 @@
 </template>
 
 <script setup>
+import useProduct from '@/composables/useProduct';
 import { MoreVertical, Edit, Trash } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { globalEventBus } from 'vue-toastification';
+import Helper from '@/util/Helper';
 
 // Injections
 // Macros
@@ -68,6 +71,9 @@ defineProps({
         type: Object
     }
 });
+
+// composables
+const { getAttributes } = useProduct();
 
 const sheet = ref(false);
 

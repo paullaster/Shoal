@@ -10,7 +10,7 @@
           </h1>
         </div>
         <div class="text-subtitle-1 white--text opacity-80 animate__animated animate__fadeIn animate__delay-1s">
-          {{ filteredProducts.length }} products • {{ categories.length }} categories
+          {{ filteredProducts?.length }} products • {{ categories?.length }} categories
         </div>
       </v-col>
       <v-col cols="12" md="6" class="d-flex justify-end align-center header-actions">
@@ -42,7 +42,7 @@
             <v-divider />
 
             <v-card-text class="pa-0">
-              <v-list v-if="categories.length" class="category-list">
+              <v-list v-if="categories?.length" class="category-list">
                 <v-list-item v-for="category in categories" :key="category.cid" :value="category"
                   :active="selectedCategory === category.cid" @click="selectCategory(category.cid)"
                   class="category-list-item" rounded="lg">
@@ -85,7 +85,7 @@
                     {{ selectedCategory ? 'Products in ' + getCategoryName(selectedCategory) : 'All Products' }}
                   </div>
                   <div class="text-caption premium-table-subtitle">
-                    Showing {{ filteredProducts.length }} of {{ totalProducts }} products
+                    Showing {{ filteredProducts?.length }} of {{ totalProducts }} products
                   </div>
                 </div>
               </div>
@@ -101,7 +101,7 @@
             <v-divider />
 
             <!-- Bulk Actions -->
-            <div v-if="selectedProducts.length > 0" class="bulk-actions px-4 py-2">
+            <div v-if="selectedProducts?.length > 0" class="bulk-actions px-4 py-2">
               <div class="d-flex gap-2">
                 <v-btn v-for="action in bulkActions" :key="action.id" :color="action.color" variant="tonal"
                   class="rounded-pill" :prepend-icon="action.icon" @click="action.handler" size="small">
@@ -112,11 +112,11 @@
 
             <!-- Product Grid/List -->
             <div class="product-content pa-4">
-              <product-grid v-if="viewMode === 'grid' && filteredProducts.length > 0" :products="filteredProducts"
+              <product-grid v-if="viewMode === 'grid' && filteredProducts?.length > 0" :products="filteredProducts"
                 :loading="loading" :search="search" :sort-by="sortBy" :sort-order="sortOrder" :page="page"
                 :items-per-page="pageSize" :total-items="totalProducts" v-model:selected="selectedProducts"
                 @edit="editProduct" @delete="deleteProduct" @click="editProduct" />
-              <product-list v-else-if="viewMode === 'list' && filteredProducts.length > 0" :products="filteredProducts"
+              <product-list v-else-if="viewMode === 'list' && filteredProducts?.length > 0" :products="filteredProducts"
                 :loading="loading" :search="search" :sort-by="sortBy" :sort-order="sortOrder" :page="page"
                 :items-per-page="pageSize" :total-items="totalProducts" v-model:selected="selectedProducts"
                 @edit="editProduct" @delete="deleteProduct" />
@@ -327,7 +327,7 @@
     </v-dialog>
 
     <!-- Upload Status -->
-    <v-snackbar v-model="showUploadStatus" :color="uploadStatus.color" location="bottom" timeout="-1">
+    <v-snackbar v-model="showUploadStatus" :color="uploadStatus?.color" location="bottom" timeout="-1">
       <div class="d-flex align-center">
         <v-icon class="mr-2">{{ uploadStatus.icon }}</v-icon>
         <span>{{ uploadStatus.message }}</span>
@@ -493,16 +493,16 @@ const filteredProducts = computed(() => {
     );
   }
 
-  console.log('filteredProducts computed:', filtered.length, 'products');
+  console.log('filteredProducts computed:', filtered?.length, 'products');
 
   return filtered;
 });
 
-const totalProducts = computed(() => filteredProducts.value.length);
+const totalProducts = computed(() => filteredProducts.value?.length);
 
 // Methods
 function getProductCount(categoryId) {
-  return products.value.filter(p => p.category === categoryId).length;
+  return products.value.filter(p => p.category === categoryId)?.length;
 }
 
 function getCategoryName(categoryId) {
@@ -555,7 +555,7 @@ function closeAttributeDialog() {
 }
 
 function openDiscountDialog() {
-  if (selectedProducts.value.length === 0) {
+  if (selectedProducts.value?.length === 0) {
     useToast().warning('Please select at least one product');
     return;
   }
@@ -576,7 +576,7 @@ async function handleProductSubmit({ productData, images }) {
     useToast().success(`Product ${editingProduct.value ? 'updated' : 'created'} successfully`);
 
     // If there are images, upload them
-    if (images && images.length > 0) {
+    if (images && images?.length > 0) {
       await uploadProductImages(createdProduct.pid, images);
     }
 
@@ -671,14 +671,14 @@ async function deleteProduct(product) {
 
 async function deleteSelectedProducts() {
   try {
-    if (selectedProducts.value.length === 0) {
+    if (selectedProducts.value?.length === 0) {
       useToast().warning('Please select at least one product');
       return;
     }
 
     const confirmed = await confirmDeleteDialog(
       'products',
-      `${selectedProducts.value.length} selected products`
+      `${selectedProducts.value?.length} selected products`
     );
     if (!confirmed) return;
 
@@ -695,7 +695,7 @@ async function deleteSelectedProducts() {
 }
 
 async function updateStock() {
-  if (selectedProducts.value.length === 0) {
+  if (selectedProducts.value?.length === 0) {
     useToast().warning('Please select at least one product');
     return;
   }
@@ -732,7 +732,7 @@ async function confirmStockUpdate() {
     await new Promise(resolve => setTimeout(resolve, 500)); // Mock delay
 
     // Logic to apply stock update to selected products (mock)
-    console.log(`Updating stock for ${selectedProducts.value.length} products with operation: ${stockForm.value.operation} and quantity: ${stockForm.value.quantity}`);
+    console.log(`Updating stock for ${selectedProducts.value?.length} products with operation: ${stockForm.value.operation} and quantity: ${stockForm.value.quantity}`);
 
     // You would integrate with your actual product store action here
     // await productStore.updateStock({ productIds: selectedProducts.value, ...stockForm.value });
@@ -756,7 +756,7 @@ function refreshProducts() {
 
 // Lifecycle
 onMounted(() => {
-  productStore.getProducts();
+  productStore.getProducts({ eager: true });
   setupStore.getCategories();
   console.log('onMounted: Fetching products and categories...');
 });

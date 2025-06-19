@@ -40,7 +40,7 @@
 
                 <div>
                     <label for="stock" class="block text-sm font-medium text-gray-700">Stock</label>
-                    <input type="number" id="stock" v-model.number="form.stock"
+                    <input type="number" id="stock" v-model.number="form.quantity"
                         class="mt-1 block w-full h-12 rounded-md border border-gray-300 px-3 text-sm focus:ring-black focus:border-black"
                         required aria-required="true" min="0" />
                 </div>
@@ -54,8 +54,9 @@
                 <div class="space-y-8">
                     <v-autocomplete variant="outlined" v-for="(attribute) in getAttributes" :key="attribute.attributeId"
                         class="w-full rounded-xl" :placeholder="`Select ${attribute.name}`" :items="attribute.values"
+                        item-title="value" item-value="valueId"
                         @update:modelValue="(value) => handleAttributeChange(value)" clearable
-                        @click:clear="(value) => handleRemoveAttribute(value)" auto-select-first item-props>
+                        @click:clear="(value) => handleRemoveAttribute(value)" return-object>
                         <template #label>
                             <label>
                                 {{ attribute.name }}
@@ -128,7 +129,6 @@ function updateVariant() {
 
 }
 function handleAttributeChange(value) {
-    console.log(value);
     form.attributes.push(value);
 }
 function handleRemoveAttribute(value) {

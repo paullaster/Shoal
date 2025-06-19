@@ -76,39 +76,20 @@ export const useProductStore = defineStore("product", {
         product: product,
       });
     },
-    getProducts() {
-      // Replace API call with dummy data
-      this.$patch({
-        products: [
-          {
-            pid: 'p1', name: 'Laptop', description: 'Powerful laptop', price: 1200, stock: 50, category: 'cat1', images: [{ url: 'https://via.placeholder.com/150' }], discount: 0
-          },
-          {
-            pid: 'p2', name: 'Keyboard', description: 'Mechanical keyboard', price: 75, stock: 20, category: 'cat2', images: [{ url: 'https://via.placeholder.com/150' }], discount: 10
-          },
-          {
-            pid: 'p3', name: 'Mouse', description: 'Wireless mouse', price: 25, stock: 10, category: 'cat2', images: [{ url: 'https://via.placeholder.com/150' }], discount: 0
-          },
-          {
-            pid: 'p4', name: 'Monitor', description: '4K monitor', price: 300, stock: 5, category: 'cat1', images: [{ url: 'https://via.placeholder.com/150' }], discount: 0
-          },
-          {
-            pid: 'p5', name: 'Webcam', description: 'HD webcam', price: 50, stock: 0, category: 'cat3', images: [{ url: 'https://via.placeholder.com/150' }], discount: 0
-          }
-        ]
-      });
-      // _request.axiosRequest({
-      //   url: constants.products,
-      //   method: "GET",
-      // })
-      //   .then(res => {
-      //     this.$patch({
-      //       products: res.data.rows
-      //     })
-      //   })
-      //   .catch(err => {
-      //     this.toast.error(err.message);
-      //   });
+    getProducts(query) {
+      _request.axiosRequest({
+        url: constants.products,
+        method: "GET",
+        params: query
+      })
+        .then(res => {
+          this.$patch({
+            products: res.data.rows
+          })
+        })
+        .catch(err => {
+          this.toast.error(err.message);
+        });
     },
     getProduct(productId) {
       try {
@@ -120,17 +101,17 @@ export const useProductStore = defineStore("product", {
 
           })
             .then(res => {
-              // this.$patch({
-              //   product: res.data
-              // })
+              this.$patch({
+                product: res.data
+              })
             })
             .catch(err => {
               this.toast.error(err.message);
             });
         }
-        // this.$patch({
-        //   product: product
-        // });
+        this.$patch({
+          product: product
+        });
       } catch (error) {
         this.toast.error(error.message);
       }
