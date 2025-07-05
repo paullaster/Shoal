@@ -316,7 +316,20 @@ import { globalEventBus } from 'vue-toastification';
 
 // composables
 // Server-driven state
-const { discounts, fetchDiscounts, filterStatus, page, pageSize, search, sortBy, totalDiscounts, setFilterStatus, setSortBy } = useDiscount();
+const {
+    discounts,
+    fetchDiscounts,
+    filterStatus,
+    page,
+    pageSize,
+    search,
+    sortBy,
+    totalDiscounts,
+    setFilterStatus,
+    setSortBy,
+    dialog,
+    setDialog
+} = useDiscount();
 const { loading } = useGlobal();
 
 
@@ -333,7 +346,6 @@ const headers = ref([
     { title: 'Actions', key: 'actions', sortable: false },
 ]);
 
-const dialog = ref(false);
 const detailsDialog = ref(false);
 const editMode = ref(false);
 const selectedDiscount = ref(null);
@@ -393,19 +405,15 @@ const filteredDiscounts = computed(() => discounts.value);
 
 // Methods
 function openCreateDialog() {
-    console.log('Dialog clicked!!');
     editMode.value = false;
     selectedDiscount.value = null;
-    dialog.value = true;
-    console.log(editMode.value,
-        selectedDiscount.value,
-        dialog.value,);
+    setDialog(true);
 }
 
 function editDiscount(item) {
     editMode.value = true;
     selectedDiscount.value = { ...item };
-    dialog.value = true;
+    setDialog(true)
 }
 
 function viewDetails(item) {
@@ -431,7 +439,7 @@ async function saveDiscount(discountData) {
 }
 
 function closeDialog() {
-    dialog.value = false;
+    setDialog(false);
     selectedDiscount.value = null;
 }
 </script>

@@ -36,10 +36,6 @@
                                     density="comfortable" class="mb-4" prefix="$"
                                     @change="(value) => onProductChange('price', value.target.value, 'number')" />
                             </v-col>
-                            <v-col cols="12">
-                                <v-switch label="Has Variants?" color="primary" hide-details
-                                    @change="(value) => onProductChange('hasVariants', value.target.value, 'boolean')" />
-                            </v-col>
                         </v-row>
                     </div>
                 </v-stepper-window-item>
@@ -49,21 +45,34 @@
                     <div class="step-content">
                         <v-row>
                             <v-col cols="12">
-                                <v-autocomplete v-model="product.categories" :items="categories" item-title="name"
-                                    item-value="cid" label="Categories" :rules="rules.categories" variant="outlined"
-                                    density="comfortable" class="mb-4" multiple chips closable-chips>
+                                <v-autocomplete v-model="selectedCategories" :items="categories" item-title="name"
+                                    item-value="cid" label="Categories" :rules="rules.categories" variant="solo"
+                                    density="comfortable"
+                                    class="tw-bg-white/70 tw-backdrop-blur-md tw-border tw-border-gray-200 tw-shadow-lg tw-rounded-2xl tw-px-4 tw-py-2 tw-transition-all tw-duration-300 tw-outline-none focus:tw-ring-2 focus:tw-ring-primary-500 modern-classic-autocomplete mb-4"
+                                    multiple chips closable-chips hide-details="auto"
+                                    :menu-props="{ contentClass: 'tw-rounded-xl tw-shadow-xl tw-bg-white/90 tw-backdrop-blur' }"
+                                    return-object>
+                                    <template v-slot:label>
+                                        <span
+                                            class="tw-text-base tw-font-semibold tw-text-gray-700 tw-ml-1">Categories</span>
+                                    </template>
                                     <template v-slot:chip="{ props, item }">
-                                        <v-chip v-bind="props" :color="item.raw.color || 'primary'" variant="tonal">
-                                            <v-icon start :icon="item.raw.icon || 'mdi-folder'" />
+                                        <v-chip v-bind="props" :color="item.raw.color || 'primary'" variant="elevated"
+                                            class="tw-bg-gradient-to-r tw-from-primary-100 tw-to-primary-50 tw-text-primary-700 tw-shadow-md tw-rounded-full tw-px-4 tw-py-2 tw-text-sm tw-font-medium tw-flex tw-items-center tw-gap-1"
+                                            style="border: none; min-height: 2rem;">
+                                            <v-icon start :icon="item.raw.icon || 'mdi-folder'" size="18"
+                                                class="tw-mr-1" />
                                             {{ item.raw.name }}
                                         </v-chip>
                                     </template>
                                 </v-autocomplete>
                             </v-col>
                             <v-col cols="12">
-                                <v-btn color="secondary" variant="tonal" prepend-icon="mdi-folder-plus"
+                                <v-btn color="secondary" variant="flat" prepend-icon="mdi-folder-plus"
+                                    class="modern-classic-btn rounded-pill px-6 py-2 elevation-1"
+                                    style="font-weight: 600; font-size: 1rem; letter-spacing: 0.2px; box-shadow: 0 2px 8px rgba(123,97,255,0.08);"
                                     @click="openCategoryDialog">
-                                    Add New Category
+                                    <span style="text-transform: capitalize;">Add New Category</span>
                                 </v-btn>
                             </v-col>
                         </v-row>
@@ -73,65 +82,6 @@
                 <!-- Variants Step -->
                 <v-stepper-window-item :value="3">
                     <div class="step-content">
-                        <!-- <v-row>
-                            <v-col cols="12">
-                                <div class="mb-4"
-                                    style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-                                    <div class="text-subtitle-1 font-weight-medium">Product Variants</div>
-                                    <v-btn color="primary" variant="tonal" prepend-icon="mdi-plus"
-                                        @click="openAttributeDialog">
-                                        Manage Attributes
-                                    </v-btn>
-                                </div> -->
-
-                        <!-- Variants List -->
-                        <!-- <v-expansion-panels>
-                                    <v-expansion-panel v-for="(variant, index) in product.variants"
-                                        :key="variant.variantId" class="mb-2">
-                                        <v-expansion-panel-title>
-                                            <div class="d-flex align-center">
-                                                <span class="mr-2">Variant {{ index + 1 }}</span>
-                                                <v-chip size="small" color="primary" variant="tonal" class="ml-2">
-                                                    SKU: {{ variant.sku }}
-                                                </v-chip>
-                                            </div>
-                                        </v-expansion-panel-title>
-                                        <v-expansion-panel-text>
-                                            <v-row>
-                                                <v-col cols="12" md="6">
-                                                    <v-text-field v-model.number="variant.price" label="Variant Price"
-                                                        type="number" variant="outlined" density="comfortable"
-                                                        class="mb-4" prefix="$" />
-                                                </v-col>
-                                                <v-col cols="12" md="6">
-                                                    <v-text-field v-model.number="variant.quantity" label="Stock"
-                                                        type="number" variant="outlined" density="comfortable"
-                                                        class="mb-4" />
-                                                </v-col>
-                                                <v-col cols="12">
-                                                    <v-text-field v-model="variant.sku" label="SKU" variant="outlined"
-                                                        density="comfortable" class="mb-4" />
-                                                </v-col>
-                                                <v-col cols="12">
-                                                    <div class="d-flex gap-2 flex-wrap">
-                                                        <v-chip v-for="(value, attr) in variant.attributes" :key="attr"
-                                                            closable @click:close="removeVariantAttribute(index, attr)">
-                                                            {{ attr }}: {{ value }}
-                                                        </v-chip>
-                                                    </div>
-                                                </v-col>
-                                            </v-row>
-                                        </v-expansion-panel-text>
-                                    </v-expansion-panel>
-                                </v-expansion-panels> -->
-
-                        <!-- Generate Variants Button -->
-                        <!-- <v-btn v-if="hasAttributes" color="primary" variant="tonal" prepend-icon="mdi-plus"
-                                    class="mt-4" @click="generateVariants">
-                                    Generate Variants
-                                </v-btn>
-                            </v-col>
-                        </v-row> -->
                         <v-container fluid class="pa-0">
                             <MobileVariantManager v-if="$vuetify.display.mobile" />
                             <ProductVariantManager v-else />
@@ -144,24 +94,53 @@
                     <div class="step-content">
                         <v-row>
                             <v-col cols="12">
-                                <v-autocomplete v-model="product.discounts" :items="discounts" item-title="title"
-                                    item-value="discountId" label="Discounts" :rules="rules.discounts"
-                                    variant="outlined" density="comfortable" class="mb-4" multiple chips closable-chips>
-                                    <template v-slot:chip="{ props, item }">
-                                        <v-chip v-bind="props" :color="item.raw.color || 'primary'" variant="tonal">
-                                            <v-icon start :icon="'mdi-percent'" />
-                                            {{ item.raw.title }}
-                                        </v-chip>
-                                    </template>
-                                </v-autocomplete>
-                            </v-col>
-                            <v-col cols="12">
-                                <v-btn color="secondary" variant="tonal" @click="openDiscountDialog" class="rouded-lg">
-                                    <template #prepend>
-                                        <BadgePercent :size="16" />
-                                    </template>
-                                    <span class="capitalize">add new discount</span>
-                                </v-btn>
+                                <v-card class="modern-classic-card pa-6 mb-6 rounded-xl elevation-2"
+                                    style="border: 1px solid var(--v-border-color, #ececec); background: var(--v-surface, #fff);">
+                                    <div class="d-flex align-center mb-4">
+                                        <v-icon color="primary" size="28" class="mr-3">mdi-percent</v-icon>
+                                        <div>
+                                            <div class="text-h6 font-weight-bold" style="letter-spacing: 0.5px;">
+                                                Discounts</div>
+                                            <div class="text-body-2 text-grey-darken-1" style="font-style: italic;">
+                                                Select or add
+                                                discounts for this product
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <v-autocomplete v-model="selectedDiscounts" :items="discounts" item-title="title"
+                                        item-value="discountId" label="Select Discounts" :rules="rules.discounts"
+                                        variant="solo" density="comfortable"
+                                        class="tw-bg-white/70 tw-backdrop-blur-md tw-border tw-border-gray-200 tw-shadow-lg tw-rounded-2xl tw-px-4 tw-py-2 tw-transition-all tw-duration-300 tw-outline-none focus:tw-ring-2 focus:tw-ring-primary-500 modern-classic-autocomplete mb-4"
+                                        multiple chips closable-chips hide-details="auto"
+                                        :menu-props="{ contentClass: 'tw-rounded-xl tw-shadow-xl tw-bg-white/90 tw-backdrop-blur' }"
+                                        return-object>
+                                        <template v-slot:label>
+                                            <span
+                                                class="tw-text-base tw-font-semibold tw-text-gray-700 tw-ml-1">Discounts
+                                            </span>
+                                        </template>
+                                        <template v-slot:chip="{ props, item }">
+                                            <v-chip v-bind="props" :color="item.raw.color || 'primary'"
+                                                variant="elevated"
+                                                class="tw-bg-gradient-to-r tw-from-primary-100 tw-to-primary-50 tw-text-primary-700 tw-shadow-md tw-rounded-full tw-px-4 tw-py-2 tw-text-sm tw-font-medium tw-flex tw-items-center tw-gap-1"
+                                                style="border: none; min-height: 2rem;">
+                                                <v-icon start :icon="'mdi-percent'" size="18" class="tw-mr-1" />
+                                                {{ item.raw.title }}
+                                            </v-chip>
+                                        </template>
+                                    </v-autocomplete>
+                                    <div class="d-flex justify-end mt-2">
+                                        <v-btn color="secondary" variant="flat"
+                                            class="modern-classic-btn rounded-pill px-6 py-2 elevation-1"
+                                            style="font-weight: 600; font-size: 1rem; letter-spacing: 0.2px; box-shadow: 0 2px 8px rgba(123,97,255,0.08);"
+                                            @click="openDiscountDialog">
+                                            <template #prepend>
+                                                <BadgePercent :size="18" class="mr-2" />
+                                            </template>
+                                            <span style="text-transform: capitalize;">Add New Discount</span>
+                                        </v-btn>
+                                    </div>
+                                </v-card>
                             </v-col>
                         </v-row>
                     </div>
@@ -171,28 +150,50 @@
                 <v-stepper-window-item :value="5">
                     <div class="step-content">
                         <v-row>
-                            <v-col cols="12">
-                                <v-file-input v-model="product.images" label="Product Images" :rules="rules.images"
-                                    variant="outlined" density="comfortable" class="mb-4" accept="image/*" multiple
-                                    chips counter show-size @change="handleImageUpload" @click:clear="clearImages" />
-                            </v-col>
-                            <v-col cols="12">
-                                <div class="image-preview-grid">
-                                    <div v-for="(image, index) in imagePreviews" :key="index"
-                                        class="image-preview-item">
-                                        <v-img :src="image.preview" aspect-ratio="1" cover class="rounded-lg">
-                                            <template v-slot:placeholder>
-                                                <v-row class="fill-height ma-0" align="center" justify="center">
-                                                    <v-progress-circular indeterminate color="primary" />
-                                                </v-row>
-                                            </template>
-                                            <div class="image-actions">
-                                                <v-btn icon="mdi-delete" color="white" variant="tonal" size="small"
-                                                    @click="removeImage(index)" />
-                                            </div>
-                                        </v-img>
+                            <v-col cols="12" style="padding-inline: 0 !important;">
+                                <v-card class="py-6 modern-upload-card elevation-2 mb-4 rounded-xl">
+                                    <div class="d-flex align-center mb-3">
+                                        <v-icon color="primary" class="mr-2">mdi-image-multiple</v-icon>
+                                        <div>
+                                            <div class="font-weight-bold text-h6">Product Images</div>
+                                            <div class="text-body-2 text-grey-darken-1">Upload up to 10 images. Drag &
+                                                drop or click
+                                                to select.</div>
+                                        </div>
                                     </div>
-                                </div>
+                                    <div class="modern-upload-dropzone mb-3" @drop.prevent="handleDrop"
+                                        @dragover.prevent @click="fileInputRef.click()">
+                                        <v-file-input ref="fileInputRef" v-model="images" :rules="rules.images"
+                                            variant="outlined" density="comfortable" class="modern-upload-input"
+                                            accept="image/*" multiple chips counter show-size
+                                            @change="handleImageUpload" @click:clear="clearImages"
+                                            prepend-icon="mdi-upload" hide-details="auto">
+                                            <template #selection="{ text }">
+                                                <span class="text-primary">{{ text }}</span>
+                                            </template>
+                                        </v-file-input>
+                                        <div class="modern-upload-dropzone-text">
+                                            <v-icon color="primary" size="32">mdi-cloud-upload</v-icon>
+                                            <div class="mt-2">Click or drag images here to upload</div>
+                                        </div>
+                                    </div>
+                                    <div v-if="imagePreviews.length" class="modern-image-preview-grid mt-4">
+                                        <div v-for="(image, index) in imagePreviews" :key="index"
+                                            class="modern-image-preview-item">
+                                            <v-img :src="image.preview" aspect-ratio="1" cover class="rounded-lg">
+                                                <template v-slot:placeholder>
+                                                    <v-row class="fill-height ma-0" align="center" justify="center">
+                                                        <v-progress-circular indeterminate color="primary" />
+                                                    </v-row>
+                                                </template>
+                                                <div class="modern-image-actions">
+                                                    <v-btn icon="mdi-delete" color="white" variant="tonal" size="small"
+                                                        @click="removeImage(index)" />
+                                                </div>
+                                            </v-img>
+                                        </div>
+                                    </div>
+                                </v-card>
                             </v-col>
                         </v-row>
                     </div>
@@ -211,7 +212,7 @@
                     Next
                     <v-icon end>mdi-chevron-right</v-icon>
                 </v-btn>
-                <v-btn v-else color="primary" :loading="saving" @click="saveProduct">
+                <v-btn v-else class="primary-gradient-button rounded-lg" :loading="saving" @click="saveProduct">
                     <v-icon start>mdi-content-save</v-icon>
                     Save Product
                 </v-btn>
@@ -247,7 +248,7 @@
                     Add Discount
                 </v-card-title>
                 <v-card-text>
-                    <DiscountForm />
+                    <DiscountForm @closeQuickDiscountDialog="closeDiscountDialog" />
                 </v-card-text>
             </v-card>
         </v-dialog>
@@ -255,16 +256,15 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted, useTemplateRef } from 'vue';
 import { useSetupStore } from '@/store';
 import { storeToRefs } from 'pinia';
-import { globalEventBus, useToast } from 'vue-toastification';
+import { useToast } from 'vue-toastification';
 import AddCategoryForm from './AddCategoryForm.vue';
 import DiscountForm from '../../discounts/components/DiscountForm.vue';
 import AttributeManager from './AttributeManager.vue';
 import MobileVariantManager from './MobileVariantManager.vue';
 import ProductVariantManager from './ProductVariantManager.vue';
-import { useDisplay } from 'vuetify';
 import { BadgePercent } from 'lucide-vue-next';
 import { useDiscount } from '@/composables/useDiscount';
 import useProduct from '@/composables/useProduct';
@@ -279,33 +279,25 @@ const props = defineProps({
 const emit = defineEmits(['submit', 'cancel']);
 
 // Composables
-const { discounts } = useDiscount();
+const { discounts, fetchDiscounts } = useDiscount();
 const { onProductChange } = useProduct();
 
 const setupStore = useSetupStore();
 const { categories } = storeToRefs(setupStore);
-const { mobile } = useDisplay();
 
 
-const form = ref(null);
+const form = useTemplateRef('form');
+const fileInputRef = useTemplateRef('fileInputRef');
 const categoryForm = ref(null);
 const attributeManager = ref(null);
-const discountForm = ref(null);
 const saving = ref(false);
 const currentStep = ref(1);
 const categoryDialog = ref(false);
 const attributeDialog = ref(false);
 const discountDialog = ref(false);
-const product = ref({
-    name: '',
-    description: '',
-    recipeTips: '',
-    price: 0,
-    hasVariants: false,
-    categories: [],
-    variants: [],
-    discounts: [],
-})
+const selectedCategories = ref([]);
+const selectedDiscounts = ref([]);
+const images = ref([]);
 
 const steps = [
     {
@@ -340,11 +332,6 @@ const steps = [
     }
 ];
 
-const newDiscount = ref({
-    percentage: 0,
-    validUntil: null
-});
-
 const imagePreviews = ref([]);
 
 const rules = {
@@ -367,15 +354,11 @@ const rules = {
     ]
 };
 
-const hasAttributes = computed(() => {
-    return product.value.variants.some(v => Object.keys(v.attributes || {}).length > 0);
-});
-
 // Image handling
-function handleImageUpload(files) {
+function handleImageUpload(e) {
+    const files = e.target.files
     if (!files) return;
-    const newFiles = Array.from(files);
-    newFiles.forEach(file => {
+    for (const file of files) {
         const reader = new FileReader();
         reader.onload = e => {
             imagePreviews.value.push({
@@ -384,17 +367,33 @@ function handleImageUpload(files) {
             });
         };
         reader.readAsDataURL(file);
-    });
+    }
+}
+
+function handleDrop(e) {
+    const files = e.dataTransfer.files;
+    if (!files) return;
+    for (const file of files) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+            imagePreviews.value.push({
+                file,
+                preview: ev.target.result
+            });
+        };
+        reader.readAsDataURL(file);
+        images.value.push(file);
+    }
 }
 
 function clearImages() {
-    product.value.images = [];
+    images.value = [];
     imagePreviews.value = [];
 }
 
 function removeImage(index) {
     imagePreviews.value.splice(index, 1);
-    product.value.images.splice(index, 1);
+    images.value.splice(index, 1);
 }
 
 // Category handling
@@ -418,25 +417,6 @@ async function saveCategory(categoryData) {
     }
 }
 
-// Attribute handling
-function openAttributeDialog() {
-    attributeDialog.value = true;
-}
-
-function closeAttributeDialog() {
-    attributeDialog.value = false;
-}
-
-function updateAttributes(attributes) {
-    product.value.attributes = attributes;
-}
-
-function removeVariantAttribute(variantIndex, attribute) {
-    const variant = product.value.variants[variantIndex];
-    if (variant.attributes) {
-        delete variant.attributes[attribute];
-    }
-}
 
 // Discount handling
 function openDiscountDialog() {
@@ -447,28 +427,7 @@ function closeDiscountDialog() {
     discountDialog.value = false;
 }
 
-async function saveDiscount() {
-    try {
-        const { valid } = await discountForm.value.validate();
-        if (!valid) {
-            useToast().error('Please fill in all required fields');
-            return;
-        }
 
-        const discountId = `disc_${Date.now()}`;
-        product.value.discounts.push({
-            id: discountId,
-            percentage: newDiscount.value.percentage,
-            validUntil: newDiscount.value.validUntil
-        });
-
-        useToast().success('Discount added successfully');
-        closeDiscountDialog();
-    } catch (error) {
-        console.error('Error saving discount:', error);
-        useToast().error('Failed to save discount');
-    }
-}
 
 // Variant generation
 function generateVariants() {
@@ -548,28 +507,14 @@ async function saveProduct() {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
+    await fetchDiscounts();
     if (props.initialData.images) {
         imagePreviews.value = props.initialData.images.map(url => ({
             preview: url,
             file: null
         }));
     }
-    globalEventBus.on('setVariants', (value) => {
-        product.value = [
-            ...product.value,
-            ...value
-        ]
-    });
-    globalEventBus.on('closeDiscountForm', () => {
-        console.log('close discount event emitted:');
-        discountDialog.value = false;
-    });
-
-    globalEventBus.on('UpdatingVariant', (variant) => {
-        console.log('EMITTED EVENT:UpdatingVariant')
-        addVariant(variant)
-    });
 });
 </script>
 
@@ -656,5 +601,148 @@ onMounted(() => {
         background: rgba(255, 255, 255, 0.04);
         border-color: rgba(255, 255, 255, 0.08);
     }
+}
+
+.modern-upload-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+}
+
+.modern-upload-dropzone {
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    padding: 16px;
+    transition: border-color 0.2s ease;
+}
+
+.modern-upload-dropzone:hover {
+    border-color: rgba(255, 255, 255, 0.7);
+}
+
+.modern-upload-input {
+    display: none;
+}
+
+.modern-image-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.modern-image-preview-item {
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modern-image-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.modern-image-preview-item:hover .modern-image-actions {
+    opacity: 1;
+}
+
+/* Modern Classic Card Styles */
+.modern-classic-card {
+    background: #fff;
+    border: 1px solid #ececec;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modern-classic-card .v-card-title {
+    border-bottom: 1px solid #ececec;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.modern-classic-card .v-card-title .text-h5 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.modern-classic-card .v-card-title .text-h6 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #666;
+}
+
+.modern-classic-card .v-autocomplete {
+    margin-bottom: 16px;
+}
+
+.modern-classic-card .v-btn {
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.2px;
+    padding: 10px 24px;
+    border-radius: 24px;
+}
+
+.modern-classic-card .v-btn:hover {
+    box-shadow: 0 4px 12px rgba(123, 97, 255, 0.2);
+}
+
+.modern-classic-chip {
+    border-radius: 999px;
+    background: rgba(123, 97, 255, 0.08);
+    color: #3d2c8d;
+    letter-spacing: 0.2px;
+}
+
+.modern-classic-autocomplete .v-input__control {
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+}
+
+.modern-classic-autocomplete .v-input__control:hover {
+    border-color: #7b61ff;
+}
+
+.modern-classic-autocomplete .v-input__slot {
+    padding: 8px 12px;
+}
+
+.modern-classic-autocomplete .v-select__selections {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.modern-classic-autocomplete .v-select__selection {
+    background: #f5f5f5;
+    border: 1px solid #dcdcdc;
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+    color: #333;
+}
+
+.modern-classic-autocomplete .v-select__selection--disabled {
+    background: #e9ecef;
+    color: #aaa;
+}
+
+.modern-classic-autocomplete .v-select__selection--error {
+    border-color: #f44336;
+}
+
+.modern-classic-autocomplete .v-select__selection--error .v-icon {
+    color: #f44336;
+}
+
+.modern-classic-autocomplete .v-select__selection--success {
+    border-color: #4caf50;
+}
+
+.modern-classic-autocomplete .v-select__selection--success .v-icon {
+    color: #4caf50;
 }
 </style>

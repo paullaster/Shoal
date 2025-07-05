@@ -34,7 +34,8 @@
       density="comfortable" :rules="[v => !!v || 'Status is required']" required class="premium-input mt-4" />
     <v-row class="mt-6">
       <v-col cols="6">
-        <v-btn color="grey-darken-1" variant="tonal" block @click="$emit('cancel')" class="cancel-btn">
+        <v-btn color="grey-darken-1" variant="tonal" block
+          @click="() => ($emit('closeQuickDiscountDialog'), $emit('cancel'))" class="cancel-btn">
           <v-icon start>mdi-close</v-icon>
           Cancel
         </v-btn>
@@ -59,7 +60,7 @@ const props = defineProps({
   editMode: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['save', 'cancel']);
+const emit = defineEmits(['save', 'cancel', 'closeQuickDiscountDialog']);
 
 // Composables
 const { createDiscount } = useDiscount();

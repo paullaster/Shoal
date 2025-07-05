@@ -54,7 +54,7 @@
 
 <script setup>
 import { Settings, Wand2, Plus } from 'lucide-vue-next';
-import { onMounted, provide, ref, watchEffect, reactive } from 'vue';
+import { onMounted, provide, ref, watchEffect } from 'vue';
 import VariantsTable from './VariantsTable.vue';
 import { globalEventBus, useToast } from 'vue-toastification';
 import VariantForm from './VariantForm.vue';

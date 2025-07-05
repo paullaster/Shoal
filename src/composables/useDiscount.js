@@ -3,7 +3,7 @@ import { storeToRefs } from "pinia";
 
 export const useDiscount = () => {
     const discountStore = discount();
-    const { discountsGetter, sortByGetter, totalDiscountsGetter, filterStatus, page, pageSize, search, } = storeToRefs(discountStore);
+    const { discountsGetter, sortByGetter, totalDiscountsGetter, filterStatus, page, pageSize, search, getDialog } = storeToRefs(discountStore);
 
     return {
         filterStatus,
@@ -13,9 +13,11 @@ export const useDiscount = () => {
         search,
         sortBy: sortByGetter,
         totalDiscounts: totalDiscountsGetter,
+        dialog: getDialog,
         createDiscount: async (payload) => await discountStore.createDiscount(payload),
         fetchDiscounts: async () => await discountStore.fetchDiscounts(),
         setFilterStatus: (payload) => discountStore.setFilterStatus(payload),
         setSortBy: (payload) => discountStore.setSortBy(payload),
+        setDialog: (payload) => discountStore.setDialog(payload),
     };
 }

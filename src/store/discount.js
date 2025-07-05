@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 export const discount = defineStore('discount', {
     state: () => ({
+        dialog: false,
         discounts: [],
         totalDiscounts: 0,
         page: 1,
@@ -19,6 +20,7 @@ export const discount = defineStore('discount', {
         activeAbortController: null,
     }),
     getters: {
+        getDialog: (state) => state['dialog'],
         discountsGetter: (state) => state['discounts'],
         sortByGetter: (state) => state['sortBy'],
         filterStatusGetter: (state) => state['filterStatus'],
@@ -33,6 +35,11 @@ export const discount = defineStore('discount', {
             } catch (error) {
                 this.toast.error(error.message);
             }
+        },
+        setDialog(payload) {
+            this.$patch({
+                dialog: payload,
+            });
         },
         setFilterStatus(payload) {
             this.$patch({

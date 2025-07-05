@@ -16,10 +16,10 @@ export const useProductStore = defineStore("product", {
         description: '',
         recipeTips: '',
         price: 0,
-        hasVariants: false,
         categories: [],
         variants: [],
         discounts: [],
+        images: [],
       },
       productActions: [
         {
