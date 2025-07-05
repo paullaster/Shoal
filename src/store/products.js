@@ -11,7 +11,16 @@ export const useProductStore = defineStore("product", {
       attributes: [],
       attributesCount: 0,
       products: [],
-      product: {},
+      product: {
+        name: '',
+        description: '',
+        recipeTips: '',
+        price: 0,
+        categories: [],
+        variants: [],
+        discounts: [],
+        images: [],
+      },
       productActions: [
         {
           text: 'Create a new product',
@@ -30,9 +39,9 @@ export const useProductStore = defineStore("product", {
     }
   },
   getters: {
-    productGetter: (state) => (key) => state[key],
     getAttributeCount: (state) => state['attributesCount'],
     getAttributes: (state) => state['attributes'],
+    getProduct: (state) => state['product'],
   },
   actions: {
     setLoading(payload) {
@@ -61,41 +70,45 @@ export const useProductStore = defineStore("product", {
         this.toast.error("An error occurred while setting product actions view.");
       }
     },
-    getProducts() {
-      // Replace API call with dummy data
+    setProduct(product) {
       this.$patch({
-        products: [
-          {
-            pid: 'p1', name: 'Laptop', description: 'Powerful laptop', price: 1200, stock: 50, category: 'cat1', images: [{ url: 'https://via.placeholder.com/150' }], discount: 0
-          },
-          {
-            pid: 'p2', name: 'Keyboard', description: 'Mechanical keyboard', price: 75, stock: 20, category: 'cat2', images: [{ url: 'https://via.placeholder.com/150' }], discount: 10
-          },
-          {
-            pid: 'p3', name: 'Mouse', description: 'Wireless mouse', price: 25, stock: 10, category: 'cat2', images: [{ url: 'https://via.placeholder.com/150' }], discount: 0
-          },
-          {
-            pid: 'p4', name: 'Monitor', description: '4K monitor', price: 300, stock: 5, category: 'cat1', images: [{ url: 'https://via.placeholder.com/150' }], discount: 0
-          },
-          {
-            pid: 'p5', name: 'Webcam', description: 'HD webcam', price: 50, stock: 0, category: 'cat3', images: [{ url: 'https://via.placeholder.com/150' }], discount: 0
-          }
-        ]
+        product: product,
       });
-      // _request.axiosRequest({
-      //   url: constants.products,
-      //   method: "GET",
-      // })
-      //   .then(res => {
-      //     this.$patch({
-      //       products: res.data.rows
-      //     })
-      //   })
-      //   .catch(err => {
-      //     this.toast.error(err.message);
-      //   });
     },
-    getProduct(productId) {
+    onProductFormchange(field, value, type = 'string') {
+      switch (type) {
+        case 'number': {
+          value = Number(value);
+          break;
+        };
+        case 'boolean': {
+          value = Boolean(value);
+          break;
+        }
+      }
+      this.$patch({
+        product: {
+          ...this.product,
+          [field]: value,
+        }
+      })
+    },
+    getProducts(query) {
+      _request.axiosRequest({
+        url: constants.products,
+        method: "GET",
+        params: query
+      })
+        .then(res => {
+          this.$patch({
+            products: res.data.rows
+          })
+        })
+        .catch(err => {
+          this.toast.error(err.message);
+        });
+    },
+    fetchProduct(productId) {
       try {
         const product = this.products.find(p => p.pid === productId);
         if (!product) {
@@ -114,8 +127,8 @@ export const useProductStore = defineStore("product", {
             });
         }
         this.$patch({
-          product: product,
-        })
+          product: product
+        });
       } catch (error) {
         this.toast.error(error.message);
       }
@@ -129,7 +142,7 @@ export const useProductStore = defineStore("product", {
     },
     async createAttribute(payload) {
       try {
-        this.setLoading(true)
+        this.setLoading(true);
         if (this.activeAbortController) {
           this.activeAbortController.abort();
         }
@@ -141,7 +154,8 @@ export const useProductStore = defineStore("product", {
           data: payload,
           signal,
         });
-        await this.fetchAttributes();
+        this.toast.success('Attribute created successfully!');
+        await this.fetchAttributes({ eager: true });
       } catch (error) {
         console.error(error);
         this.toast.error(error?.message)
@@ -149,8 +163,82 @@ export const useProductStore = defineStore("product", {
         this.setLoading(false);
       }
     },
+    async updateAttribute(payload) {
+      try {
+        console.log('payload in store:', payload)
+        this.setLoading(true);
+        if (this.activeAbortController) {
+          this.activeAbortController.abort();
+        }
+        this.activeAbortController = new AbortController();
+        const signal = this.activeAbortController.signal;
+        if (!payload.attributeId) throw new Error('Missing attribute ID');
+        const { attributeId, ...update } = payload;
+
+        await _request.axiosRequest({
+          url: `${constants.attribute}/${attributeId}`,
+          method: 'PUT',
+          data: update,
+          signal,
+        });
+        await this.fetchAttributes({ eager: true });
+      } catch (error) {
+        console.error(error);
+        throw error;
+      } finally {
+        this.setLoading(false);
+      }
+    },
+    async deleteAttribute(payload) {
+      try {
+        this.setLoading(true);
+        if (this.activeAbortController) {
+          this.activeAbortController.abort();
+        }
+        this.activeAbortController = new AbortController();
+        const signal = this.activeAbortController.signal;
+        if (!payload.attributeId) throw new Error('Missing attribute ID');
+        await _request.axiosRequest({
+          url: `${constants.attribute}/${payload.attributeId}`,
+          method: 'DELETE',
+          signal,
+        });
+        await this.fetchAttributes({ eager: true });
+      } catch (error) {
+        console.error(error);
+        throw error;
+      } finally {
+        this.setLoading(false);
+      }
+    },
+    async deleteAttributeValue(payload) {
+      try {
+        this.setLoading(true);
+        if (this.activeAbortController) {
+          this.activeAbortController.abort();
+        }
+        this.activeAbortController = new AbortController();
+        const signal = this.activeAbortController.signal;
+        if (!payload.attributeId) throw new Error('Missing attribute ID');
+        const { attributeId, ...archivedValues } = payload;
+
+        await _request.axiosRequest({
+          url: `${constants.attribute}/${attributeId}/value`,
+          method: 'DELETE',
+          data: archivedValues,
+          signal,
+        });
+        await this.fetchAttributes({ eager: true });
+      } catch (error) {
+        console.error(error);
+        throw error;
+      } finally {
+        this.setLoading(false);
+      }
+    },
     async fetchAttributes(query) {
       try {
+        this.setLoading(true);
         let attributes;
         attributes = await _request.axiosRequest({
           url: constants.attribute,

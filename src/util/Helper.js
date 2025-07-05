@@ -49,6 +49,11 @@ class Helper {
         }
         return newObject;
     }
+    findObjectFromArray(array, key, value) {
+        if (!Array.isArray(array) || !key || (value === undefined || value === null)) return
+        const map = new Map(array.map((item) => [item[key], item]))
+        return map.get(value)
+    }
 }
 
 export default new Helper();

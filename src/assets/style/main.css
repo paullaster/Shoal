@@ -1,4 +1,11 @@
+/* EXTERNAL */
+/* @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'); */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Tailwind */
 @import "tailwindcss";
+
+/* custom */
 @import './animation.css';
 @import './auth.css';
 @import './base.css';
@@ -24,10 +31,6 @@
 @import './typography.css';
 @import './userHistory.css';
 @import './utils.css';
-
-/* EXTERNAL */
-/* @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap'); */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 a,
 .green {

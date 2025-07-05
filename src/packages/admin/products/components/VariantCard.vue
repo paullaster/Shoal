@@ -49,34 +49,31 @@
         <v-row>
             <v-col cols="6" v-for="(attribute, i) in variant.attributes" :key="attribute.id || i">
                 <v-chip variant="outlined" color="black" class="vchip text-xs font-medium px-2 py-1 rounded-md">
-                    {{ attribute.name }}: {{ attribute.value }}
+                    {{ Helper.findObjectFromArray(getAttributes, 'attributeId', attribute.attributeId)?.name }}: {{
+                    attribute.value }}
                 </v-chip>
             </v-col>
         </v-row>
     </div>
-    <v-bottom-sheet v-model="variantFormSheet" scrollable>
-        <v-card width="85%" class="mx-auto rounded-xl" style="padding-inline: 0 !important;">
-            <v-card-text style="padding-inline: 0;">
-                <VariantForm />
-            </v-card-text>
-        </v-card>
-    </v-bottom-sheet>
 </template>
 
 <script setup>
+import useProduct from '@/composables/useProduct';
 import { MoreVertical, Edit, Trash } from 'lucide-vue-next';
-import VariantForm from './VariantForm.vue';
-import { inject, ref } from 'vue';
+import { ref } from 'vue';
 import { globalEventBus } from 'vue-toastification';
+import Helper from '@/util/Helper';
 
 // Injections
-const variantFormSheet = inject('variantFormSheet');
 // Macros
 defineProps({
     variant: {
         type: Object
     }
 });
+
+// composables
+const { getAttributes } = useProduct();
 
 const sheet = ref(false);
 

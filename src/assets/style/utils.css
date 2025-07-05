@@ -101,3 +101,7 @@ background-color: var(--vt-c-secondary-light)
     background: linear-gradient(135deg, #7b61ff1e 0%, #ff6f9115 100%) !important;
     color: #fff !important;
 }
+
+.txt-color-secondary {
+    color: linear-gradient(135deg, #7b61ff1e 0%, #ff6f9115 100%) !important;
+}

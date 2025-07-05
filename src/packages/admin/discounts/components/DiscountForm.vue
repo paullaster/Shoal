@@ -34,7 +34,8 @@
       density="comfortable" :rules="[v => !!v || 'Status is required']" required class="premium-input mt-4" />
     <v-row class="mt-6">
       <v-col cols="6">
-        <v-btn color="grey-darken-1" variant="tonal" block @click="$emit('cancel')" class="cancel-btn">
+        <v-btn color="grey-darken-1" variant="tonal" block
+          @click="() => ($emit('closeQuickDiscountDialog'), $emit('cancel'))" class="cancel-btn">
           <v-icon start>mdi-close</v-icon>
           Cancel
         </v-btn>
@@ -50,13 +51,19 @@
 </template>
 
 <script setup>
+import { useDiscount } from '@/composables/useDiscount';
 import { ref, watch } from 'vue';
+import { globalEventBus, useToast } from 'vue-toastification';
 
 const props = defineProps({
   discount: { type: Object, default: null },
+  editMode: { type: Boolean, default: false },
 });
 
-const emit = defineEmits(['save', 'cancel']);
+const emit = defineEmits(['save', 'cancel', 'closeQuickDiscountDialog']);
+
+// Composables
+const { createDiscount } = useDiscount();
 
 const valid = ref(false);
 const formData = ref({
@@ -91,9 +98,20 @@ watch(
   { immediate: true }
 );
 
-function save() {
+async function save() {
   if (valid.value) {
-    emit('save', { ...formData.value });
+    if (props.editMode) {
+      console.log('values of edit mode: ', props.editMode);
+      emit('save', { ...formData.value });
+    } else {
+      try {
+        await createDiscount({ ...formData.value });
+        useToast().success('Discount created successfully');
+        globalEventBus.emit('closeDiscountForm');
+      } catch (error) {
+        useToast().error(error.message);
+      }
+    }
   }
 }
 </script>
