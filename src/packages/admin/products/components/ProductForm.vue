@@ -51,7 +51,7 @@
                                     class="tw-bg-white/70 tw-backdrop-blur-md tw-border tw-border-gray-200 tw-shadow-lg tw-rounded-2xl tw-px-4 tw-py-2 tw-transition-all tw-duration-300 tw-outline-none focus:tw-ring-2 focus:tw-ring-primary-500 modern-classic-autocomplete mb-4"
                                     multiple chips closable-chips hide-details="auto"
                                     :menu-props="{ contentClass: 'tw-rounded-xl tw-shadow-xl tw-bg-white/90 tw-backdrop-blur' }"
-                                    return-object>
+                                    @update:modelValue="onChangeCategories" return-object>
                                     <template v-slot:label>
                                         <span
                                             class="tw-text-base tw-font-semibold tw-text-gray-700 tw-ml-1">Categories</span>
@@ -113,10 +113,10 @@
                                         class="tw-bg-white/70 tw-backdrop-blur-md tw-border tw-border-gray-200 tw-shadow-lg tw-rounded-2xl tw-px-4 tw-py-2 tw-transition-all tw-duration-300 tw-outline-none focus:tw-ring-2 focus:tw-ring-primary-500 modern-classic-autocomplete mb-4"
                                         multiple chips closable-chips hide-details="auto"
                                         :menu-props="{ contentClass: 'tw-rounded-xl tw-shadow-xl tw-bg-white/90 tw-backdrop-blur' }"
-                                        return-object>
+                                        @update:modelValue="onChangeDiscount" return-object>
                                         <template v-slot:label>
-                                            <span
-                                                class="tw-text-base tw-font-semibold tw-text-gray-700 tw-ml-1">Discounts
+                                            <span class=" tw-text-base tw-font-semibold tw-text-gray-700
+                                        tw-ml-1">Discounts
                                             </span>
                                         </template>
                                         <template v-slot:chip="{ props, item }">
@@ -256,7 +256,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, useTemplateRef } from 'vue';
+import { ref, onMounted, useTemplateRef, toRaw, watch } from 'vue';
 import { useSetupStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
@@ -280,7 +280,7 @@ const emit = defineEmits(['submit', 'cancel']);
 
 // Composables
 const { discounts, fetchDiscounts } = useDiscount();
-const { onProductChange } = useProduct();
+const { onProductChange, getProduct, setProduct } = useProduct();
 
 const setupStore = useSetupStore();
 const { categories } = storeToRefs(setupStore);
@@ -417,6 +417,19 @@ async function saveCategory(categoryData) {
     }
 }
 
+function onChangeCategories(categories) {
+    const product = { ...getProduct.value };
+    const newCategories = [...categories.map((cat) => toRaw(cat))];
+    product.categories = newCategories;
+    setProduct(product);
+}
+
+function onChangeDiscount(discounts) {
+    const product = { ...getProduct.value };
+    const newCategories = [...discounts.map((disc) => toRaw(disc))];
+    product.discounts = newCategories;
+    setProduct(product);
+}
 
 // Discount handling
 function openDiscountDialog() {
@@ -516,6 +529,9 @@ onMounted(async () => {
         }));
     }
 });
+
+// Effects
+
 </script>
 
 <style scoped>
