@@ -31,29 +31,32 @@ export default defineConfig({
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024 // Set to 4 MB
       },
       manifest: {
-        name: 'Noel\'s Fish Deliveries',
-        short_name: 'N\'sFD',
-        description: 'Noel\'s Fish Deliveries App',
+        name: 'Noels',
+        short_name: 'Noels',
+        description: 'Order fresh fish delivered to your door with Noels.',
+        start_url: '/',
+        display: 'standalone',
         theme_color: '#ffffff',
+        background_color: '#ffffff',
         icons: [
           {
-            src: 'pwa-192x192.png',
+            src: 'android-chrome-192x192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: 'pwa-512x512.png',
+            src: 'android-chrome-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable'
