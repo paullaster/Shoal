@@ -42,6 +42,7 @@ export const useProductStore = defineStore("product", {
     getAttributeCount: (state) => state['attributesCount'],
     getAttributes: (state) => state['attributes'],
     getProduct: (state) => state['product'],
+    getProducts: (state) => state['products'],
   },
   actions: {
     setLoading(payload) {

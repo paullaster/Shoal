@@ -6,7 +6,7 @@ export default () => {
     // Stores
     const cartStore = useCartStore();
     const productStore = useProductStore();
-    const { getAttributes, getAttributeCount, getProduct } = storeToRefs(productStore);
+    const { getAttributes, getAttributeCount, getProduct, getProducts } = storeToRefs(productStore);
 
     const addToCart = async (item) => {
         await cartStore.createCart(item)
@@ -28,6 +28,7 @@ export default () => {
         getAttributeCount,
         getAttributes,
         getProduct,
+        getProducts,
         createAttribute: async (payload) => await productStore.createAttribute(payload),
         updateAttribute: async (payload) => await productStore.updateAttribute(payload),
         fetchAttributes: async (query) => await productStore.fetchAttributes(query),

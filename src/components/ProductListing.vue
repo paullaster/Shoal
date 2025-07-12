@@ -1,35 +1,53 @@
 <template>
-  <article class="product-listing-wrapper cool-shadow cool-borderradius"
-    @click="() => router.push({ name: 'productDetails', params: { category: product.category, productId: stringToBase64AndReverse.toBase64String(product.pid) } })">
-    <div class="productlisting-image" :style="`
-  background-image:url(${product?.Images[0].url});
-  `
-      ">
-
+  <article 
+    class="group relative product-listing-wrapper cool-borderradius bg-white shadow-sm transition-all duration-300 ease-in-out hover:shadow-xl overflow-hidden"
+    @click="() => router.push({ name: 'productDetails', params: { productId: stringToBase64AndReverse.toBase64String(product?.productId) } })">
+    
+    <div class="productlisting-image h-48 w-full overflow-hidden">
+      <div 
+        class="h-full w-full bg-cover bg-center transition-transform duration-500 ease-in-out group-hover:scale-110"
+        :style="`background-image:url(${product?.images?.[0]?.url});`">
+      </div>
     </div>
-    <div class="product-details">
-      <p class="product-details-name">
+
+    <div class="product-details p-4">
+      <p class="text-base font-semibold text-gray-800 truncate" :title="product?.name">
         {{ product?.name }}
       </p>
-      <p class="product-details-price" disabled>{{ currency }} {{ product?.price }}</p>
-      <p class="product-details-availability">{{ product.quantity }} in stock</p>
+      <p class="text-lg font-bold text-gray-900">{{ currency }} {{ product?.price }}</p>
+      
+      <!-- Modern Availability Indicator -->
+      <div class="mt-1">
+        <!-- "In Stock" Indicator -->
+        <div v-if="product.isAvailable" class="flex items-center">
+          <span class="h-2 w-2 bg-green-500 rounded-full mr-2"></span>
+          <span class="text-xs text-gray-600">In Stock</span>
+        </div>
+
+        <!-- "Out of Stock" Indicator -->
+        <div v-else class="flex items-center">
+          <span class="h-2 w-2 bg-red-500 rounded-full mr-2"></span>
+          <span class="text-xs text-gray-500">Out of Stock</span>
+        </div>
+      </div>
     </div>
-    <div class="cta-btn">
+
+    <!-- God-level CTA: Slides up on hover -->
+    <div class="cta-btn absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white/80 to-transparent opacity-0 transform translate-y-full group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 ease-in-out">
       <v-btn color="primary" variant="flat" rounded="pill" v-if="!Object.keys(productInCart).length"
-        @click.stop="addToCart(product)">
-        <v-icon class="mr-3">mdi-cart-outline</v-icon>
-        <span class="text-capitalize">add </span><span style="margin-left: .4rem;" class="text-lowecase"> to
-          cart</span>
+        @click.stop="addToCart(product)" class="w-full shadow-lg">
+        <v-icon class="mr-2">mdi-cart-outline</v-icon>
+        Add to Cart
       </v-btn>
-      <div class="cta-btn-group-container" v-if="Object.keys(productInCart).length"
+      <div class="cta-btn-group-container flex justify-around items-center bg-white rounded-pill shadow-lg p-1" v-if="Object.keys(productInCart).length"
         @click.stop="cartUpdate(product, $event)">
-        <v-btn variant="text" data-type-remove>
+        <v-btn variant="text" data-type-remove rounded="circle">
           <v-icon data-type-remove>mdi-minus</v-icon>
         </v-btn>
-        <span>
+        <span class="font-bold text-lg">
           {{ productInCart.quantity }}
         </span>
-        <v-btn variant="text" data-type-add>
+        <v-btn variant="text" data-type-add rounded="circle">
           <v-icon data-type-add>mdi-plus</v-icon>
         </v-btn>
       </div>
