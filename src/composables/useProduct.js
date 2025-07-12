@@ -35,5 +35,8 @@ export default () => {
         deleteAttribute: async (payload) => await productStore.deleteAttribute(payload),
         setProduct: (product) => productStore.setProduct(product),
         onProductChange: (field, value, type = 'string') => productStore.onProductFormchange(field, value, type),
+        setLoader: (payload) => productStore.setLoading(payload),
+        createProduct: async (product) => await productStore.createProduct(product),
+        fetchProducts: async (query) => await productStore.fetchProducts(query),
     }
 }

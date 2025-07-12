@@ -51,7 +51,7 @@
                                     class="tw-bg-white/70 tw-backdrop-blur-md tw-border tw-border-gray-200 tw-shadow-lg tw-rounded-2xl tw-px-4 tw-py-2 tw-transition-all tw-duration-300 tw-outline-none focus:tw-ring-2 focus:tw-ring-primary-500 modern-classic-autocomplete mb-4"
                                     multiple chips closable-chips hide-details="auto"
                                     :menu-props="{ contentClass: 'tw-rounded-xl tw-shadow-xl tw-bg-white/90 tw-backdrop-blur' }"
-                                    return-object>
+                                    @update:modelValue="onChangeCategories" return-object>
                                     <template v-slot:label>
                                         <span
                                             class="tw-text-base tw-font-semibold tw-text-gray-700 tw-ml-1">Categories</span>
@@ -113,10 +113,10 @@
                                         class="tw-bg-white/70 tw-backdrop-blur-md tw-border tw-border-gray-200 tw-shadow-lg tw-rounded-2xl tw-px-4 tw-py-2 tw-transition-all tw-duration-300 tw-outline-none focus:tw-ring-2 focus:tw-ring-primary-500 modern-classic-autocomplete mb-4"
                                         multiple chips closable-chips hide-details="auto"
                                         :menu-props="{ contentClass: 'tw-rounded-xl tw-shadow-xl tw-bg-white/90 tw-backdrop-blur' }"
-                                        return-object>
+                                        @update:modelValue="onChangeDiscount" return-object>
                                         <template v-slot:label>
-                                            <span
-                                                class="tw-text-base tw-font-semibold tw-text-gray-700 tw-ml-1">Discounts
+                                            <span class=" tw-text-base tw-font-semibold tw-text-gray-700
+                                        tw-ml-1">Discounts
                                             </span>
                                         </template>
                                         <template v-slot:chip="{ props, item }">
@@ -256,7 +256,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, useTemplateRef } from 'vue';
+import { ref, onMounted, useTemplateRef, toRaw } from 'vue';
 import { useSetupStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
@@ -268,6 +268,7 @@ import ProductVariantManager from './ProductVariantManager.vue';
 import { BadgePercent } from 'lucide-vue-next';
 import { useDiscount } from '@/composables/useDiscount';
 import useProduct from '@/composables/useProduct';
+import Helper from '@/util/Helper';
 
 const props = defineProps({
     initialData: {
@@ -280,7 +281,7 @@ const emit = defineEmits(['submit', 'cancel']);
 
 // Composables
 const { discounts, fetchDiscounts } = useDiscount();
-const { onProductChange } = useProduct();
+const { onProductChange, getProduct, setProduct } = useProduct();
 
 const setupStore = useSetupStore();
 const { categories } = storeToRefs(setupStore);
@@ -368,6 +369,9 @@ function handleImageUpload(e) {
         };
         reader.readAsDataURL(file);
     }
+    const product = { ...getProduct.value };
+    product.images = imagePreviews.value;
+    setProduct(product);
 }
 
 function handleDrop(e) {
@@ -383,6 +387,9 @@ function handleDrop(e) {
         };
         reader.readAsDataURL(file);
         images.value.push(file);
+        const product = { ...getProduct.value };
+        product.images = imagePreviews.value;
+        setProduct(product);
     }
 }
 
@@ -417,6 +424,19 @@ async function saveCategory(categoryData) {
     }
 }
 
+function onChangeCategories(categories) {
+    const product = { ...getProduct.value };
+    const newCategories = [...categories.map((cat) => toRaw(cat))];
+    product.categories = newCategories;
+    setProduct(product);
+}
+
+function onChangeDiscount(discounts) {
+    const product = { ...getProduct.value };
+    const newCategories = [...discounts.map((disc) => toRaw(disc))];
+    product.discounts = newCategories;
+    setProduct(product);
+}
 
 // Discount handling
 function openDiscountDialog() {
@@ -468,38 +488,76 @@ function addVariant(variant) {
 // Save product
 async function saveProduct() {
     try {
-        const { valid } = await form.value.validate();
-        if (!valid) {
-            useToast().error('Please fill in all required fields');
+        const product = { ...getProduct.value };
+        const { variants, categories, discounts, images, ...rest } = product;
+        const stripeNullsFromBaseProduct = Helper.removeNullsFromObject(rest);
+        const stripeNullFromVariant = variants.map((variant) => {
+            variant.attributes = variant.attributes.map((attr) => ({ value: attr.valueId }));
+            return Helper.removeNullsFromObject(variant);
+        });
+        const usableDiscounts = discounts.map((discount) => {
+            return {
+                discount: discount.discountId,
+            }
+        });
+        const usableCategories = categories.map((cat) => {
+            return {
+                category: cat.categoryId,
+            }
+        });
+        const isBaseProductValid = Helper.validateRequiredProperties(
+            stripeNullsFromBaseProduct,
+            ['description', 'price', 'name']
+        );
+        if (!isBaseProductValid.valid) {
+            useToast().error(`Please fill in all required fields. ${isBaseProductValid.missing.join(",")} are missing.`);
+            return;
+        }
+        const requiredVariantFields = ['price', 'quantity', 'sku', 'attributes'];
+        const invalidVariants = stripeNullFromVariant.filter(
+            variant => !Helper.validateRequiredProperties(variant, requiredVariantFields).valid
+        );
+        const isVariantsValid = invalidVariants.length === 0;
+        if (!isVariantsValid) {
+            useToast().error(`Invalid variant(s)`);
             return;
         }
 
-        const productData = { ...product.value };
+        const requiredCategoryFields = ['category'];
+        const isCategoriesValid =
+            Array.isArray(usableCategories) &&
+            usableCategories.length > 0 &&
+            usableCategories.every(cat =>
+                Helper.validateRequiredProperties(cat, requiredCategoryFields).valid
+            );
+
+        if (!isCategoriesValid) {
+            useToast().error('Product must belong to at least one valid category.');
+            return;
+        }
+        const requiredDiscountFields = ['discount'];
+        const hasValidDiscounts =
+            Array.isArray(usableDiscounts) &&
+            usableDiscounts.length > 0 &&
+            usableDiscounts.every(disc =>
+                Helper.validateRequiredProperties(disc, requiredDiscountFields).valid
+            );
+
         const formData = {
-            name: productData.name,
-            description: productData.description,
-            recipeTips: productData.recipeTips || undefined,
-            price: productData.price || undefined,
-            categories: productData.categories,
-            variants: productData.variants.map(variant => ({
-                price: variant.price,
-                quantity: variant.quantity,
-                sku: variant.sku,
-                attributes: variant.attributes
-            })),
-            discounts: productData.discounts.map(discount => ({
-                percentage: discount.percentage,
-                validUntil: discount.validUntil
-            }))
+            name: stripeNullsFromBaseProduct.name,
+            description: stripeNullsFromBaseProduct.description,
+            recipeTips: stripeNullsFromBaseProduct.recipeTips || undefined,
+            price: stripeNullsFromBaseProduct.price,
+            categories: usableCategories,
+            variants: stripeNullFromVariant,
+            ...(hasValidDiscounts && {
+                discounts: usableDiscounts
+            })
         };
 
-        // Emit the form data and images separately
         emit('submit', {
             productData: formData,
-            images: imagePreviews.value.map(img => ({
-                file: img.file,
-                preview: img.preview
-            }))
+            images,
         });
     } catch (error) {
         console.error('Error validating form:', error);
@@ -516,6 +574,9 @@ onMounted(async () => {
         }));
     }
 });
+
+// Effects
+
 </script>
 
 <style scoped>

@@ -22,7 +22,7 @@
                 <label for="sku" class="block text-sm font-medium text-gray-700">SKU</label>
                 <input type="text" id="sku" v-model="form.sku"
                     class="mt-1 block w-full h-12 rounded-md border border-gray-300 px-3 text-sm focus:ring-black focus:border-black"
-                    required aria-required="true" />
+                    required aria-required="true" readonly />
             </div>
 
             <!-- Price & Stock -->
@@ -82,8 +82,9 @@
 
 <script setup>
 import useProduct from '@/composables/useProduct'
+import Helper from '@/util/Helper'
 import { XCircle } from 'lucide-vue-next'
-import { computed, inject, reactive, ref, watch } from 'vue'
+import { computed, inject, onMounted, reactive, ref, watch } from 'vue'
 import { globalEventBus } from 'vue-toastification'
 
 // Injections
@@ -135,6 +136,14 @@ function handleRemoveAttribute(value) {
     console.log(value);
     form.attributes = form.attributes.filter((attr) => attr.value !== value);
 }
+
+// Life cycle hooks
+onMounted(() => {
+    if (!isVariantEdit.value) {
+        form.sku = Helper.getRandomNumber(16);
+    }
+})
+
 // effects
 watch(
     () => getAttributes.value,
