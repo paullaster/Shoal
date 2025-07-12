@@ -26,8 +26,6 @@ export default defineConfig({
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-        // Add this line to increase the maximum file size for precaching
-        // The error mentioned 2.82 MB, so 3 MB (3 * 1024 * 1024 bytes) or 4 MB would be safe.
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024 // Set to 4 MB
       },
       manifest: {

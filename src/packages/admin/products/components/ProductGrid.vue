@@ -5,7 +5,8 @@
                 style="padding-inline: 0 !important;">
                 <v-card class="product-card rounded-lg" elevation="2">
                     <div class="product-image-container">
-                        <v-img :src="product.imageUrl || 'https://via.placeholder.com/300x200.png?text=No+Image'"
+                        <v-img
+                            :src="product?.images?.[0]?.url || 'https://via.placeholder.com/300x200.png?text=No+Image'"
                             :alt="product.name" height="150" cover class="product-image" />
 
                         <!-- Discount Badge -->
@@ -245,7 +246,7 @@ const hasActiveFilters = computed(() => props.search !== '' || props.filterStatu
 /* Dark mode support */
 @media (prefers-color-scheme: dark) {
     .product-card {
-        background: #1a1a1a;
+        background: #fff;
         border-color: rgba(255, 255, 255, 0.08);
     }
 
@@ -266,7 +267,7 @@ const hasActiveFilters = computed(() => props.search !== '' || props.filterStatu
     .product-title,
     .product-categories,
     .product-description {
-        color: #ffffff !important;
+        color: #030303 !important;
     }
 }
 
