@@ -265,7 +265,7 @@ router.beforeResolve(async (to) => {
 
 router.afterEach((to) => {
   useGlobalStore().setLoading(false);
-  const title = to.meta.title || 'Home';
+  const title = to.meta.title;
   document.title = 'Noels | ' + title;
   scroll({
     top: 0,
