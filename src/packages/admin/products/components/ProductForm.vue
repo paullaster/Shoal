@@ -256,7 +256,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, useTemplateRef, toRaw, watch } from 'vue';
+import { ref, onMounted, useTemplateRef, toRaw } from 'vue';
 import { useSetupStore } from '@/store';
 import { storeToRefs } from 'pinia';
 import { useToast } from 'vue-toastification';
@@ -268,6 +268,7 @@ import ProductVariantManager from './ProductVariantManager.vue';
 import { BadgePercent } from 'lucide-vue-next';
 import { useDiscount } from '@/composables/useDiscount';
 import useProduct from '@/composables/useProduct';
+import Helper from '@/util/Helper';
 
 const props = defineProps({
     initialData: {
@@ -368,6 +369,9 @@ function handleImageUpload(e) {
         };
         reader.readAsDataURL(file);
     }
+    const product = { ...getProduct.value };
+    product.images = imagePreviews.value;
+    setProduct(product);
 }
 
 function handleDrop(e) {
@@ -383,6 +387,9 @@ function handleDrop(e) {
         };
         reader.readAsDataURL(file);
         images.value.push(file);
+        const product = { ...getProduct.value };
+        product.images = imagePreviews.value;
+        setProduct(product);
     }
 }
 
@@ -481,38 +488,76 @@ function addVariant(variant) {
 // Save product
 async function saveProduct() {
     try {
-        const { valid } = await form.value.validate();
-        if (!valid) {
-            useToast().error('Please fill in all required fields');
+        const product = { ...getProduct.value };
+        const { variants, categories, discounts, images, ...rest } = product;
+        const stripeNullsFromBaseProduct = Helper.removeNullsFromObject(rest);
+        const stripeNullFromVariant = variants.map((variant) => {
+            variant.attributes = variant.attributes.map((attr) => ({ value: attr.valueId }));
+            return Helper.removeNullsFromObject(variant);
+        });
+        const usableDiscounts = discounts.map((discount) => {
+            return {
+                discount: discount.discountId,
+            }
+        });
+        const usableCategories = categories.map((cat) => {
+            return {
+                category: cat.categoryId,
+            }
+        });
+        const isBaseProductValid = Helper.validateRequiredProperties(
+            stripeNullsFromBaseProduct,
+            ['description', 'price', 'name']
+        );
+        if (!isBaseProductValid.valid) {
+            useToast().error(`Please fill in all required fields. ${isBaseProductValid.missing.join(",")} are missing.`);
+            return;
+        }
+        const requiredVariantFields = ['price', 'quantity', 'sku', 'attributes'];
+        const invalidVariants = stripeNullFromVariant.filter(
+            variant => !Helper.validateRequiredProperties(variant, requiredVariantFields).valid
+        );
+        const isVariantsValid = invalidVariants.length === 0;
+        if (!isVariantsValid) {
+            useToast().error(`Invalid variant(s)`);
             return;
         }
 
-        const productData = { ...product.value };
+        const requiredCategoryFields = ['category'];
+        const isCategoriesValid =
+            Array.isArray(usableCategories) &&
+            usableCategories.length > 0 &&
+            usableCategories.every(cat =>
+                Helper.validateRequiredProperties(cat, requiredCategoryFields).valid
+            );
+
+        if (!isCategoriesValid) {
+            useToast().error('Product must belong to at least one valid category.');
+            return;
+        }
+        const requiredDiscountFields = ['discount'];
+        const hasValidDiscounts =
+            Array.isArray(usableDiscounts) &&
+            usableDiscounts.length > 0 &&
+            usableDiscounts.every(disc =>
+                Helper.validateRequiredProperties(disc, requiredDiscountFields).valid
+            );
+
         const formData = {
-            name: productData.name,
-            description: productData.description,
-            recipeTips: productData.recipeTips || undefined,
-            price: productData.price || undefined,
-            categories: productData.categories,
-            variants: productData.variants.map(variant => ({
-                price: variant.price,
-                quantity: variant.quantity,
-                sku: variant.sku,
-                attributes: variant.attributes
-            })),
-            discounts: productData.discounts.map(discount => ({
-                percentage: discount.percentage,
-                validUntil: discount.validUntil
-            }))
+            name: stripeNullsFromBaseProduct.name,
+            description: stripeNullsFromBaseProduct.description,
+            recipeTips: stripeNullsFromBaseProduct.recipeTips || undefined,
+            price: stripeNullsFromBaseProduct.price,
+            categories: usableCategories,
+            variants: stripeNullFromVariant,
+            ...(hasValidDiscounts && {
+                discounts: usableDiscounts
+            })
         };
 
-        // Emit the form data and images separately
         emit('submit', {
             productData: formData,
-            images: imagePreviews.value.map(img => ({
-                file: img.file,
-                preview: img.preview
-            }))
+            images,
         });
     } catch (error) {
         console.error('Error validating form:', error);

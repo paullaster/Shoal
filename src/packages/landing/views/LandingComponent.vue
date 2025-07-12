@@ -8,16 +8,15 @@
 <script setup>
 import DisplayCard from '../components/DisplayCard.vue';
 import SearchComponent from '@/components/SearchComponent.vue';
+import useProduct from '@/composables/useProduct';
 import { onMounted } from 'vue';
 
-// STORE
-// const categoryStore = useProductStore();
+// composables
+const { fetchProducts } = useProduct();
 
-// STORE ACTIONS
-// const { getProducts } = categoryStore;
 
 onMounted(() => {
-    // getProducts();
+    fetchProducts({ eager: true });
 });
 
 </script>

@@ -93,7 +93,7 @@ export const useProductStore = defineStore("product", {
         }
       })
     },
-    getProducts(query) {
+    async fetchProducts(query) {
       _request.axiosRequest({
         url: constants.products,
         method: "GET",
@@ -138,7 +138,7 @@ export const useProductStore = defineStore("product", {
         url: constants.products,
         method: "POST",
         data: product,
-      })
+      });
     },
     async createAttribute(payload) {
       try {

@@ -49,6 +49,21 @@ class Helper {
         }
         return newObject;
     }
+    validateRequiredProperties(obj, requiredProps) {
+        if (typeof obj !== 'object' || obj === null) {
+            throw new TypeError('Input must be a non-null object');
+        }
+        if (!Array.isArray(requiredProps) || requiredProps.length === 0) {
+            return { valid: true, missing: [] };
+        }
+        const missing = [];
+        for (const prop of requiredProps) {
+            if (!Object.prototype.hasOwnProperty.call(obj, prop) || obj[prop] == null) {
+                missing.push(prop);
+            }
+        }
+        return { valid: missing.length === 0, missing };
+    }
     findObjectFromArray(array, key, value) {
         if (!Array.isArray(array) || !key || (value === undefined || value === null)) return
         const map = new Map(array.map((item) => [item[key], item]))

@@ -354,11 +354,13 @@ import AddCategoryForm from '../components/AddCategoryForm.vue';
 import AttributeManager from '../components/AttributeManager.vue';
 import DiscountManager from '../components/DiscountManager.vue';
 import { useDisplay } from 'vuetify';
+import useProduct from '@/composables/useProduct';
 
 
 
 // Composables
 const { isMobile } = useDisplay();
+const { setLoader, createProduct, setProduct, fetchProducts } = useProduct();
 
 // Stores
 const productStore = useProductStore();
@@ -536,7 +538,18 @@ function openCreateDialog() {
 function closeCreateDialog() {
   createDialog.value = false;
   editingProduct.value = null;
-  // Optionally reset form here if needed, depending on form component logic
+  setProduct(
+    {
+      name: '',
+      description: '',
+      recipeTips: '',
+      price: 0,
+      categories: [],
+      variants: [],
+      discounts: [],
+      images: [],
+    }
+  );
 }
 
 function openCategoryDialog() {
@@ -569,33 +582,34 @@ function closeDiscountDialog() {
 async function handleProductSubmit({ productData, images }) {
   try {
     // First, create/update the product
-    const createdProduct = editingProduct.value?.pid
+    setLoader(true);
+    const createdProduct = editingProduct.value?.productId
       ? await productStore.updateProduct(productData)
-      : await productStore.createProduct(productData);
-
-    useToast().success(`Product ${editingProduct.value ? 'updated' : 'created'} successfully`);
-
-    // If there are images, upload them
+      : await createProduct(productData);
     if (images && images?.length > 0) {
-      await uploadProductImages(createdProduct.pid, images);
+      await uploadProductImages(createdProduct?.data?.productId, images);
     }
+    useToast().success(`Product ${editingProduct.value ? 'updated' : 'created'} successfully`);
 
     // Close dialog and refresh products
     closeCreateDialog();
-    await refreshProducts();
+    await refreshProducts(true);
   } catch (error) {
     console.error('Error handling product submission:', error);
     useToast().error('Failed to save product');
+  } finally {
+    setLoader(false);
   }
 }
 
 async function uploadProductImages(productId, images) {
   const formData = new FormData();
-  formData.append('productId', productId);
+  formData.append('id', productId);
+  formData.append('type', 'Product');
 
   images.forEach(image => {
     if (image.file) {
-      formData.append('images', image.file);
+      formData.append('image', image.file);
     }
   });
 
@@ -750,14 +764,16 @@ async function confirmStockUpdate() {
   }
 }
 
-function refreshProducts() {
-  productStore.getProducts();
+async function refreshProducts(hydrate = false) {
+  await fetchProducts({ eager: hydrate });
 }
 
 // Lifecycle
-onMounted(() => {
-  productStore.getProducts({ eager: true });
-  setupStore.getCategories();
+onMounted(async () => {
+  await Promise.allSettled([
+    fetchProducts({ eager: true }),
+    setupStore.getCategories(),
+  ]);
   console.log('onMounted: Fetching products and categories...');
 });
 
