@@ -18,9 +18,8 @@ export default () => {
                 typeAdd: 'add',
                 typeRemove: 'remove'
             }
-            await cartStore.updateCart(item.pid, actions[prop], false)
+            await cartStore.updateCart(item.productId, actions[prop], false)
         }
-        console.log('event', target)
     }
     return {
         addToCart,
@@ -39,5 +38,6 @@ export default () => {
         setLoader: (payload) => productStore.setLoading(payload),
         createProduct: async (product) => await productStore.createProduct(product),
         fetchProducts: async (query) => await productStore.fetchProducts(query),
+        fetchProduct: async (productId, query) => await productStore.fetchProduct(productId, query),
     }
 }

@@ -15,7 +15,6 @@ export const useProductStore = defineStore("product", {
         name: '',
         description: '',
         recipeTips: '',
-        price: 0,
         categories: [],
         variants: [],
         discounts: [],
@@ -109,14 +108,14 @@ export const useProductStore = defineStore("product", {
           this.toast.error(err.message);
         });
     },
-    fetchProduct(productId) {
+    fetchProduct(productId, query) {
       try {
-        const product = this.products.find(p => p.pid === productId);
+        const product = this.products.find(p => p.productId === productId);
         if (!product) {
           return _request.axiosRequest({
             url: `${constants.products}/${productId}`,
             method: "GET",
-
+            params: query,
           })
             .then(res => {
               this.$patch({
