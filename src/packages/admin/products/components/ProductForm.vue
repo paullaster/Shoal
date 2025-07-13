@@ -31,11 +31,11 @@
                                 <v-textarea label="Recipe Tips" variant="outlined" density="comfortable" class="mb-4"
                                     rows="4" @change="(value) => onProductChange('recipeTips', value.target.value)" />
                             </v-col>
-                            <v-col cols="12" md="6">
+                            <!-- <v-col cols="12" md="6">
                                 <v-text-field label="Base Price" type="number" :rules="rules.price" variant="outlined"
                                     density="comfortable" class="mb-4" prefix="$"
                                     @change="(value) => onProductChange('price', value.target.value, 'number')" />
-                            </v-col>
+                            </v-col> -->
                         </v-row>
                     </div>
                 </v-stepper-window-item>
@@ -507,7 +507,7 @@ async function saveProduct() {
         });
         const isBaseProductValid = Helper.validateRequiredProperties(
             stripeNullsFromBaseProduct,
-            ['description', 'price', 'name']
+            ['description', 'name']
         );
         if (!isBaseProductValid.valid) {
             useToast().error(`Please fill in all required fields. ${isBaseProductValid.missing.join(",")} are missing.`);

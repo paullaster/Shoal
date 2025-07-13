@@ -5,6 +5,7 @@ import AuthService from "@/packages/auth/AuthService";
 import WebStorage from "@/util/storage";
 import { APPNAME } from "@/environments";
 import { useGlobalStore } from "./global";
+import { useProductStore } from "./products";
 
 export const useCartStore = defineStore('cart', {
     state() {
@@ -59,12 +60,16 @@ export const useCartStore = defineStore('cart', {
             try {
                 this.setGlobalLoader(true);
                 const cartItem = { ...payload, quantity: 1 };
-
-                cartItem.image = cartItem.Images[0].url;
+                const productStore = useProductStore();
+                await productStore.fetchProduct(cartItem.productId, { eager: true });
+                const selectedProduct = productStore.getProduct;
+                if (!selectedProduct) {
+                    return;
+                }
+                cartItem.image = selectedProduct?.images?.[0].url;
+                console.log(cartItem);
                 if (!AuthService.isAuthenticated()) {
                     this.getCart();
-                    cartItem.productId = cartItem.pid;
-                    cartItem.productPid = cartItem.productId
                     if (!Object.keys(this.cart).length) {
                         this.setGlobalLoader(false);
                         return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [cartItem] });
@@ -101,6 +106,7 @@ export const useCartStore = defineStore('cart', {
                 return this.toast.error(error.message);
             } finally {
                 this.getCart();
+                this.setGlobalLoader(false);
             }
         },
         getCart(getFromCashe = false) {

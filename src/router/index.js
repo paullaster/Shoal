@@ -12,16 +12,16 @@ const router = createRouter({
       component: LandingComponent
     },
     {
-      path: '/products',
-      redirect: { name: 'category' },
+      path: '/view',
+      // redirect: { name: 'category' },
       children: [
         {
-          path: ':category',
+          path: 'category/:category',
           name: 'category',
           component: () => import('@/packages/products/views/ProductsComponent.vue'),
         },
         {
-          path: ':productId',
+          path: 'product/:productId',
           name: 'productDetails',
           component: () => import('@/packages/products/components/ProductDetailPage.vue'),
         },
