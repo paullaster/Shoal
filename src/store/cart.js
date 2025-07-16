@@ -19,6 +19,12 @@ export const useCartStore = defineStore('cart', {
     getters: {
         itemsInCart: (state) => state.cart?.Items?.reduce((sum, item) => sum + item.quantity, 0),
         cartTotal: (state) => state.cart?.Items?.reduce((sum, item) => Number(sum + (Number(item.price) * Number(item.quantity))), 0),
+        itemsById(state) {
+            return state.cart?.Items?.reduce((acc, item) => {
+                acc[item.productId] = item;
+                return acc;
+            }, {}) || {};
+        }
     },
     actions: {
         setGlobalLoader(payload) {

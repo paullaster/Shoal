@@ -36,11 +36,11 @@
                 Social Media
             </h4>
             <p class="social-media-platforms">
-                <a href="https://www.facebook.com/{{ APPNAME }}"><v-img :src="facebooSVG" width="15"></v-img></a> <br />
-                <a href="https://www.instagram.com/{{ APPNAME }}"><v-img :src="instagramSVG" width="15"></v-img></a> <br />
-                <a href="https://www.twitter.com/{{ APPNAME }}"><v-img :src="tiktokSVG" width="15"></v-img></a> <br />
-                <a href="https://www.youtube.com/{{ APPNAME }}"><v-img :src="youtubeSVG" width="15"></v-img></a> <br />
-                <a href="https://www.linkedin.com/{{ APPNAME }}"><v-img :src="xDotCOMSVG" width="15"></v-img></a> <br />
+                <a href="https://www.facebook.com/{{ APPNAME }}"><v-img :src="facebooSVG" width="15"></v-img></a>
+                <a href="https://www.instagram.com/{{ APPNAME }}"><v-img :src="instagramSVG" width="15"></v-img></a>
+                <a href="https://www.twitter.com/{{ APPNAME }}"><v-img :src="tiktokSVG" width="15"></v-img></a>
+                <a href="https://www.youtube.com/{{ APPNAME }}"><v-img :src="youtubeSVG" width="15"></v-img></a>
+                <a href="https://www.linkedin.com/{{ APPNAME }}"><v-img :src="xDotCOMSVG" width="15"></v-img></a>
             </p>
         </div>
         <div class="footer-container">

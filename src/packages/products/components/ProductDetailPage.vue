@@ -48,7 +48,7 @@
               <div class="flex justify-between items-center mb-2">
                 <span class="text-lg font-bold">{{ activeDiscount.title }}</span>
                 <span class="bg-green-500 text-white text-sm font-bold py-1 px-3 rounded-full">SAVE {{ savingsPercentage
-                  }}%</span>
+                }}%</span>
               </div>
               <div class="flex items-baseline gap-3">
                 <p class="text-4xl font-extrabold">{{ currency }} {{ displayPrice }}</p>
@@ -67,7 +67,8 @@
           <div class="variants-section mb-6" v-if="product.variants && product.variants.length > 1">
             <h3 class="text-sm font-semibold text-gray-600 mb-2">Select Option</h3>
             <div class="flex flex-wrap gap-2">
-              <v-chip v-for="variant in product.variants" :key="variant.variantId" @click="selectedVariantId = variant.variantId"
+              <v-chip v-for="variant in product.variants" :key="variant.variantId"
+                @click="selectedVariantId = variant.variantId"
                 :variant="selectedVariantId === variant.variantId ? 'elevated' : 'outlined'" color="primary"
                 size="large" class="cursor-pointer">
                 {{variant.name || variant.attributes.map(a => a.values[0].value).join(' / ')}}
@@ -178,17 +179,17 @@ watch(() => route.params.productId, async (newId) => {
 
 // DERIVED STATE (Computed properties for selected objects)
 const selectedImage = computed(() => {
-    if (!product.value || !selectedImageId.value) return {};
-    return product.value.images.find(img => img.imgId === selectedImageId.value) || {};
+  if (!product.value || !selectedImageId.value) return {};
+  return product.value.images.find(img => img.imgId === selectedImageId.value) || {};
 });
 
 const selectedVariant = computed(() => {
-    if (!product.value) return null;
-    // If no variants or no ID selected, the "variant" is the main product data
-    if (!selectedVariantId.value || !product.value.variants?.length) {
-        return product.value;
-    }
-    return product.value.variants.find(v => v.variantId === selectedVariantId.value) || product.value;
+  if (!product.value) return null;
+  // If no variants or no ID selected, the "variant" is the main product data
+  if (!selectedVariantId.value || !product.value.variants?.length) {
+    return product.value;
+  }
+  return product.value.variants.find(v => v.variantId === selectedVariantId.value) || product.value;
 });
 
 
@@ -225,13 +226,13 @@ const savingsPercentage = computed(() => {
 });
 
 const numberOfProductInCart = computed(() => {
-  if (!product.value?.pid) return 0;
+  if (!product.value?.productId) return 0;
   // Assumes cart store is optimized with a Map/object for O(1) lookup
   const itemsById = cart.value.Items?.reduce((acc, item) => {
-    acc[item.productPid] = item;
+    acc[item.productId] = item;
     return acc;
   }, {});
-  return itemsById[product.value.pid]?.quantity || 0;
+  return itemsById[product.value.productId]?.quantity || 0;
 });
 
 const stockStatus = computed(() => {

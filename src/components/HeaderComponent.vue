@@ -1,93 +1,139 @@
 <template>
-  <header class="header-wrapper">
-    <nav class="header-nav">
-      <ul>
-        <li v-if="!lgAndUp">
-          <v-btn variant="text" @click="() => globalStore.toggleSidebarNavigation(true)" v-if="!showAuthMenu">
+  <header class="bg-white shadow-md sticky top-0 z-40">
+    <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Left Section: Mobile Menu & Logo -->
+        <div class="flex items-center space-x-2">
+          <!-- Mobile Menu Button -->
+          <button v-if="!lgAndUp" @click="handleMobileMenuClick"
+            class="p-2 rounded-md text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            aria-label="Open main menu">
             <v-icon>mdi-menu</v-icon>
-          </v-btn>
-          <v-btn v-if="showAuthMenu" variant="text" @click="() => !lgAndUp && dashboardStore.setToggleNavbar(true)">
-            <v-icon size="30" :color="ColorHelper.colorsHelper('primary')">mdi-view-module</v-icon>
-          </v-btn>
-        </li>
-        <li>
-          <a @click="() => router.push({ name: 'landing' })"><img :src="HeaderLogo" alt="Noel Fish Delivery" /></a>
-        </li>
-      </ul>
-      <ul class="reare-nav">
-        <li>
-          <a @click="() => router.push({ name: 'search' })"
-            v-if="route.name !== 'landing'"><v-icon>mdi-magnify</v-icon></a>
-        </li>
-        <li class="cart-menu">
-          <button @click="() => router.push({ name: 'cart' })">
-            <v-icon>mdi-cart-outline</v-icon>
-            <v-badge color="#ED1E79" :content="itemsInCart" inline v-if="itemsInCart"></v-badge>
-            <span v-if="lgAndUp"> cart </span>
           </button>
-        </li>
-        <li>
-          <a v-if="!AuthService.isAuthenticated()" @click="
-            () =>
-              router.push({
-                name: 'auth',
-                query: { redirectTo: stringToBase64AndReverse.toBase64String(route.fullPath) }
-              })
-          "><v-icon v-tooltip="'Login'">mdi-account-outline</v-icon><span v-if="lgAndUp">account</span></a>
-          <a v-else @click="() => authStore.logout()"><v-icon v-tooltip="'Logout'">mdi-logout</v-icon><span
-              v-if="lgAndUp">Logout</span></a>
-        </li>
-      </ul>
+
+          <!-- Admin Mobile Menu Button -->
+          <button v-if="showAuthMenu && !lgAndUp" @click="toggleAdminNavbar"
+            class="p-2 rounded-md text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            aria-label="Open admin dashboard menu">
+            <v-icon size="30" :color="ColorHelper.colorsHelper('primary')">mdi-view-module</v-icon>
+          </button>
+
+          <!-- Logo -->
+          <a @click.prevent="navigateTo('landing')" :href="getRouteUrl('landing')" class="flex-shrink-0">
+            <img class="h-8 w-auto" :src="HeaderLogo" alt="Noel Fish Delivery" />
+          </a>
+        </div>
+
+        <!-- Right Section: Navigation Icons -->
+        <div class="flex items-center space-x-3 sm:space-x-4">
+          <!-- Search Icon -->
+          <button v-if="route.name !== 'landing'" @click="navigateTo('search')"
+            class="p-2 rounded-full text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            aria-label="Search products">
+            <v-icon>mdi-magnify</v-icon>
+          </button>
+
+          <!-- Cart Icon -->
+          <button @click="navigateTo('cart')"
+            class="relative p-2 rounded-full text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            aria-label="View shopping cart">
+            <v-icon>mdi-cart-outline</v-icon>
+            <span v-if="itemsInCart > 0"
+              class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-xs font-medium text-white">
+              {{ itemsInCart }}
+            </span>
+            <span v-if="lgAndUp" class="ml-2 text-sm font-medium">Cart</span>
+          </button>
+
+          <!-- Account/Login Icon -->
+          <button v-if="!isAuthenticated" @click="navigateToLogin"
+            class="p-2 rounded-full text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            aria-label="Login to your account">
+            <v-icon>mdi-account-outline</v-icon>
+            <span v-if="lgAndUp" class="ml-2 text-sm font-medium">Account</span>
+          </button>
+
+          <!-- Logout Icon -->
+          <button v-else @click="handleLogout"
+            class="p-2 rounded-full text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            aria-label="Logout">
+            <v-icon>mdi-logout</v-icon>
+            <span v-if="lgAndUp" class="ml-2 text-sm font-medium">Logout</span>
+          </button>
+        </div>
+      </div>
     </nav>
+
+    <!-- Sidebar Component -->
     <SidebarComponent v-if="showsidebarNavigation || lgAndUp" />
   </header>
 </template>
 
 <script setup>
-import HeaderLogo from '@/assets/logo/logo-header.png'
-import { useDisplay } from 'vuetify/lib/framework.mjs'
-import { useAuth, useCartStore, useDashboard, useGlobalStore } from '@/store'
-import { storeToRefs } from 'pinia'
-import stringToBase64AndReverse from '@/util/stringToBase64AndReverse'
-import { useRouter, useRoute } from 'vue-router'
-import SidebarComponent from './SidebarComponent.vue'
-import AuthService from '@/packages/auth/AuthService'
-import ColorHelper from '@/util/ColorHelper'
-import { computed } from 'vue'
+import { computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useDisplay } from 'vuetify/lib/framework.mjs';
+import { storeToRefs } from 'pinia';
+import { useAuth, useCartStore, useDashboard, useGlobalStore } from '@/store';
+import HeaderLogo from '@/assets/logo/logo-header.png';
+import SidebarComponent from './SidebarComponent.vue';
+import ColorHelper from '@/util/ColorHelper';
 
-// ROUTES
-const router = useRouter()
-const route = useRoute()
+// ROUTER & ROUTE
+const router = useRouter();
+const route = useRoute();
 
-// VUETIFY
-const { lgAndUp } = useDisplay()
+// VUETIFY DISPLAY
+const { lgAndUp } = useDisplay();
 
-// STORE
-const cartStore = useCartStore()
-const globalStore = useGlobalStore()
-const authStore = useAuth()
-const dashboardStore = useDashboard()
-const { itemsInCart } = storeToRefs(cartStore)
-const { showsidebarNavigation } = storeToRefs(globalStore)
+// PINIA STORES
+const cartStore = useCartStore();
+const globalStore = useGlobalStore();
+const authStore = useAuth();
+const dashboardStore = useDashboard();
 
-// Component State
-// COMPUTED
-const showAuthMenu = computed(() => {
-  return AuthService.isAuthenticated() && route.matched.some((record) => record.name === 'accounts')
-})
-// WATCHERS
+// REACTIVE STATE
+const { itemsInCart } = storeToRefs(cartStore);
+const { showsidebarNavigation } = storeToRefs(globalStore);
+const { isAuthenticated } = storeToRefs(authStore);
+
+// COMPUTED PROPERTIES
+const showAuthMenu = computed(() =>
+  isAuthenticated.value && route.matched.some((record) => record.name === 'accounts')
+);
+
+// METHODS
+const navigateTo = (routeName) => {
+  router.push({ name: routeName });
+};
+
+const navigateToLogin = () => {
+  router.push({
+    name: 'auth',
+    query: { redirectTo: route.fullPath }
+  });
+};
+
+const handleLogout = () => {
+  authStore.logout();
+};
+
+const handleMobileMenuClick = () => {
+  globalStore.toggleSidebarNavigation(true);
+};
+
+const toggleAdminNavbar = () => {
+  dashboardStore.setToggleNavbar(true);
+};
+
+const getRouteUrl = (routeName) => {
+  const resolvedRoute = router.resolve({ name: routeName });
+  return resolvedRoute.href;
+};
 </script>
 
 <style scoped>
-.cart-menu {
-  position: relative;
-}
-
-.v-badge {
-  display: inline-block;
-  line-height: 0;
-  position: absolute;
-  top: -0.6rem;
-  left: 20.8%;
-}
+/* Scoped styles are intentionally removed in favor of Tailwind CSS utility classes. */
+/* Any component-specific overrides or complex styles that cannot be achieved */
+/* with utilities can be added here if necessary. */
 </style>

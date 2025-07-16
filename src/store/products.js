@@ -7,6 +7,8 @@ import { globalEventBus } from "vue-toastification";
 export const useProductStore = defineStore("product", {
   state: () => {
     return {
+      productListingMeta: {},
+      productLinkedEntities: {},
       activeAbortController: null,
       attributes: [],
       attributesCount: 0,
@@ -42,6 +44,10 @@ export const useProductStore = defineStore("product", {
     getAttributes: (state) => state['attributes'],
     getProduct: (state) => state['product'],
     getProducts: (state) => state['products'],
+    getCategoryById: (state) => state['productLinkedEntities']['categories'],
+    getImageById: (state) => state['productLinkedEntities']['images'],
+    getAttributeById: (state) => state['productLinkedEntities']['attributes'],
+    getDiscountById: (state) => state['productLinkedEntities']['discounts'],
   },
   actions: {
     setLoading(payload) {
@@ -95,13 +101,16 @@ export const useProductStore = defineStore("product", {
     },
     async fetchProducts(query) {
       _request.axiosRequest({
-        url: constants.products,
+        url: constants.v2products,
         method: "GET",
         params: query
       })
         .then(res => {
+          const { linked, meta, data } = res.data;
           this.$patch({
-            products: res.data.rows
+            products: data,
+            productListingMeta: meta,
+            productLinkedEntities: linked,
           })
         })
         .catch(err => {

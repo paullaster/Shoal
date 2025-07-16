@@ -13,7 +13,6 @@ const router = createRouter({
     },
     {
       path: '/view',
-      // redirect: { name: 'category' },
       children: [
         {
           path: 'category/:category',

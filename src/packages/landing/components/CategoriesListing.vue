@@ -1,11 +1,11 @@
 <template>
   <div class="categories">
     <ul>
-      <li v-for="category in categories" :key="category.cid">
-        <router-link :to="{ name: 'category', params: { category: category.cid } }">
-          <img :src="category.Images[0].url" alt="category" />
+      <li v-for="category in categories" :key="category.categoryId">
+        <RouterLink :to="{ name: 'category', params: { category: category.categoryId } }">
+          <v-icon :color="category.color">{{ category.icon }}</v-icon>
           <span>{{ category.name }}</span>
-        </router-link>
+        </RouterLink>
       </li>
     </ul>
   </div>
