@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "total": 2,
+    "limit": 20,
+    "offset": 0,
+    "timestamp": "2025-07-14T10:30:00Z"
+  },
+  "data": [
+    {
+      "productId": "PROD69CZFI",
+      "name": "Wild-Caught Tilapia",
+      "description": "Fresh, wild-caught Tilapia, prized for its mild flavor and firm texture. Perfect for grilling, baking, or pan-searing.",
+      "recipeTips": "<p>For a simple and delicious meal, season the fillet with salt, pepper, and lemon. Pan-sear for 3-4 minutes per side until golden brown and cooked through.</p>",
+      "categoryIds": [
+        "CAT_FRESH_FISH"
+      ],
+      "imageIds": [
+        "IMG_TILAPIA_MAIN",
+        "IMG_TILAPIA_COOKED"
+      ],
+      "variants": [
+        {
+          "variantId": "V6DL_1752297602099",
+          "name": "500g Fillet",
+          "price": 260,
+          "quantity": 12,
+          "isAvailable": true,
+          "attributes": [
+            {
+              "attributeId": "ATTR_WEIGHT",
+              "value": "500g"
+            }
+          ],
+          "saleInfo": {
+            "onSale": true,
+            "discountedPrice": 210,
+            "discountIds": [
+              "DISC_MIDYEAR"
+            ]
+          }
+        },
+        {
+          "variantId": "V7AX_1752297602100",
+          "name": "1kg Whole Fish",
+          "price": 480,
+          "quantity": 8,
+          "isAvailable": true,
+          "attributes": [
+            {
+              "attributeId": "ATTR_WEIGHT",
+              "value": "1000g"
+            }
+          ],
+          "saleInfo": {
+            "onSale": true,
+            "discountedPrice": 430,
+            "discountIds": [
+              "DISC_MIDYEAR"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "productId": "PROD8BR9CM",
+      "name": "Sun-Dried Omena",
+      "description": "Nutrient-rich, sun-dried Omena (Silver Cyprinid), a staple in traditional cuisine. Ideal for stews and savory dishes.",
+      "recipeTips": "<p>To prepare, first wash the Omena thoroughly. Lightly fry with onions and tomatoes until crispy, then add to your favorite stew.</p>",
+      "categoryIds": [
+        "CAT_DRIED_FISH"
+      ],
+      "imageIds": [
+        "IMG_OMENA_MAIN"
+      ],
+      "variants": [
+        {
+          "variantId": "V9EN_1752386941650",
+          "name": "250g Pack",
+          "price": 300,
+          "quantity": 0,
+          "isAvailable": false,
+          "attributes": [
+            {
+              "attributeId": "ATTR_WEIGHT",
+              "value": "250g"
+            }
+          ],
+          "saleInfo": {
+            "onSale": false,
+            "discountedPrice": null
+          }
+        }
+      ]
+    }
+  ],
+  "linked": {
+    "categories": {
+      "CAT_FRESH_FISH": {
+        "name": "Fresh Fish",
+        "description": "Directly from the lake to your kitchen."
+      },
+      "CAT_DRIED_FISH": {
+        "name": "Dried & Smoked Fish",
+        "description": "Preserved fish with rich, concentrated flavors."
+      }
+    },
+    "discounts": {
+      "DISC_MIDYEAR": {
+        "title": "Mid-Year Sale",
+        "description": "Limited-time offer on select products."
+      }
+    },
+    "images": {
+      "IMG_TILAPIA_MAIN": {
+        "url": "https://noelsdeliveries.com:3500/public/image/tilapia_raw.jpg",
+        "altText": "A fresh, raw Tilapia fillet on a clean surface."
+      },
+      "IMG_TILAPIA_COOKED": {
+        "url": "https://noelsdeliveries.com:3500/public/image/tilapia_cooked.jpg",
+        "altText": "A perfectly pan-seared Tilapia with lemon and herbs."
+      },
+      "IMG_OMENA_MAIN": {
+        "url": "https://noelsdeliveries.com:3500/public/image/omena_dried.jpg",
+        "altText": "A bowl of sun-dried Omena."
+      }
+    },
+    "attributes": {
+      "ATTR_WEIGHT": {
+        "name": "Weight"
+      }
+    }
+  }
+}

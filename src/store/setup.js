@@ -15,7 +15,8 @@ export const useSetupStore = defineStore('setup', {
         }
     },
     getters: {
-        setupGetter: (state) => (key) => state[key]
+        setupGetter: (state) => (key) => state[key],
+        getCurrency: (state) => state['currency'],
     },
     actions: {
         setLoader(payload) {

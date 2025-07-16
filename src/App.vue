@@ -1,75 +1,61 @@
 <template>
-  <div class="app">
-    <template v-if="lgAndUp">
-      <div style="display: flex; justify-content: center; align-items: center; width: 100vw;">
-        <p style="text-align: center;">
-          We're working on the desktop view and it will be available soon. Kindly access the app using your mobile
-          device.
-          <br />
-          Thank you for your continued support. ::heart
-        </p>
-      </div>
-    </template>
-    <template v-else>
-      <HeaderComponent v-if="showHeader" />
-      <router-view v-slot="{ Component }">
-        <transition>
-          <component :is="Component" />
+  <div class="app bg-gray-50 min-h-screen">
+    <HeaderComponent v-if="showHeader" />
+    <main class="overflow-x-hidden">
+      <router-view v-slot="{ Component, route }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" :key="route.path" />
         </transition>
       </router-view>
-      <FooterComponents />
-      <DynamicDialog />
-      <LoaderComponent v-if="loading" />
-    </template>
+    </main>
+    <FooterComponents v-if="showFooter" />
+    <DynamicDialog />
+    <LoaderComponent v-if="loading" />
   </div>
 </template>
+
 <script setup>
-import HeaderComponent from '@/components/HeaderComponent.vue'
-import { RouterView, useRoute } from 'vue-router'
-import { onMounted, ref, watch, defineAsyncComponent } from 'vue';
+import { computed, onMounted, defineAsyncComponent } from 'vue';
+import { RouterView, useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
 import { useAuth, useCartStore, useGlobalStore, useSetupStore } from './store';
 import AuthService from './packages/auth/AuthService';
+
+// ASYNC COMPONENTS
+const HeaderComponent = defineAsyncComponent(() => import('@/components/HeaderComponent.vue'));
+const FooterComponents = defineAsyncComponent(() => import('./components/FooterComponents.vue'));
 const DynamicDialog = defineAsyncComponent(() => import("@/components/DynamicDialog.vue"));
-import FooterComponents from './components/FooterComponents.vue';
-import LoaderComponent from './components/LoaderComponent.vue';
-import { storeToRefs } from 'pinia';
-import { useDisplay } from 'vuetify/lib/framework.mjs';
+const LoaderComponent = defineAsyncComponent(() => import('./components/LoaderComponent.vue'));
 
-
-// VUETIFY
-const { lgAndUp } = useDisplay()
-
-
-// ROUTES
+// ROUTER
 const route = useRoute();
 
-
-// STORE AND STORE ACTIONS
+// STORES
 const globalStore = useGlobalStore();
 const setupStore = useSetupStore();
 const cartStore = useCartStore();
 const authStore = useAuth();
-const { loading } = storeToRefs(globalStore);
-const { setMenu } = globalStore;
 
-const menus = [
+// STATE
+const { loading } = storeToRefs(globalStore);
+const { isAuthenticated } = storeToRefs(authStore);
+
+// COMPUTED PROPERTIES
+const showHeader = computed(() => !route.matched.some((record) => record.meta.headerless));
+const showFooter = computed(() => !route.matched.some((record) => record.meta.footerless));
+
+const reactiveMenus = computed(() => [
   {
     name: 'Orders',
     path: '/account/orders',
     icon: 'mdi-hoop-house',
-    enabled: AuthService.isAuthenticated()
+    enabled: isAuthenticated.value
   },
-  // {
-  //     name: 'Vouchers',
-  //     path: '/vouchers',
-  //     icon: 'mdi-ticket-percent-outline',
-  // enabled: true
-  // },
   {
     name: 'Saved Items',
     path: '/saved-items',
     icon: 'mdi-bookmark-outline',
-    enabled: AuthService.isAuthenticated()
+    enabled: isAuthenticated.value
   },
   {
     name: 'More',
@@ -77,33 +63,36 @@ const menus = [
     icon: 'mdi-unfold-more-vertical',
     enabled: true
   }
-];
+]);
 
-setMenu(menus);
-authStore.setUser(AuthService.getUser());
-
-if (AuthService.getUser()?.type !== 'admin') {
-  cartStore.getCart();
-}
-
-
-const showHeader = ref(true);
-// WATCH
-
-//@TODO:  Handle this route guards
-watch(
-  () => route,
-  (route) => {
-    const headerless = route.matched.some((record) => record.meta.headerless);
-    showHeader.value = !headerless;
-  }, { deep: true, immediate: true });
-
+// LIFECYCLE HOOKS
 onMounted(() => {
+  // Set reactive menus in the global store
+  globalStore.setMenu(reactiveMenus.value);
+
+  // Initialize user state from AuthService
+  const user = AuthService.getUser();
+  if (user) {
+    authStore.setUser(user);
+  }
+
+  // Initial data fetching
+  if (user?.type !== 'admin') {
+    cartStore.getCart();
+  }
   setupStore.getCategories();
-  const headerless = route.matched.some((record) => record.meta.headerless);
-  showHeader.value = !headerless;
 });
 
 </script>
 
-<style scoped></style>
+<style>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

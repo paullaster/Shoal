@@ -14,6 +14,7 @@ export const useAuth = defineStore("auth", {
     }),
     getters: {
         authGetter: (state) => (key) => state[key],
+        isAuthenticated: (state) => Object.keys(state.user).length > 0,
     },
     actions: {
         setLoader(payload) {

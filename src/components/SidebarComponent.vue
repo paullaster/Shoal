@@ -1,7 +1,7 @@
 <template>
   <aside class="sidebar-container">
     <div class="close-and-logo">
-      <v-btn variant="text" @click="()=>globalStore.toggleSidebarNavigation(false)">
+      <v-btn variant="text" @click="() => globalStore.toggleSidebarNavigation(false)">
         <v-icon>mdi-window-close</v-icon>
       </v-btn>
       <LogoComponent width="200px" @click="() => router.push('/')" />
@@ -9,16 +9,16 @@
     <div class="support">
       <ul>
         <li>
-          <router-link>
+          <RouterLink>
             <span>NEED HELP &quest;</span>
             <v-icon>mdi-chevron-right</v-icon>
-          </router-link>
+          </RouterLink>
         </li>
         <li>
-          <router-link :to="AuthService.isAuthenticated() ? {name: 'userProfile'}:{name: 'auth'}">
+          <RouterLink :to="AuthService.isAuthenticated() ? { name: 'userProfile' } : { name: 'auth' }">
             <span>My account</span>
             <v-icon>mdi-chevron-right</v-icon>
-          </router-link>
+          </RouterLink>
         </li>
       </ul>
     </div>
@@ -26,27 +26,28 @@
       <ul>
         <template v-for="menu in menus" :key="menu.path">
           <li v-if="menu.enabled">
-            <router-link :to="menu.path">
+            <RouterLink :to="menu.path">
               <v-icon class="mr-4">{{ menu.icon }}</v-icon>
               <span>{{ menu.name }}</span>
-            </router-link>
+            </RouterLink>
           </li>
         </template>
       </ul>
     </div>
     <div class="categories">
-      <router-link to="">
+      <RouterLink to="">
         <span>Our Categories</span>
         <span>See All</span>
-      </router-link>
+      </RouterLink>
     </div>
+    <div>test ghere</div>
     <div class="categories-nav-list">
       <ul>
-        <li v-for="category in categories" :key="category.cid">
-          <router-link>
-            <img :src="category.Images[0].url" alt="Category" width="30px" height="30px" />
+        <li v-for="category in categories" :key="category.categoryId">
+          <RouterLink>
+            <v-icon :color="category.color">{{ category.icon }}</v-icon>
             <span>{{ category.name }}</span>
-          </router-link>
+          </RouterLink>
         </li>
       </ul>
     </div>
