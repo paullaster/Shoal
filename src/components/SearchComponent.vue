@@ -1,33 +1,70 @@
 <template>
-  <section :class="onSearchPage">
-    <div class="search-input-wrapper">
-      <v-icon>mdi-magnify</v-icon>
-      <input
-        type="search"
-        placeholder="search our products"
-        @focus="setSearchPage"
-        @input="fetchSearchterm"
+  <section :class="['search-container w-full relative', onSearchPage]">
+    <div class="search-input-wrapper px-0">
+      <v-text-field
         v-model="term"
-      />
+        placeholder="What are you craving today?"
+        prepend-inner-icon="mdi-magnify"
+        variant="outlined"
+        rounded="pill"
+        density="comfortable"
+        hide-details
+        class="search-field"
+        bg-color="grey-lighten-4"
+        color="primary"
+        base-color="transparent"
+        clearable
+        @focus="setSearchPage"
+        @update:model-value="fetchSearchterm"
+      >
+        <template v-slot:prepend-inner>
+          <v-icon color="primary" class="opacity-80">mdi-magnify</v-icon>
+        </template>
+      </v-text-field>
     </div>
-    <div class="search-page-result" v-if="results.length">
-      <v-list lines="two">
-        <v-list-item
-          v-for="result in results"
-          :key="result.document.id"
-          :title="result.document.name"
-          :subtitle="result.document.description"
-          class="search-result-item"
-          @click="navigateToPage(result.document)"
-        >
-          <template v-slot:prepend>
-            <v-avatar >
-              <v-img :src="result.document.Images[0].url"></v-img>
-            </v-avatar>
-          </template>
-        </v-list-item>
-      </v-list>
-    </div>
+    
+    <!-- Results Dropdown -->
+    <transition name="fade-slide">
+      <div class="search-page-result absolute top-full left-0 right-0 z-50 mt-2 px-1" v-if="results.length">
+        <v-card class="rounded-xl overflow-hidden border border-gray-100" elevation="6">
+          <v-list lines="two" class="py-0">
+            <v-list-subheader class="text-caption font-weight-bold text-uppercase text-grey-darken-1 px-4 py-2 bg-grey-lighten-5">
+              Suggestions
+            </v-list-subheader>
+            
+            <template v-for="(result, index) in results" :key="result.document.id">
+              <v-divider v-if="index > 0" class="border-opacity-50"></v-divider>
+              <v-list-item
+                :title="result.document.name"
+                :subtitle="result.document.description"
+                class="search-result-item py-3 transition-colors hover:bg-grey-lighten-5"
+                @click="navigateToPage(result.document)"
+                link
+              >
+                <template v-slot:prepend>
+                  <v-avatar size="56" rounded="lg" class="mr-3 bg-grey-lighten-4">
+                    <v-img 
+                      :src="result.document.Images[0].url" 
+                      cover 
+                      alt="Product Image"
+                      class="rounded-lg"
+                    ></v-img>
+                  </v-avatar>
+                </template>
+                
+                <template v-slot:title>
+                  <span class="text-body-1 font-weight-bold text-grey-darken-3">{{ result.document.name }}</span>
+                </template>
+                
+                <template v-slot:append>
+                  <v-icon size="small" color="grey-lighten-1">mdi-arrow-top-right</v-icon>
+                </template>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-card>
+      </div>
+    </transition>
   </section>
 </template>
 
@@ -57,8 +94,8 @@ const onSearchPage = computed(() =>
 )
 
 function setSearchPage() {
-  if (name === 'landing') {
-    console.log('setSearchPage')
+  // If we are on the landing page, redirect to search page immediately on focus
+  if (route.name === 'landing') {
     router.push({ name: 'search' })
   }
 }
@@ -82,3 +119,43 @@ function navigateToPage (document) {
     }
 }
 </script>
+
+<style scoped>
+.search-field :deep(.v-field__outline__start),
+.search-field :deep(.v-field__outline__end) {
+  border-color: transparent !important; /* Remove default outlined borders for cleaner look */
+}
+
+.search-field :deep(.v-field) {
+  box-shadow: none !important;
+  transition: all 0.2s ease;
+}
+
+/* Add a subtle ring on focus to support accessibility and focus state without heavy borders */
+.search-field :deep(.v-field--focused) {
+  background-color: white !important;
+  box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.2) !important;
+}
+
+.search-field :deep(.v-field__input) {
+  font-size: 0.95rem;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* Animations */
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.fade-slide-enter-from,
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.onsearch-page {
+  /* specific styles for when on search page if needed */
+}
+</style>

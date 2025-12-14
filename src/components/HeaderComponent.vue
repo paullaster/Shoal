@@ -1,71 +1,85 @@
 <template>
-  <header class="bg-white shadow-md sticky top-0 z-40">
+  <header class="bg-white/95 backdrop-blur-sm sticky top-0 z-40 border-b border-gray-100 transition-all duration-300">
     <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+      <div class="flex items-center justify-between h-20">
         <!-- Left Section: Mobile Menu & Logo -->
-        <div class="flex items-center space-x-2">
+        <div class="flex items-center gap-4">
           <!-- Mobile Menu Button -->
           <button v-if="!lgAndUp" @click="handleMobileMenuClick"
-            class="p-2 rounded-md text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            class="p-2 -ml-2 rounded-full text-gray-600 hover:text-primary-600 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-100"
             aria-label="Open main menu">
-            <v-icon>mdi-menu</v-icon>
+            <v-icon size="28">mdi-menu</v-icon>
           </button>
 
           <!-- Admin Mobile Menu Button -->
           <button v-if="showAuthMenu && !lgAndUp" @click="toggleAdminNavbar"
-            class="p-2 rounded-md text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+            class="p-2 rounded-full text-gray-600 hover:text-primary-600 hover:bg-primary-50 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-100"
             aria-label="Open admin dashboard menu">
-            <v-icon size="30" :color="ColorHelper.colorsHelper('primary')">mdi-view-module</v-icon>
+            <v-icon size="28" :color="ColorHelper.colorsHelper('primary')">mdi-view-module</v-icon>
           </button>
 
-          <!-- Logo -->
-          <a @click.prevent="navigateTo('landing')" :href="getRouteUrl('landing')" class="flex-shrink-0">
-            <img class="h-8 w-auto" :src="HeaderLogo" alt="Noel Fish Delivery" />
+          <!-- Logo (Mobile Only) -->
+          <a v-if="!lgAndUp" @click.prevent="navigateTo('landing')" :href="getRouteUrl('landing')" class="flex-shrink-0 hover:opacity-80 transition-opacity">
+            <img class="h-10 w-auto" :src="HeaderLogo" alt="Noel Fish Delivery" />
           </a>
+          
+          <!-- Desktop: Search Bar (Moved to left/center area if needed, or keep right) -->
+          <!-- We keep Search here if it was intended to be on the right, but typically search is central. 
+               The original code had it in the right section. Let's keep it in the flow but make it distinct. -->
         </div>
 
-        <!-- Right Section: Navigation Icons -->
-        <div class="flex items-center space-x-3 sm:space-x-4">
-          <!-- Search Icon -->
-          <button v-if="route.name !== 'landing'" @click="navigateTo('search')"
-            class="p-2 rounded-full text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+
+        <!-- Right Section: Navigation Icons & Actions -->
+        <div class="flex items-center space-x-2 sm:space-x-4 lg:space-x-6">
+          
+          <!-- Desktop Search -->
+          <div class="hidden lg:block w-96 transition-all duration-300">
+             <SearchComponent />
+          </div>
+
+          <!-- Mobile Search Trigger -->
+          <button v-if="route.name !== 'landing' && !lgAndUp" @click="navigateTo('search')"
+            class="p-2 rounded-full text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
             aria-label="Search products">
-            <v-icon>mdi-magnify</v-icon>
+            <v-icon size="26">mdi-magnify</v-icon>
           </button>
 
-          <!-- Cart Icon -->
+          <!-- Cart Action -->
           <button @click="navigateTo('cart')"
-            class="relative p-2 rounded-full text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            class="group flex items-center gap-2 px-3 py-2 rounded-full text-gray-600 hover:bg-gray-50 hover:text-primary-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-100"
             aria-label="View shopping cart">
-            <v-icon>mdi-cart-outline</v-icon>
-            <span v-if="itemsInCart > 0"
-              class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-pink-500 text-xs font-medium text-white">
-              {{ itemsInCart }}
-            </span>
-            <span v-if="lgAndUp" class="ml-2 text-sm font-medium">Cart</span>
+            <div class="relative">
+              <v-icon size="26" class="group-hover:scale-110 transition-transform">mdi-cart-outline</v-icon>
+              <span v-if="itemsInCart > 0"
+                class="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary-500 text-[10px] font-bold text-white shadow-sm ring-2 ring-white">
+                {{ itemsInCart }}
+              </span>
+            </div>
+            <span v-if="lgAndUp" class="text-sm font-semibold tracking-wide">Cart</span>
           </button>
 
-          <!-- Account/Login Icon -->
+          <!-- Divider -->
+          <div v-if="lgAndUp" class="h-6 w-px bg-gray-200 mx-2"></div>
+
+          <!-- Account Action -->
           <button v-if="!isAuthenticated" @click="navigateToLogin"
-            class="p-2 rounded-full text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            class="flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 text-primary-700 hover:bg-primary-100 hover:shadow-md transition-all duration-200 font-semibold text-sm"
             aria-label="Login to your account">
-            <v-icon>mdi-account-outline</v-icon>
-            <span v-if="lgAndUp" class="ml-2 text-sm font-medium">Account</span>
+            <v-icon size="22">mdi-account-circle</v-icon>
+            <span v-if="lgAndUp">Login</span>
           </button>
 
-          <!-- Logout Icon -->
+          <!-- Logout Action -->
           <button v-else @click="handleLogout"
-            class="p-2 rounded-full text-gray-600 hover:text-primary-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+            class="group flex items-center gap-2 px-3 py-2 rounded-full text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
             aria-label="Logout">
-            <v-icon>mdi-logout</v-icon>
-            <span v-if="lgAndUp" class="ml-2 text-sm font-medium">Logout</span>
+            <v-icon size="26" class="group-hover:scale-110 transition-transform">mdi-logout-variant</v-icon>
+            <span v-if="lgAndUp" class="text-sm font-semibold">Logout</span>
           </button>
         </div>
       </div>
     </nav>
 
-    <!-- Sidebar Component -->
-    <SidebarComponent v-if="showsidebarNavigation || lgAndUp" />
   </header>
 </template>
 
@@ -76,8 +90,8 @@ import { useDisplay } from 'vuetify/lib/framework.mjs';
 import { storeToRefs } from 'pinia';
 import { useAuth, useCartStore, useDashboard, useGlobalStore } from '@/store';
 import HeaderLogo from '@/assets/logo/logo-header.png';
-import SidebarComponent from './SidebarComponent.vue';
 import ColorHelper from '@/util/ColorHelper';
+import SearchComponent from '@/components/SearchComponent.vue';
 
 // ROUTER & ROUTE
 const router = useRouter();

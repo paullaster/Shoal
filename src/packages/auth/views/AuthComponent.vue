@@ -1,83 +1,80 @@
 <template>
-  <main class="auth-wrapper">
-    <section class="btn-section">
-      <article class="navigation-btn">
-        <v-btn variant="text" @click="() => router.back()">
-          <v-icon size="30">mdi-keyboard-backspace</v-icon>
+  <main class="auth-wrapper min-h-screen bg-grey-lighten-5 d-flex align-center justify-center py-10 px-4">
+    <v-card class="auth-card w-full max-w-md rounded-xl overflow-hidden" elevation="0" border>
+      <!-- Navigation Header -->
+      <div class="d-flex align-center justify-space-between px-4 pt-4">
+        <v-btn icon variant="text" color="grey-darken-1" @click="() => router.back()">
+          <v-icon size="24">mdi-arrow-left</v-icon>
         </v-btn>
-      </article>
-    </section>
-    <section class="logo-section">
-      <article class="logo">
-        <LogoComponent width="100px" @click="() => router.push({ name: 'landing' })" />
-      </article>
-    </section>
-    <section class="auth-intro">
-      <article>
-        <p>Welcome to Noels Fish Delivery</p>
-      </article>
-    </section>
-    <section class="auth-content">
-      <!-- Login form -->
-      <article class="form-container">
-        <p>Type your email or phone number to login or create an account</p>
-        <!-- Form -->
-        <v-form ref="customerLogin">
-          <v-row>
-            <v-col cols="12" sm="6">
-              <v-text-field label="Email or Phone Number" v-model="formData.username"
-                hint="If using a phone number, you must provide country code followed by white space then your phone number"
-                variant="outlined" :rules="rules.username" />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col cols="12">
-              <v-btn @click="checkUser" class="bg-c-primary" block density="default" size="large">Continue</v-btn>
-            </v-col>
-          </v-row>
+        <div class="text-caption font-weight-bold text-uppercase text-grey">Login / Sign Up</div>
+        <div style="width: 40px"></div> <!-- Spacer for centering -->
+      </div>
+
+      <div class="px-6 pb-8 pt-2 text-center">
+        <!-- Logo -->
+        <div class="mb-6 d-flex justify-center">
+          <LogoComponent width="120px" @click="() => router.push({ name: 'landing' })"
+            class="cursor-pointer hover-scale" />
+        </div>
+
+        <!-- Intro -->
+        <h1 class="text-h5 font-weight-bold text-grey-darken-3 mb-2">Welcome to Noels</h1>
+        <p class="text-body-2 text-grey-darken-1 mb-8">
+          Fresh L.Victoria food and local favorites, delivered.
+        </p>
+
+        <!-- Login Form -->
+        <v-form ref="customerLogin" @submit.prevent="checkUser">
+          <div class="mb-6 text-left">
+            <label class="text-caption font-weight-bold text-grey-darken-2 ml-1 mb-1 d-block">Email or Phone
+              Number</label>
+            <v-text-field v-model="formData.username" placeholder="e.g. john@example.com or +254..." variant="outlined"
+              rounded="pill" density="comfortable" bg-color="grey-lighten-5" color="primary" :rules="rules.username"
+              hide-details="auto">
+              <template v-slot:prepend-inner>
+                <v-icon color="grey" size="small" class="ml-2">mdi-account-outline</v-icon>
+              </template>
+            </v-text-field>
+          </div>
+
+          <v-btn @click="checkUser" color="primary" block rounded="pill" size="x-large" elevation="4"
+            class="font-weight-bold mb-8 text-capitalize tracking-wide">
+            Continue
+          </v-btn>
         </v-form>
-      </article>
-    </section>
-    <section class="toc">
-      <v-row class="my-6">
-        <v-col cols="12">
-          <p class="text-center">
-            <span>By continuing you agree to Noels&apos; Fish Delivery </span><a href="#">Terms and Conditions</a>
-          </p>
-        </v-col>
-      </v-row>
-    </section>
-    <section class="social-login">
-      <v-row class="my-6">
-        <v-col col="12" class="my-4">
-          <v-btn block density="default" size="large" elevation="0" class="google-bg">
-            <v-img :src="googleIcon" width="1"></v-img>
-            <span class="social-login-caption" style="color: #ED1E79 !important;">Login with Google</span>
+
+        <!-- Divider -->
+        <div class="d-flex align-center mb-8">
+          <v-divider class="flex-grow-1"></v-divider>
+          <span class="mx-4 text-caption text-grey">OR CONTINUE WITH</span>
+          <v-divider class="flex-grow-1"></v-divider>
+        </div>
+
+        <!-- Social Login -->
+        <div class="social-login-grid d-flex flex-column gap-3">
+          <v-btn block rounded="pill" variant="outlined" color="grey-lighten-1" class="text-grey-darken-2" height="48">
+            <v-img :src="googleIcon" width="20" height="20" class="mr-3"></v-img>
+            <span class="font-weight-medium">Google</span>
           </v-btn>
-        </v-col>
-        <v-col col="12" class="my-4">
-          <v-btn block density="default" size="large" class="facebook-bg">
-            <v-icon> mdi-facebook </v-icon>
-            <span class="social-login-caption">Login with Facebook</span>
+
+          <v-btn block rounded="pill" variant="outlined" color="grey-lighten-1" class="text-grey-darken-2" height="48">
+            <v-icon color="#1877F2" class="mr-3">mdi-facebook</v-icon>
+            <span class="font-weight-medium">Facebook</span>
           </v-btn>
-        </v-col>
-        <v-col col="12" class="my-4">
-          <v-btn block density="default" size="large" class="instagram-bg">
-            <v-icon>mdi-instagram</v-icon>
-            <span class="social-login-caption">Login with Instagram</span>
-          </v-btn>
-        </v-col>
-      </v-row>
-    </section>
-    <section class="support">
-      <article>
-        <p>Need help? Call us at <a href="tel:+254 799 049181">+254 (799) &dash; 049181</a></p>
-      </article>
-    </section>
+
+          <!-- Hidden Instagram for now to clean up UI, or keep if essential -->
+        </div>
+
+        <!-- Terms -->
+        <div class="mt-8 text-caption text-grey text-center px-4" style="line-height: 1.4;">
+          By continuing, you agree to our
+          <a href="#" class="text-primary font-weight-bold text-decoration-none">Terms of Service</a>
+          and
+          <a href="#" class="text-primary font-weight-bold text-decoration-none">Privacy Policy</a>.
+        </div>
+      </div>
+    </v-card>
   </main>
-  <footer class="footer">
-    <LogoComponent width="150px" height="150px" />
-  </footer>
 </template>
 
 <script setup>
@@ -148,3 +145,13 @@ async function checkUser() {
   }
 }
 </script>
+
+<style scoped>
+.hover-scale {
+  transition: transform 0.2s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+</style>
