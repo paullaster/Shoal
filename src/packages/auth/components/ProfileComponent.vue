@@ -1,64 +1,152 @@
 <template>
-    <main class="complete-profile">
-        <section class="complete-profile-card">
-            <v-card elevation="0">
-                <v-card-title style="width: 100%;">
-                    {{ userData[4] === 'newAccount' ? 'Complete Profile' : 'Enter your password' }}
-                </v-card-title>
-                <v-card-text style="padding: 0 !important;">
-                    <v-form ref="profileForm">
-                        <v-row style="margin: 0 !important;">
-                            <v-col cols="12" sm="6">
-                                <v-label>Email</v-label>
-                                <v-text-field variant="outlined" v-model="user.email"
-                                    :readonly="userData[2] === 'email'" :rules="rules.email"
-                                    aria-autocomplete="both"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" v-if="userData[4] === 'newAccount'">
-                                <v-label>First Name</v-label>
-                                <v-text-field variant="outlined" v-model="user.firstName"
-                                    placeholder="for example: John" :rules="rules.firstName"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" v-if="userData[4] === 'newAccount'">
-                                <v-label>Last Name</v-label>
-                                <v-text-field variant="outlined" v-model="user.lastName" placeholder="for example: Doe"
-                                    :rules="rules.lastName"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" v-if="userData[4] === 'newAccount'">
-                                <v-label>Phone number</v-label>
-                                <v-text-field variant="outlined" v-model="user.phoneNumber"
-                                    placeholder="for example: +254 700258098" :readonly="userData[2] === 'phone'"
-                                    :rules="rules.phoneNumber" @update:modelValue="formatPhoneNumberInput"
-                                    aria-autocomplete="both"></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6">
-                                <v-label>Password</v-label>
-                                <v-text-field variant="outlined" v-model="user.password"
-                                    :type="showPassword ? 'text' : 'password'" placeholder="minimum 8 characters"
-                                    :rules="rules.password" aria-autocomplete="both" autocomplete="on">
-                                    <template v-slot:append-inner>
-                                        <v-icon @click="toggleShowPassword"
-                                            :color="ColorHelper.colorsHelper('secondary')" style="
-                            background-color: #ED1E79 !important;
-                            padding: 1rem !important;
-                            border-radius: .4rem !important;
-                            ">{{ showPassword ? 'mdi-lock-outline' : 'mdi-lock-open-variant-outline' }}</v-icon>
-                                    </template>
-                                </v-text-field>
-                            </v-col>
-                            <v-col cols="12">
-                                <v-btn :color="ColorHelper.colorsHelper('primary')" @click="updateProfile"
-                                    :loading="loading" :disabled="loading" :block="mdAndDown" size="x-large">
-                                    {{ userData[4] === 'newAccount' ? 'Update Profile' : 'Continue' }}
-                                </v-btn>
-                            </v-col>
-                        </v-row>
-                    </v-form>
-                </v-card-text>
-            </v-card>
+  <main class="profile-wrapper min-h-screen bg-grey-lighten-5 d-flex align-center justify-center py-10 px-4">
+    <v-card class="profile-card w-full max-w-lg rounded-xl overflow-hidden" elevation="0" border>
+      
+      <!-- Header -->
+      <div class="px-8 pt-8 pb-4 text-center">
+        <v-avatar color="primary-lighten-5" size="64" class="mb-4">
+          <v-icon size="32" color="primary">
+            {{ userData[4] === 'newAccount' ? 'mdi-account-plus' : 'mdi-login-variant' }}
+          </v-icon>
+        </v-avatar>
+        <h3 class="text-h5 font-weight-bold text-grey-darken-3">
+          {{ userData[4] === 'newAccount' ? 'Complete Your Profile' : 'Welcome Back' }}
+        </h3>
+        <p class="text-body-2 text-grey-darken-1 mt-1">
+          {{ userData[4] === 'newAccount' ? 'Tell us a bit about yourself to get started.' : 'Please enter your password to continue.' }}
+        </p>
+      </div>
 
-        </section>
-    </main>
+      <div class="px-8 pb-8">
+        <v-form ref="profileForm" @submit.prevent="updateProfile">
+          <v-row dense>
+            <!-- Email (Read-only usually) -->
+            <v-col cols="12">
+              <div class="text-caption font-weight-bold text-grey-darken-2 ml-1 mb-1">Email</div>
+              <v-text-field
+                v-model="user.email"
+                variant="outlined"
+                rounded="pill"
+                density="comfortable"
+                bg-color="grey-lighten-4"
+                readonly
+                hide-details="auto"
+                class="mb-2"
+              >
+                <template v-slot:prepend-inner>
+                   <v-icon size="small" color="grey" class="ml-2">mdi-email-outline</v-icon>
+                </template>
+              </v-text-field>
+            </v-col>
+
+            <!-- Name Fields (New Account Only) -->
+            <template v-if="userData[4] === 'newAccount'">
+              <v-col cols="12" sm="6">
+                <div class="text-caption font-weight-bold text-grey-darken-2 ml-1 mb-1">First Name</div>
+                <v-text-field
+                  v-model="user.firstName"
+                  placeholder="e.g. John"
+                  variant="outlined"
+                  rounded="pill"
+                  density="comfortable"
+                  color="primary"
+                  :rules="rules.firstName"
+                  hide-details="auto"
+                  class="mb-2"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12" sm="6">
+                <div class="text-caption font-weight-bold text-grey-darken-2 ml-1 mb-1">Last Name</div>
+                <v-text-field
+                  v-model="user.lastName"
+                  placeholder="e.g. Doe"
+                  variant="outlined"
+                  rounded="pill"
+                  density="comfortable"
+                  color="primary"
+                  :rules="rules.lastName"
+                  hide-details="auto"
+                  class="mb-2"
+                ></v-text-field>
+              </v-col>
+
+              <v-col cols="12">
+                <div class="text-caption font-weight-bold text-grey-darken-2 ml-1 mb-1">Phone Number</div>
+                <v-text-field
+                  v-model="user.phoneNumber"
+                  placeholder="e.g. +254 700 000 000"
+                  variant="outlined"
+                  rounded="pill"
+                  density="comfortable"
+                  color="primary"
+                  :readonly="userData[2] === 'phone'"
+                  :bg-color="userData[2] === 'phone' ? 'grey-lighten-4' : undefined"
+                  :rules="rules.phoneNumber"
+                  @update:modelValue="formatPhoneNumberInput"
+                  hide-details="auto"
+                  class="mb-2"
+                >
+                  <template v-slot:prepend-inner>
+                    <v-icon size="small" color="grey" class="ml-2">mdi-phone-outline</v-icon>
+                  </template>
+                </v-text-field>
+              </v-col>
+            </template>
+
+            <!-- Password Field -->
+            <v-col cols="12">
+              <div class="text-caption font-weight-bold text-grey-darken-2 ml-1 mb-1">Password</div>
+              <v-text-field
+                v-model="user.password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="Min 8 chars"
+                variant="outlined"
+                rounded="pill"
+                density="comfortable"
+                color="primary"
+                :rules="rules.password"
+                hide-details="auto"
+                class="mb-4"
+              >
+                <template v-slot:prepend-inner>
+                    <v-icon size="small" color="grey" class="ml-2">mdi-lock-outline</v-icon>
+                </template>
+                <template v-slot:append-inner>
+                  <v-btn
+                    icon
+                    variant="text"
+                    size="small"
+                    color="grey"
+                    @click="toggleShowPassword"
+                  >
+                    <v-icon>{{ showPassword ? 'mdi-eye-off' : 'mdi-eye' }}</v-icon>
+                  </v-btn>
+                </template>
+              </v-text-field>
+            </v-col>
+
+            <!-- Submit Button -->
+            <v-col cols="12" class="mt-4">
+              <v-btn
+                @click="updateProfile"
+                color="primary"
+                block
+                rounded="pill"
+                size="x-large"
+                elevation="4"
+                :loading="loading"
+                :disabled="loading"
+                class="font-weight-bold tracking-wide"
+              >
+                {{ userData[4] === 'newAccount' ? 'Create Account' : 'Login' }}
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
+      </div>
+    </v-card>
+  </main>
 </template>
 
 <script setup>

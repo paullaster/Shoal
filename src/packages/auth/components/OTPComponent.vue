@@ -1,31 +1,62 @@
 <template>
-  <main class="otp-main-view">
-    <section class="otp-main-view-card">
-      <v-card class="py-8 px-6 text-center mx-auto ma-4" elevation="0" max-width="400" width="100%">
-        <h3 class="text-h6 mb-4">Verify Your Account</h3>
-
-        <div class="text-body-2">
-          We sent a verification code to {{ Helper.mask(uniqueUserCode[0]) }} <br />
-
-          Please check your {{ uniqueUserCode[2] }} and paste the code below.
+  <main class="otp-wrapper min-h-screen bg-grey-lighten-5 d-flex align-center justify-center py-10 px-4">
+    <v-card class="otp-card w-full max-w-md rounded-xl overflow-hidden" elevation="0" border>
+      <!-- Header -->
+      <div class="px-6 pt-8 pb-2 text-center">
+        <div class="mb-4">
+           <v-icon size="48" color="primary" class="mb-2">mdi-shield-check-outline</v-icon>
         </div>
+        <h3 class="text-h5 font-weight-bold text-grey-darken-3 mb-2">Verify Your Account</h3>
+        <p class="text-body-2 text-grey-darken-1 px-4">
+          We sent a code to <span class="font-weight-bold text-primary">{{ Helper.mask(uniqueUserCode[0]) }}</span>.
+          <br>Please enter it below to continue.
+        </p>
+      </div>
 
-        <v-sheet color="surface">
-          <v-otp-input v-model="otp" type="text" variant="solo"></v-otp-input>
+      <div class="px-6 pb-8">
+        <v-sheet class="py-4">
+          <v-otp-input
+            v-model="otp"
+            length="6"
+            variant="outlined"
+            base-color="primary"
+            class="mb-4"
+          ></v-otp-input>
         </v-sheet>
 
-        <v-btn class="my-4" :color="ColorHelper.colorsHelper('primary')" height="40" text="Verify" variant="flat"
-          :block="mdAndDown" :disabled="otp.length !== 6" @click.prevent="verifyOTP()"></v-btn>
+        <v-btn
+          @click.prevent="verifyOTP()"
+          color="primary"
+          block
+          rounded="pill"
+          size="x-large"
+          elevation="4"
+          class="font-weight-bold mb-6 tracking-wide"
+          :disabled="otp.length !== 6"
+          :loading="loading"
+        >
+          Verify Code
+        </v-btn>
 
-        <div class="text-caption">
-          Didn't receive the code? <span v-if="otpTimer"> resend after {{ Helper.countDownDisplay(otpTimer) }} </span>
-          <a href="#" @click.prevent="() => (otp = '', resendOtp({ datapoint: route.params.uniquCode }))"
-            v-else>Resend</a>
+        <div class="text-center text-body-2 text-grey-darken-1">
+          Didn't receive code? 
+          <span v-if="otpTimer > 0" class="font-weight-bold text-orange">
+            Resend in {{ Helper.countDownDisplay(otpTimer) }}
+          </span>
+          <a
+            v-else
+            href="#"
+            @click.prevent="() => { otp = ''; resendOtp({ datapoint: route.params.uniquCode }) }"
+            class="text-primary font-weight-bold text-decoration-none hover-underline"
+          >
+            Resend Code
+          </a>
         </div>
-      </v-card>
-    </section>
+      </div>
+    </v-card>
   </main>
 </template>
+
 <script setup>
 import { useAuth } from '@/store';
 import ColorHelper from '@/util/ColorHelper'
@@ -35,7 +66,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { globalEventBus } from 'vue-toastification';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 import useAuthentication from '@/composables/useAuthentication';
-
+import { storeToRefs } from 'pinia'; // Added for loading state
 
 // VUETIFY
 const { mdAndDown } = useDisplay();
@@ -50,7 +81,7 @@ const { resendOtp } = useAuthentication()
 
 // APP STATE
 const authStore = useAuth();
-
+const { loading } = storeToRefs(authStore); // Assuming authStore has loading state
 
 
 // COMPONENT STATE
@@ -97,3 +128,9 @@ function verifyOTP() {
   authStore.verifyOtp(payload)
 }
 </script>
+
+<style scoped>
+.hover-underline:hover {
+  text-decoration: underline !important;
+}
+</style>

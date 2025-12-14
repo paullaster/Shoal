@@ -10,21 +10,14 @@
     }
     .social-media-platforms {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row; /* Changed to row for desktop */
+        align-items: center;
+        gap: 1rem; /* Add some spacing between icons */
         & > * {
-            margin-bottom:.4rem; /* Add some vertical spacing */
+            margin-bottom:0; /* Remove vertical spacing */
             margin-right:0; /* Remove horizontal spacing */
         }
 
     }
 
-}
-.mobile-app-footer {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    & > div.footer-container:not(:last-child) {
-        margin-bottom: 1rem;
-    }
 }

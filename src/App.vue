@@ -1,17 +1,26 @@
 <template>
-  <div class="app bg-gray-50 min-h-screen">
-    <HeaderComponent v-if="showHeader" />
-    <main class="overflow-x-hidden">
-      <router-view v-slot="{ Component, route }">
-        <transition name="fade" mode="out-in">
-          <component :is="Component" :key="route.path" />
-        </transition>
-      </router-view>
-    </main>
-    <FooterComponents v-if="showFooter" />
+  <v-app>
+    <SidebarComponent v-if="showSidebar" />
+    
+    <v-main>
+      <div class="d-flex flex-column fill-height">
+        <HeaderComponent v-if="showHeader" />
+        
+        <div class="flex-grow-1">
+          <router-view v-slot="{ Component, route }">
+            <transition name="fade" mode="out-in">
+              <component :is="Component" :key="route.path" />
+            </transition>
+          </router-view>
+        </div>
+
+        <FooterComponents v-if="showFooter" />
+      </div>
+    </v-main>
+
     <DynamicDialog />
     <LoaderComponent v-if="loading" />
-  </div>
+  </v-app>
 </template>
 
 <script setup>
@@ -26,6 +35,7 @@ const HeaderComponent = defineAsyncComponent(() => import('@/components/HeaderCo
 const FooterComponents = defineAsyncComponent(() => import('./components/FooterComponents.vue'));
 const DynamicDialog = defineAsyncComponent(() => import("@/components/DynamicDialog.vue"));
 const LoaderComponent = defineAsyncComponent(() => import('./components/LoaderComponent.vue'));
+const SidebarComponent = defineAsyncComponent(() => import('./components/SidebarComponent.vue'));
 
 // ROUTER
 const route = useRoute();
@@ -42,6 +52,26 @@ const { isAuthenticated } = storeToRefs(authStore);
 
 // COMPUTED PROPERTIES
 const showHeader = computed(() => !route.matched.some((record) => record.meta.headerless));
+
+// Configuration for routes where sidebar should be hidden (Scalable & Extensible)
+const sidebarlessRoutes = [
+  'auth',
+  'verifyAccount',
+  'completeProfile',
+  'userCredentials',
+  'adminAuth',
+  // Future: Add 'cart' or 'checkout' here to hide sidebar on those pages
+];
+
+const showSidebar = computed(() => {
+  // 1. Check explicit route meta (decentralized control)
+  const isMetaSidebarless = route.matched.some((record) => record.meta.sidebarless || record.meta.headerless);
+  if (isMetaSidebarless) return false;
+
+  // 2. Check centralized configuration array
+  return !sidebarlessRoutes.includes(route.name);
+});
+
 const showFooter = computed(() => !route.matched.some((record) => record.meta.footerless));
 
 const reactiveMenus = computed(() => [

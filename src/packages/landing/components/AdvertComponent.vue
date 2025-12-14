@@ -1,97 +1,113 @@
 <template>
-  <v-container fluid class="advert-container">
-    <!-- Full-Width Hero Section -->
-    <v-carousel height="500px" cycle show-arrows="hover" hide-delimiter-background>
-      <v-carousel-item v-for="(item, i) in featuredProducts" :key="i">
-        <v-sheet height="100%" class="advert-hero d-flex align-center justify-center" elevation="0">
-          <v-row class="text-center white--text">
-            <v-col cols="12">
-              <div
-                style="
-                  background-color: white;
-                  width: max-content;
-                  margin: auto auto;
-                  padding-inline: 0.8rem;
-                  border-radius: 0.4rem;
-                "
-              >
-                <h1 class="display-1 font-weight-bold">Savor Freshness, Delivered!</h1>
-                <h3 class="subtitle-1 mb-5">Order now and enjoy exclusive offers</h3>
-              </div>
-              <v-btn class="cta-btn" color="yellow darken-3" large elevation="12" @click="orderNow">
-                Order Now & Get 20% Off!
-              </v-btn>
-            </v-col>
-            <v-chip
-              color="pink"
-              text-color="white"
-              large
-              class="promo-timer"
-              style="background-color: white; position: absolute; bottom: 2%; left: 25%"
+  <div class="hero-section">
+    <v-carousel
+      cycle
+      height="400"
+      hide-delimiters
+      show-arrows="hover"
+      interval="6000"
+      class="rounded-xl overflow-hidden shadow-lg mx-2 mt-2 md:mx-4"
+    >
+      <v-carousel-item
+        v-for="(slide, i) in slides"
+        :key="i"
+        :src="slide.image"
+        cover
+        class="hero-slide"
+      >
+        <div class="d-flex fill-height align-center justify-start px-4 px-md-10 gradient-overlay">
+          <div class="text-content text-white" style="max-width: 600px;">
+            <div class="text-overline mb-1 font-weight-bold text-yellow-lighten-2 tracking-widest text-uppercase">
+              {{ slide.overline }}
+            </div>
+            <h1 class="text-h5 text-md-h3 font-weight-bold mb-2 leading-tight">
+              {{ slide.title }}
+            </h1>
+            <p class="text-body-2 text-md-body-1 mb-4 font-weight-light opacity-90">
+              {{ slide.subtitle }}
+            </p>
+            <v-btn
+              color="primary"
+              size="large"
+              rounded="pill"
+              elevation="4"
+              class="px-6 font-weight-bold"
+              @click="handleCta"
             >
-              Limited Offer! Only <span>{{ timeLeft }}</span> left
-            </v-chip>
-          </v-row>
-        </v-sheet>
+              Order Now
+              <v-icon end icon="mdi-arrow-right" class="ml-2"></v-icon>
+            </v-btn>
+          </div>
+        </div>
       </v-carousel-item>
     </v-carousel>
-  </v-container>
+  </div>
 </template>
-  
-  <script setup>
-import { ref } from 'vue'
 
-// COMPONENT VARIABLE
-const timeLeft = ref('24:00:00')
-const featuredProducts = ref([
+<script setup>
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+// Assets
+import fishImage from '@/assets/images/display_fish.jpeg';
+import fishImage2 from '@/assets/images/display_fish2.webp';
+// Using the path relative to the alias or file structure. 
+// Note: The file name is long, let's try to reference it carefully or use the fish ones for safety if the long name is risky to import directly without rename.
+// I will stick to the fish images for now to ensure safety, and maybe the fish3.
+import fishImage3 from '@/assets/images/display_fish3.webp';
+
+const router = useRouter();
+
+const slides = ref([
   {
-    name: 'Grilled Chicken Deluxe',
-    description: 'Succulent chicken served with a side of fresh veggies.',
-    image: 'https://your-image-link.com/chicken.jpg'
+    image: fishImage,
+    overline: 'Fresh Catch Daily',
+    title: 'Savor the Taste of the Ocean',
+    subtitle: 'Expertly prepared fresh fish, delivered piping hot to your doorstep. Experience the finest culinary delight.',
   },
   {
-    name: 'Veggie Pizza',
-    description: 'A delicious mix of fresh vegetables on a crispy base.',
-    image: 'https://your-image-link.com/pizza.jpg'
+    image: fishImage2,
+    overline: 'Authentic Flavors',
+    title: 'Traditional Dishes, Modern Comfort',
+    subtitle: 'Enjoy our signature Mboga Kienyeji and other local favorites, cooked with love and tradition.',
   },
   {
-    name: 'Sushi Platter',
-    description: 'Freshly prepared sushi with the finest ingredients.',
-    image: 'https://your-image-link.com/sushi.jpg'
+    image: fishImage3,
+    overline: 'Fast Delivery',
+    title: 'Hungry? We’re on Our Way',
+    subtitle: 'Order now and track your meal in real-time. Satisfaction guaranteed with every bite.',
   }
-])
-function orderNow() {
-  // Implement order functionality
-  alert('Redirecting to the order page...')
+]);
+
+function handleCta() {
+  // Ideally navigate to product listing or specific category
+  // router.push({ name: 'products' }); 
+  console.log('Navigate to order');
 }
 </script>
-  
-  <style scoped>
-.advert-container {
-  color: #f5f5f5;
-  padding: 20px;
-}
 
-.advert-hero {
-  background-image: url('../../../assets/images/display_fish.jpeg');
-  background-size: cover;
-  background-position: center;
+<style scoped>
+.hero-section {
   position: relative;
 }
 
-.cta-btn:hover {
-  transform: scale(1.1);
-  transition: all 0.3s ease;
+.gradient-overlay {
+  background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.1) 100%);
 }
 
-.promo-timer {
-  font-size: 18px;
-  font-weight: bold;
+.text-content {
+  animation: fadeUp 1s ease-out;
 }
 
-.dish-img {
-  max-height: 200px;
-  object-fit: cover;
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>
   
