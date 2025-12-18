@@ -1,5 +1,5 @@
 <template>
-    <div class="user-history-wrapper py-4 px-3 md:px-5">
+    <div class="user-history-wrapper py-4">
         
         <!-- Section 1: Chef's Favorites (Horizontal Scroll) -->
         <section class="mb-10" v-if="trendingProducts.length">
@@ -34,7 +34,7 @@
             </div>
             
             <!-- Filter Chips -->
-            <div class="mb-6 sticky top-20 z-30 bg-white/95 backdrop-blur-md py-2 -mx-2 px-2 transition-all">
+            <div class="mb-6 sticky top-20 z-30 bg-white/95 backdrop-blur-md py-2 px-0 transition-all">
                  <v-slide-group show-arrows>
                     <v-slide-group-item v-slot="{ isSelected, toggle }">
                         <v-chip
