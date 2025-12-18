@@ -2,7 +2,7 @@
     <div class="user-history-wrapper py-4">
         
         <!-- Section 1: Chef's Favorites (Horizontal Scroll) -->
-        <section class="mb-10" v-if="trendingProducts.length">
+        <section class="mb-10 relative" v-if="trendingProducts.length">
             <div class="d-flex align-center justify-space-between mb-4">
                 <div class="d-flex align-center gap-2">
                     <v-icon color="orange-darken-1" icon="mdi-fire" size="28"></v-icon>
@@ -11,16 +11,37 @@
                 <v-btn variant="text" color="primary" class="font-weight-bold px-0">See All</v-btn>
             </div>
             
-            <v-slide-group show-arrows class="py-2">
-                <v-slide-group-item
-                    v-for="(product, index) in trendingProducts"
-                    :key="product.id || index"
-                >
-                    <div class="mx-2 mb-2 w-72 flex-shrink-0">
-                        <ProductListing :product="product" class="h-full" />
-                    </div>
-                </v-slide-group-item>
-            </v-slide-group>
+            <div class="group relative">
+                <v-slide-group show-arrows class="py-2 product-slide-group">
+                    <template v-slot:prev="{ onClick }">
+                        <v-btn
+                            icon="mdi-chevron-left"
+                            variant="flat"
+                            color="white"
+                            class="custom-nav-btn prev-btn elevation-3 hidden md:flex"
+                            @click="onClick"
+                        ></v-btn>
+                    </template>
+                    <template v-slot:next="{ onClick }">
+                        <v-btn
+                            icon="mdi-chevron-right"
+                            variant="flat"
+                            color="white"
+                            class="custom-nav-btn next-btn elevation-3 hidden md:flex"
+                            @click="onClick"
+                        ></v-btn>
+                    </template>
+
+                    <v-slide-group-item
+                        v-for="(product, index) in trendingProducts"
+                        :key="product.id || index"
+                    >
+                        <div class="mx-2 mb-2 w-72 md:w-80 flex-shrink-0">
+                            <ProductListing :product="product" class="h-full" />
+                        </div>
+                    </v-slide-group-item>
+                </v-slide-group>
+            </div>
         </section>
 
         <!-- Section 2: Fresh from the Kitchen (Main Grid) -->
@@ -122,4 +143,39 @@ const filteredProducts = computed(() => {
     /* Removed background-color and specific border-radius to blend seamlessly */
     background-color: transparent; 
 }
+
+/* Custom Navigation Buttons */
+.custom-nav-btn {
+    position: absolute !important;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-nav-btn:hover {
+    background-color: white !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.prev-btn {
+    left: 10px;
+}
+
+.next-btn {
+    right: 10px;
+}
+
+/* Hide default Vuetify slide group arrows if they persist */
+:deep(.v-slide-group__prev),
+:deep(.v-slide-group__next) {
+    display: none !important;
+} 
 </style>

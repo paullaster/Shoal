@@ -42,7 +42,7 @@
       .cta-btn {
         & > .cta-btn-group-container {
           cursor: pointer;
-          width: max-content;
+          /* width: max-content; */
           padding-inline: .2rem;
           border: .1rem var(--vt-c-primary) solid;
           border-radius: 10rem;
