@@ -1,10 +1,10 @@
 <template>
   <article
-    class="group relative product-listing-wrapper cool-borderradius bg-white shadow-sm transition-all duration-300 ease-in-out hover:shadow-xl flex flex-col overflow-hidden">
+    class="group relative product-listing-wrapper cool-borderradius bg-white shadow-sm transition-all duration-300 ease-in-out hover:shadow-xl flex flex-col overflow-hidden h-full">
     <a :href="productUrl"
       @click.prevent="router.push({ name: 'productDetails', params: { productId: product.productId } })"
-      class="block flex-grow">
-      <div class="productlisting-image h-48 w-full overflow-hidden relative">
+      class="grow flex flex-col">
+      <div class="productlisting-image h-64 w-full overflow-hidden relative">
         <img :src="displayImage.url" :alt="displayImage.altText"
           class="h-full w-full object-cover object-center transition-transform duration-500 ease-in-out md:group-hover:scale-110" />
         <!-- Ultra Modern God-Level Sale Percentage Badge -->
@@ -14,68 +14,82 @@
         </div>
       </div>
 
-      <div class="product-details p-4 flex-grow">
-        <p class="text-base font-semibold text-gray-800 truncate" :title="product.name">
+      <div class="product-details p-5 grow">
+        <p class="text-lg font-bold text-gray-900 truncate mb-1" :title="product.name">
           {{ product.name }}
         </p>
-        <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 mt-1">
-          <p class="text-2xl md:text-3xl font-extrabold text-black" v-if="onSale">{{ currency }} {{ displayPrice }}
+        <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 mb-2">
+          <p class="text-2xl font-extrabold text-primary" v-if="onSale">{{ currency }} {{ displayPrice }}
           </p>
-          <p class="text-lg md:text-xl font-bold text-black" :class="{ 'line-through text-black': onSale }">{{
+          <p class="text-xl font-bold text-gray-900" :class="{ 'line-through text-gray-500 text-base': onSale }">{{
             currency }} {{ originalPrice }}</p>
         </div>
 
         <!-- Categories -->
-        <div v-if="displayCategories.length" class="flex flex-wrap gap-1 mt-2">
+        <div v-if="displayCategories.length" class="flex flex-wrap gap-1 mb-2">
           <span v-for="cat in displayCategories" :key="cat.categoryId"
-            class="text-xs font-semibold bg-blue-100 text-blue-800 py-0.5 px-1.5 rounded-full">
+            class="text-xs font-semibold bg-gray-100 text-gray-700 py-1 px-2 rounded-md">
             {{ cat.name }}
           </span>
         </div>
 
         <!-- Attributes -->
-        <div v-if="displayAttributes.length" class="flex flex-wrap gap-1 mt-2">
+        <div v-if="displayAttributes.length" class="flex flex-wrap gap-1 mb-2">
           <span v-for="attr in displayAttributes" :key="attr.name"
-            class="text-xs text-gray-600 py-0.5 px-1.5 rounded-full border border-gray-300">
+            class="text-xs text-gray-500 py-0.5 px-1.5 rounded-full border border-gray-200">
             {{ attr.name }}: {{ attr.value }}
           </span>
         </div>
 
         <!-- Modern Availability Indicator -->
-        <div class="mt-2">
+        <div class="mt-auto pt-2">
           <div v-if="firstVariant?.isAvailable" class="flex items-center">
-            <span class="h-2 w-2 bg-green-500 rounded-full mr-2"></span>
-            <span class="text-xs text-gray-600">In Stock</span>
+            <span class="relative flex h-2.5 w-2.5 mr-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+            </span>
+            <span class="text-sm font-medium text-gray-600">In Stock</span>
           </div>
           <div v-else class="flex items-center">
-            <span class="h-2 w-2 bg-red-500 rounded-full mr-2"></span>
-            <span class="text-xs text-gray-500">Out of Stock</span>
+            <span class="h-2.5 w-2.5 bg-red-500 rounded-full mr-2"></span>
+            <span class="text-sm font-medium text-gray-500">Out of Stock</span>
           </div>
         </div>
       </div>
     </a>
 
     <!-- Responsive CTA -->
+
     <div
-      class="cta-btn p-4 md:absolute md:bottom-0 md:left-0 md:right-0 md:bg-gradient-to-t md:from-white md:via-white/80 md:to-transparent md:opacity-0 md:transform md:translate-y-full md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-in-out">
-      <v-btn color="primary" variant="flat" rounded="pill" v-if="!productInCart" @click.stop="addToCart(product)"
-        class="w-full md:w-5/12 shadow-lg primary-gradient-button">
+      class="cta-btn p-4 md:absolute md:bottom-0 md:left-0 md:right-0 md:bg-white/95 md:backdrop-blur-sm md:opacity-0 md:transform md:translate-y-full md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-in-out border-t md:border-none border-gray-100 flex justify-center">
+
+      <v-btn color="primary" variant="flat" rounded="pill" height="44" v-if="!productInCart"
+        @click.stop="addToCart(product)"
+        class="w-4/5 mx-auto shadow-lg font-weight-bold text-none primary-gradient-button">
+
         <v-icon class="mr-2">mdi-cart-outline</v-icon>
+
         Add to Cart
+
       </v-btn>
+
       <div v-else
-        class="cta-btn-group-container flex justify-around items-center primary-gradient-button rounded-pill p-1"
+        class="cta-btn-group-container h-11 w-4/5 mx-auto flex justify-between items-center primary-gradient-button rounded-pill p-1 shadow-lg"
         @click.stop="cartUpdate(product, $event)">
-        <v-btn variant="flat" data-type-remove rounded="circle" color="white">
-          <v-icon data-type-remove>mdi-minus</v-icon>
-        </v-btn>
+
+        <v-btn variant="text" density="comfortable" icon="mdi-minus" data-type-remove color="white"
+          class="ml-1"></v-btn>
+
         <span class="font-bold text-lg text-white">
+
           {{ productInCart.quantity }}
+
         </span>
-        <v-btn variant="flat" data-type-add rounded="circle" color="white">
-          <v-icon data-type-add>mdi-plus</v-icon>
-        </v-btn>
+
+        <v-btn variant="text" density="comfortable" icon="mdi-plus" data-type-add color="white" class="mr-1"></v-btn>
+
       </div>
+
     </div>
   </article>
 </template>
