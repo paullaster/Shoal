@@ -59,37 +59,22 @@
     </a>
 
     <!-- Responsive CTA -->
-
     <div
-      class="cta-btn p-4 md:absolute md:bottom-0 md:left-0 md:right-0 md:bg-white/95 md:backdrop-blur-sm md:opacity-0 md:transform md:translate-y-full md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-in-out border-t md:border-none border-gray-100 flex justify-center">
-
-      <v-btn color="primary" variant="flat" rounded="pill" height="44" v-if="!productInCart"
-        @click.stop="addToCart(product)"
-        class="w-4/5 mx-auto shadow-lg font-weight-bold text-none primary-gradient-button">
-
+      class="cta-btn p-2 md:absolute md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:w-[90%] md:rounded-xl md:bg-white/95 md:backdrop-blur-sm md:opacity-0 md:transform md:translate-y-[150%] md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-out border-t md:border-none border-gray-100 flex justify-center shadow-xl">
+      <v-btn color="primary" variant="flat" rounded="pill" height="44" v-if="!productInCart" @click.stop="addToCart(product)"
+        class="w-full shadow-none font-weight-bold text-none primary-gradient-button">
         <v-icon class="mr-2">mdi-cart-outline</v-icon>
-
         Add to Cart
-
       </v-btn>
-
       <div v-else
-        class="cta-btn-group-container h-11 w-4/5 mx-auto flex justify-between items-center primary-gradient-button rounded-pill p-1 shadow-lg"
+        class="cta-btn-group-container h-11 w-full flex justify-between items-center primary-gradient-button rounded-pill p-1 shadow-none"
         @click.stop="cartUpdate(product, $event)">
-
-        <v-btn variant="text" density="comfortable" icon="mdi-minus" data-type-remove color="white"
-          class="ml-1"></v-btn>
-
+        <v-btn variant="text" density="comfortable" icon="mdi-minus" data-type-remove color="white" class="ml-1"></v-btn>
         <span class="font-bold text-lg text-white">
-
           {{ productInCart.quantity }}
-
         </span>
-
         <v-btn variant="text" density="comfortable" icon="mdi-plus" data-type-add color="white" class="mr-1"></v-btn>
-
       </div>
-
     </div>
   </article>
 </template>
