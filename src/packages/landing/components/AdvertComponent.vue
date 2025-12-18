@@ -6,7 +6,7 @@
       hide-delimiters
       show-arrows="hover"
       interval="6000"
-      class="rounded-xl overflow-hidden shadow-lg mx-2 mt-2 md:mx-4"
+      class="rounded-xl overflow-hidden shadow-lg mt-2"
     >
       <v-carousel-item
         v-for="(slide, i) in slides"

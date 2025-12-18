@@ -1,6 +1,6 @@
 <template>
     <section class="landing-wrapper bg-grey-lighten-5 min-h-screen pb-6">
-        <div class="mx-auto max-w-full px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
+        <div class="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-8 pt-4 md:pt-8">
             <!-- Mobile Search Bar -->
             <div v-if="!lgAndUp" class="sticky top-0 z-50 bg-grey-lighten-5 pt-2">
                 <SearchComponent />
