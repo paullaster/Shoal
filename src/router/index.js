@@ -5,6 +5,32 @@ import AuthService from '@/packages/auth/AuthService';
 import stringToBase64AndReverse from '@/util/stringToBase64AndReverse';
 const router = createRouter({
   history: createWebHistory(import.meta.env.VUE_APP_URL),
+  scrollBehavior(to, from, savedPosition) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        // Robust scroll reset for various potential containers
+        window.scrollTo(0, 0);
+        if (document.body) document.body.scrollTop = 0;
+        if (document.documentElement) document.documentElement.scrollTop = 0;
+
+        // Target specific framework containers that might be handling scroll
+        const scrollContainers = document.querySelectorAll('.v-main, .v-application, .fill-height, main');
+        scrollContainers.forEach(el => {
+          el.scrollTop = 0;
+        });
+
+        if (to.query.x && to.query.y) {
+          resolve({
+            left: Number(to.query.x),
+            top: Number(to.query.y),
+            behavior: 'smooth',
+          })
+        } else {
+          resolve({ top: 0, left: 0, behavior: 'smooth' })
+        }
+      }, 300)
+    })
+  },
   routes: [
     {
       path: '/',
@@ -266,10 +292,6 @@ router.afterEach((to) => {
   useGlobalStore().setLoading(false);
   const title = to.meta.title || 'Home';
   document.title = 'Noels | ' + title;
-  scroll({
-    top: 0,
-    behavior: 'smooth'
-  })
 });
 
 export default router
