@@ -117,18 +117,21 @@ export const useProductStore = defineStore("product", {
           this.toast.error(err.message);
         });
     },
-    fetchProduct(productId, query) {
+    async fetchProduct(productId, query) {
       try {
         const product = this.products.find(p => p.productId === productId);
         if (!product) {
           return _request.axiosRequest({
-            url: `${constants.products}/${productId}`,
+            url: `${constants.v2products}/${productId}`,
             method: "GET",
             params: query,
           })
             .then(res => {
+              const { linked, meta, data } = res.data;
               this.$patch({
-                product: res.data
+                product: data,
+                productListingMeta: meta,
+                productLinkedEntities: linked,
               })
             })
             .catch(err => {

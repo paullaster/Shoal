@@ -2,8 +2,8 @@
   <article
     class="group relative product-listing-wrapper cool-borderradius bg-white shadow-sm transition-all duration-300 ease-in-out hover:shadow-xl flex flex-col overflow-hidden h-full">
     <a :href="productUrl"
-      @click.prevent="router.push({ name: 'productDetails', params: { productId: product.productId } })"
-      class="grow flex flex-col">
+      @click.prevent="router.push({ name: 'productDetails', params: { productId: product.productId }, query: { el: productElementId } })"
+      :id="elementId" class="grow flex flex-col">
       <div class="productlisting-image h-64 w-full overflow-hidden relative">
         <img :src="displayImage.url" :alt="displayImage.altText"
           class="h-full w-full object-cover object-center transition-transform duration-500 ease-in-out md:group-hover:scale-110" />
@@ -21,8 +21,9 @@
         <div class="flex flex-wrap items-baseline gap-x-2 gap-y-1 mb-2">
           <p class="text-2xl font-extrabold text-primary" v-if="onSale">{{ currency }} {{ displayPrice }}
           </p>
-          <p class="text-xl font-bold text-gray-900" :class="{ 'line-through text-gray-500 text-base': onSale }">{{
-            currency }} {{ originalPrice }}</p>
+          <p :class="onSale ? 'line-through text-gray-900 text-base' : 'text-xl font-bold text-primary'">
+            {{
+              currency }} {{ originalPrice }}</p>
         </div>
 
         <!-- Categories -->
@@ -36,7 +37,7 @@
         <!-- Attributes -->
         <div v-if="displayAttributes.length" class="flex flex-wrap gap-1 mb-2">
           <span v-for="attr in displayAttributes" :key="attr.name"
-            class="text-xs text-gray-500 py-0.5 px-1.5 rounded-full border border-gray-200">
+            class="text-xs text-gray-500 py-0.5 rounded-full border border-gray-200 px-2">
             {{ attr.name }}: {{ attr.value }}
           </span>
         </div>
@@ -61,15 +62,16 @@
     <!-- Responsive CTA -->
     <div
       class="cta-btn p-2 md:absolute md:bottom-4 md:left-1/2 md:-translate-x-1/2 md:w-[90%] md:rounded-xl md:bg-white/95 md:backdrop-blur-sm md:opacity-0 md:transform md:translate-y-[150%] md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-300 ease-out border-t md:border-none border-gray-100 flex justify-center shadow-xl">
-      <v-btn color="primary" variant="flat" rounded="pill" height="44" v-if="!productInCart" @click.stop="addToCart(product)"
-        class="w-full shadow-none font-weight-bold text-none primary-gradient-button">
+      <v-btn color="primary" variant="flat" rounded="pill" height="44" v-if="!productInCart"
+        @click.stop="addToCart(product)" class="w-full shadow-none font-weight-bold text-none primary-gradient-button">
         <v-icon class="mr-2">mdi-cart-outline</v-icon>
         Add to Cart
       </v-btn>
       <div v-else
         class="cta-btn-group-container h-11 w-full flex justify-between items-center primary-gradient-button rounded-pill p-1 shadow-none"
         @click.stop="cartUpdate(product, $event)">
-        <v-btn variant="text" density="comfortable" icon="mdi-minus" data-type-remove color="white" class="ml-1"></v-btn>
+        <v-btn variant="text" density="comfortable" icon="mdi-minus" data-type-remove color="white"
+          class="ml-1"></v-btn>
         <span class="font-bold text-lg text-white">
           {{ productInCart.quantity }}
         </span>
@@ -90,7 +92,11 @@ const props = defineProps({
   product: {
     type: Object,
     required: true
-  }
+  },
+  productElementId: {
+    type: String,
+    required: true,
+  },
 });
 
 // ROUTER
@@ -107,9 +113,9 @@ const { itemsById: cartItemsById } = storeToRefs(cartStore);
 const { getCategoryById, getImageById, getAttributeById } = storeToRefs(productStore);
 
 // COMPUTED
-const productUrl = computed(() => router.resolve({ name: 'productDetails', params: { productId: props.product.productId } }).href);
+const productUrl = computed(() => router.resolve({ name: 'productDetails', params: { productId: props.product.productId }, query: { el: props.productElementId } }).href);
 
-const firstVariant = computed(() => props.product.variants?.[0]);
+const firstVariant = computed(() => props.product.variants?.find(v => v.saleInfo.onSale) ?? props.product.variants?.[0]);
 
 const displayImage = computed(() => {
   const imageId = props.product.imageIds?.[0];

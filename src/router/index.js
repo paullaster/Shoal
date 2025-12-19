@@ -6,28 +6,50 @@ import stringToBase64AndReverse from '@/util/stringToBase64AndReverse';
 const router = createRouter({
   history: createWebHistory(import.meta.env.VUE_APP_URL),
   scrollBehavior(to, from, savedPosition) {
+    console.log('saved position: ', savedPosition)
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Robust scroll reset for various potential containers
-        window.scrollTo(0, 0);
-        if (document.body) document.body.scrollTop = 0;
-        if (document.documentElement) document.documentElement.scrollTop = 0;
-
-        // Target specific framework containers that might be handling scroll
-        const scrollContainers = document.querySelectorAll('.v-main, .v-application, .fill-height, main');
-        scrollContainers.forEach(el => {
-          el.scrollTop = 0;
-        });
-
+        // 1. Explicit Query Params (Highest Priority)
         if (to.query.x && to.query.y) {
           resolve({
             left: Number(to.query.x),
             top: Number(to.query.y),
             behavior: 'smooth',
           })
-        } else {
-          resolve({ top: 0, left: 0, behavior: 'smooth' })
+          return
         }
+
+        // 2. Saved Position (Browser Back Button)
+        if (savedPosition) {
+          resolve(savedPosition)
+          return
+        }
+        // 3. Use el Query Params
+
+        if (from.query.el) {
+          const element = document.querySelector(`#${from.query.el}`);
+          if (element) {
+            const marginTop = parseFloat(
+              getComputedStyle(element).scrollMarginTop
+            );
+            resolve({
+              el: element,
+              top: marginTop,
+            })
+            return
+          }
+        }
+        // 4. Default: Robust Reset for new navigation
+        window.scrollTo(0, 0);
+        if (document.body) document.body.scrollTop = 0;
+        if (document.documentElement) document.documentElement.scrollTop = 0;
+
+        const scrollContainers = document.querySelectorAll('.v-main, .v-application, .fill-height, main');
+        scrollContainers.forEach(el => {
+          el.scrollTop = 0;
+        });
+
+        resolve({ top: 0, left: 0, behavior: 'smooth' })
       }, 300)
     })
   },

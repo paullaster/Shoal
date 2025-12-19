@@ -1,6 +1,6 @@
 <template>
     <div class="user-history-wrapper py-4">
-        
+
         <!-- Section 1: Chef's Favorites (Horizontal Scroll) -->
         <section class="mb-10 relative" v-if="trendingProducts.length">
             <div class="d-flex align-center justify-space-between mb-4">
@@ -10,32 +10,19 @@
                 </div>
                 <v-btn variant="text" color="primary" class="font-weight-bold px-0">See All</v-btn>
             </div>
-            
+
             <div class="group relative">
                 <v-slide-group show-arrows class="py-2 product-slide-group">
                     <template v-slot:prev="{ onClick }">
-                        <v-btn
-                            icon="mdi-chevron-left"
-                            variant="flat"
-                            color="white"
-                            class="custom-nav-btn prev-btn elevation-3 hidden md:flex"
-                            @click="onClick"
-                        ></v-btn>
+                        <v-btn icon="mdi-chevron-left" variant="flat" color="white"
+                            class="custom-nav-btn prev-btn elevation-3 hidden md:flex" @click="onClick"></v-btn>
                     </template>
                     <template v-slot:next="{ onClick }">
-                        <v-btn
-                            icon="mdi-chevron-right"
-                            variant="flat"
-                            color="white"
-                            class="custom-nav-btn next-btn elevation-3 hidden md:flex"
-                            @click="onClick"
-                        ></v-btn>
+                        <v-btn icon="mdi-chevron-right" variant="flat" color="white"
+                            class="custom-nav-btn next-btn elevation-3 hidden md:flex" @click="onClick"></v-btn>
                     </template>
 
-                    <v-slide-group-item
-                        v-for="(product, index) in trendingProducts"
-                        :key="product.id || index"
-                    >
+                    <v-slide-group-item v-for="(product, index) in trendingProducts" :key="product.id || index">
                         <div class="mx-2 mb-2 w-72 md:w-80 flex-shrink-0">
                             <ProductListing :product="product" class="h-full" />
                         </div>
@@ -53,53 +40,35 @@
                 </div>
                 <v-btn variant="text" color="primary" class="font-weight-bold px-0">See All</v-btn>
             </div>
-            
+
             <!-- Filter Chips -->
             <div class="mb-6 sticky top-20 z-30 bg-white/95 backdrop-blur-md py-2 px-0 transition-all">
-                 <v-slide-group show-arrows>
+                <v-slide-group show-arrows>
                     <v-slide-group-item v-slot="{ isSelected, toggle }">
-                        <v-chip
-                            class="ma-2 font-weight-bold"
-                            :color="activeCategory === null ? 'primary' : undefined"
-                            :variant="activeCategory === null ? 'flat' : 'outlined'"
-                            rounded="pill"
-                            @click="activeCategory = null"
-                            elevation="0"
-                            size="default"
-                        >
+                        <v-chip class="ma-2 font-weight-bold" :color="activeCategory === null ? 'primary' : undefined"
+                            :variant="activeCategory === null ? 'flat' : 'outlined'" rounded="pill"
+                            @click="activeCategory = null" elevation="0" size="default">
                             All
                         </v-chip>
                     </v-slide-group-item>
-                    <v-slide-group-item
-                        v-for="category in categories"
-                        :key="category.categoryId"
-                        v-slot="{ isSelected, toggle }"
-                    >
-                        <v-chip
-                            class="ma-2 font-weight-bold"
+                    <v-slide-group-item v-for="category in categories" :key="category.categoryId"
+                        v-slot="{ isSelected, toggle }">
+                        <v-chip class="ma-2 font-weight-bold"
                             :color="activeCategory === category.categoryId ? 'primary' : undefined"
-                            :variant="activeCategory === category.categoryId ? 'flat' : 'outlined'"
-                            rounded="pill"
-                            @click="activeCategory = category.categoryId"
-                            elevation="0"
-                            size="default"
-                        >
+                            :variant="activeCategory === category.categoryId ? 'flat' : 'outlined'" rounded="pill"
+                            @click="activeCategory = category.categoryId" elevation="0" size="default">
                             {{ category.name }}
                         </v-chip>
                     </v-slide-group-item>
                 </v-slide-group>
             </div>
-    
+
             <!-- Product Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                <ProductListing 
-                    v-for="(product, index) in filteredProducts" 
-                    :key="product.id || index" 
-                    :product="product" 
-                    class="h-full" 
-                />
+                <ProductListing v-for="(product, index) in filteredProducts" :key="product.productId || index"
+                    :product="product" class="h-full" :product-element-id="`${product.productId}-v-${index}`" />
             </div>
-            
+
             <!-- Empty State -->
             <div v-if="filteredProducts.length === 0" class="text-center py-10 text-grey">
                 <v-icon size="large" class="mb-2">mdi-food-off</v-icon>
@@ -141,7 +110,7 @@ const filteredProducts = computed(() => {
 <style scoped>
 .user-history-wrapper {
     /* Removed background-color and specific border-radius to blend seamlessly */
-    background-color: transparent; 
+    background-color: transparent;
 }
 
 /* Custom Navigation Buttons */
@@ -177,5 +146,5 @@ const filteredProducts = computed(() => {
 :deep(.v-slide-group__prev),
 :deep(.v-slide-group__next) {
     display: none !important;
-} 
+}
 </style>
