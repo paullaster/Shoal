@@ -163,7 +163,7 @@
             </div>
 
             <!-- Add to Cart State -->
-            <button v-else @click="() => cartStore.createCart(selectedVariant)" :disabled="!stockStatus.available"
+            <button v-else @click="() => cartStore.createCart(product, selectedVariant)" :disabled="!stockStatus.available"
               class="primary-gradient-button group relative w-full py-6 px-10 rounded-full overflow-hidden transition-all duration-500 hover:scale-[1.02] active:scale-[0.98] disabled:grayscale disabled:opacity-70 disabled:hover:scale-100 shadow-[0_20px_40px_rgba(123,97,255,0.25)] hover:shadow-[0_30px_60px_rgba(123,97,255,0.4)]">
 
               <!-- Shine Effect -->

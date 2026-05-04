@@ -9,7 +9,6 @@ const router = createRouter({
     console.log('saved position: ', savedPosition)
     return new Promise((resolve) => {
       setTimeout(() => {
-        // 1. Explicit Query Params (Highest Priority)
         if (to.query.x && to.query.y) {
           resolve({
             left: Number(to.query.x),
@@ -19,12 +18,10 @@ const router = createRouter({
           return
         }
 
-        // 2. Saved Position (Browser Back Button)
         if (savedPosition) {
           resolve(savedPosition)
           return
         }
-        // 3. Use el Query Params
 
         if (from.query.el) {
           const element = document.querySelector(`#${from.query.el}`);
@@ -39,7 +36,7 @@ const router = createRouter({
             return
           }
         }
-        // 4. Default: Robust Reset for new navigation
+
         window.scrollTo(0, 0);
         if (document.body) document.body.scrollTop = 0;
         if (document.documentElement) document.documentElement.scrollTop = 0;

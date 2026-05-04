@@ -137,10 +137,12 @@ export const useProductStore = defineStore("product", {
             .catch(err => {
               this.toast.error(err.message);
             });
+        } else {
+          this.$patch({
+            product: product
+          });
         }
-        this.$patch({
-          product: product
-        });
+
       } catch (error) {
         this.toast.error(error.message);
       }

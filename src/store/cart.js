@@ -62,23 +62,46 @@ export const useCartStore = defineStore('cart', {
                     this.toast.error('Error retrieving checkout cart')
                 })
         },
-        async createCart(payload) {
+        async createCart(product, variant) {
             try {
                 this.setGlobalLoader(true);
-                const cartItem = { ...payload, quantity: 1 };
                 const productStore = useProductStore();
-                await productStore.fetchProduct(cartItem.productId, { eager: true });
+                await productStore.fetchProduct(productId, { eager: true });
                 const selectedProduct = productStore.getProduct;
+
                 if (!selectedProduct) {
                     return;
                 }
-                cartItem.image = selectedProduct?.images?.[0].url;
+                const {
+                    name,
+                    categoryIds,
+                    description,
+                    imageIds,
+                    productId
+                } = selectedProduct;
+
+                const cartItem = {
+                    name,
+                    categoryIds,
+                    description,
+                    imageIds,
+                    productId
+                };
                 console.log(cartItem);
+                console.log(AuthService.isAuthenticated());
                 if (!AuthService.isAuthenticated()) {
                     this.getCart();
                     if (!Object.keys(this.cart).length) {
+                        cartItem.variants = [
+                            {
+                                ...variant,
+                                quantity: 1,
+                            }
+                        ];
+                        console.log(cartItem);
+                        WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [cartItem] });
                         this.setGlobalLoader(false);
-                        return WebStorage.storeToWebDB('local', `${APPNAME.split(" ").join("")}_cart`, { Items: [cartItem] });
+                        return
                     }
                     const productExistsInCart = this.cart.Items.find((product) => product.productPid === cartItem.productPid);
                     if (productExistsInCart) {

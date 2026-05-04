@@ -109,7 +109,7 @@ export const useAuth = defineStore("auth", {
                             globalEventBus.emit('start-otp-resend-timer');
                         }, 1000);
                         this.setLoader(false);
-                        response.data.otp && this.toast.success(response.message);
+                        response?.data?.otp && this.toast.success(response?.message);
                     })
                     .catch(async (error) => {
                         this.toast.error(error?.response?.data?.message || error.message || customError);

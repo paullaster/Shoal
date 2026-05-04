@@ -104,6 +104,6 @@ export default defineConfig({
   server: {
     port: 3000,
     host: true,
-    allowedHosts: ['noelsdeliveries.com', 'localhost', '*']
+    allowedHosts: ['noelsdeliveries.com', 'localhost', '7906-102-213-179-57.ngrok-free.app']
   }
 })
